@@ -3,7 +3,7 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: goldenrod;
   }
   
 li {
@@ -12,23 +12,31 @@ li {
   
 li a {
     display: block;
-    color: white;
+    color: black;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: large;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Comic Sans MS";
     font-weight: bold;
 }
   
 li a:hover {
-    background-color: goldenrod;
-    color: black;
+    background-color: black;
+    color: goldenrod;
+}
+
+nav {
+    width: 100%;
 }
 
 body {
     margin: auto;
-    font-family: Comic Sans MS;
+    font-family: "Comic Sans MS";
+}
+
+section {
+    width: 50%;
 }
 
 img {

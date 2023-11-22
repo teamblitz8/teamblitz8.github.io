@@ -48,6 +48,6 @@ div {
     border-style: outset;
     border-color: goldenrod;
     border-width: medium;
-    border-radius: 5px;
-    padding: 5px 5px;
+    border-radius: 25px;
+    padding: 25px 25px;
 }

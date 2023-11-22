@@ -49,5 +49,6 @@ div {
     border-color: goldenrod;
     border-width: medium;
     border-radius: 25px;
-    padding: 25px 25px;
+    margin: 25px 25px;
+    padding: 10px 10px;
 }

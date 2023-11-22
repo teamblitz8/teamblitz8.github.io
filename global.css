@@ -25,3 +25,7 @@ li a:hover {
     background-color: goldenrod;
     color: black;
 }
+
+body {
+    text-align: center;
+}

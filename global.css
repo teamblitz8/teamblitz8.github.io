@@ -29,3 +29,8 @@ li a:hover {
 body {
     text-align: center;
 }
+
+img {
+    height: 256px;
+    width: 256px;
+}

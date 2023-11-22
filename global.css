@@ -43,3 +43,9 @@ img {
     height: 256px;
     width: 256px;
 }
+
+div {
+    border-style: outset;
+    border-color: goldenrod;
+    border-width: medium;
+}

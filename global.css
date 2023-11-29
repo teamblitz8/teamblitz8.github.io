@@ -45,10 +45,50 @@ img {
 }
 
 div {
-    border-style: outset;
+    border-style: solid;
     border-color: goldenrod;
     border-width: medium;
     border-radius: 25px;
     margin: 15px 15px;
     padding: 10px 10px;
+    display: inline-block;
+}
+
+div.description {
+    float: left;
+    width: 46%;
+    display: inline-block;
+}
+
+div.large {
+    width: 100%;
+}
+
+div.medium {
+    width: 46%;
+}
+
+div.small {
+    width: 21%;
+}
+
+a.link {
+    display: block;
+    background-color: black;
+    text-align: center;
+    color: goldenrod;
+}
+
+a:hover {
+    background-color: goldenrod;
+    color: black;
+}
+
+h3 {
+    font-weight: normal;
+}
+
+section {
+    width: 80%;
+    margin: auto;
 }

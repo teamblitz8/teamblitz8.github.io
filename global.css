@@ -17,7 +17,7 @@ li a {
     padding: 14px 16px;
     text-decoration: none;
     font-size: large;
-    font-family: "Comic Sans MS";
+    font-family: "Comic Sans", "Comic Sans MS", "Chalkboard", "ChalkboardSE-Regular", helvetica;
     font-weight: bold;
 }
   
@@ -32,7 +32,7 @@ nav {
 
 body {
     margin: auto;
-    font-family: "Comic Sans MS";
+    font-family: "Comic Sans", "Comic Sans MS", "Chalkboard", "ChalkboardSE-Regular", helvetica;
 }
 
 section {

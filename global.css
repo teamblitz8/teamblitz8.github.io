@@ -35,10 +35,6 @@ body {
     font-family: "Comic Sans", "Comic Sans MS", "Chalkboard", "ChalkboardSE-Regular", helvetica;
 }
 
-section {
-    width: 50%;
-}
-
 img {
     height: 256px;
     width: 256px;
@@ -65,11 +61,11 @@ div.large {
 }
 
 div.medium {
-    width: 46%;
+    width: 45%;
 }
 
 div.small {
-    width: 21%;
+    width: 20%;
 }
 
 a.link {
@@ -96,4 +92,8 @@ section {
 footer {
     background-color: black;
     color: goldenrod;
+}
+
+p.bold {
+    font-weight: bold;
 }

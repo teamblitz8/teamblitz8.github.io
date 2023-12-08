@@ -1,13 +1,18 @@
-ul {
+* {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+}
+
+ul {
     background-color: goldenrod;
-  }
+    float:left;
+    width:100%;
+}
   
 li {
     float: left;
+    width: 300px;
 }
   
 li a {
@@ -19,6 +24,7 @@ li a {
     font-size: large;
     font-family: "Comic Sans", "Comic Sans MS", "Chalkboard", "ChalkboardSE-Regular", helvetica;
     font-weight: bold;
+    float:left;
 }
   
 li a:hover {
@@ -28,6 +34,7 @@ li a:hover {
 
 nav {
     width: 100%;
+    background-color: goldenrod;
 }
 
 body {
@@ -96,4 +103,9 @@ footer {
 
 p.bold {
     font-weight: bold;
+}
+
+img {
+    height: 100%;
+    width: 100%;
 }

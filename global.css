@@ -1,111 +1,189 @@
 * {
     list-style-type: none;
-    margin: 0;
+    margin: 0px;
     padding: 0;
+    font-family: "Comic Sans", "Comic Sans MS", "Chalkboard", "ChalkboardSE-Regular", helvetica;
 }
 
-ul {
-    background-color: goldenrod;
-    float:left;
-    width:100%;
-}
-  
-li {
-    float: left;
-    width: 300px;
-}
-  
-li a {
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: large;
-    font-family: "Comic Sans", "Comic Sans MS", "Chalkboard", "ChalkboardSE-Regular", helvetica;
-    font-weight: bold;
-    float:left;
-}
-  
-li a:hover {
-    background-color: black;
-    color: goldenrod;
-}
+@keyframes hover {
+    from {
+        background-color: #333333;
+        color: white;
+    }
+    to {
+        background-color: goldenrod;
+        color: #333333;
+    }
+  }
 
 nav {
+    background-color: #333333;
+    overflow: auto;
     width: 100%;
-    background-color: goldenrod;
 }
 
-body {
-    margin: 0;
-    font-family: "Comic Sans", "Comic Sans MS", "Chalkboard", "ChalkboardSE-Regular", helvetica;
+nav ul li a {
+    width: 200px;
+    float: left;
+    display: block;
+    text-align: center;
+    border: white 1px;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+    font-weight: bolder;
+    font-size: 25px;
+    height: 35px;
+}
+
+nav ul li a.image {
+    height: 65px;
+}
+
+nav ul li a:hover {
+    animation: hover 1s;
+    background-color: goldenrod;
+    color: #333333;
+}
+
+nav ul li a:active {
+    background-color: goldenrod;
+    color: #333333;
+}
+
+nav ul li a img.logo {
+    height: 65px;
+    padding-bottom: 0;
+    width: 65px;
+    border-radius: 0;
+}
+
+nav ul li a.image {
+    width: max-content;
+    padding: 0;
+    padding-bottom: 0;
+}
+
+img.banner {
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
 }
 
 img {
-    height: 256px;
-    width: 256px;
-}
-
-div {
-    border-style: solid;
-    border-color: goldenrod;
-    border-width: medium;
-    border-radius: 25px;
-    margin: 15px 15px;
-    padding: 10px 10px;
-    display: inline-block;
-}
-
-div.description {
     float: left;
-    width: 46%;
-    display: inline-block;
-}
-
-div.large {
-    width: 100%;
-}
-
-div.medium {
-    width: 45%;
-}
-
-div.small {
-    width: 20%;
-}
-
-a.link {
+    height: 300px;
+    width: 300px;
+    border-radius: 150px;
     display: block;
-    background-color: black;
-    text-align: center;
-    color: goldenrod;
 }
 
-a:hover {
-    background-color: goldenrod;
-    color: black;
-}
-
-h3 {
-    font-weight: normal;
-}
-
-section {
+section#middle {
     width: 80%;
     margin: auto;
 }
 
-footer {
-    background-color: black;
+h1 {
+    font-size: 32px;
+}
+
+p.para {
+    padding: 5px;
+}
+
+div.left {
+    border: 3px solid goldenrod;
+    border-radius: 25px;
+    width: 48%;
+    float: left;
+    display: block;
+    margin-bottom: 25px
+}
+
+div.right {
+    border: 3px solid goldenrod;
+    border-radius: 25px;
+    width: 48%;
+    float: right;
+    display: block;
+    margin-bottom: 25px
+}
+
+div.name {
+    padding: 15px;
+}
+
+div img {
+    margin: 15px;
+}
+
+div.info {
+    float: right;
+    display: block;
+    width: 48%;
+    margin: 15px;
+}
+
+blockquote {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
     color: goldenrod;
+    font-size: 16px;
+    background-color: grey;
+    text-align: end;
+    width: fit-content;
+    float: right;
 }
 
-p.bold {
-    font-weight: bold;
+section#our-car-design h1 {
+    margin-top: 30px;
 }
 
-img {
-    height: 100%;
-    width: 100%;
+img#car {
+    height: 25%;
+    width: 25%;
+    float: left;
+}
+
+div.longright {
+    border: 3px solid goldenrod;
+    border-radius: 25px;
+    float: right;
+    display: block;
+    margin-bottom: 25px;
+    width: 72%;
+    padding: 15px;
+}
+
+section#the-portfolio {
+    padding-top: 25px;
+}
+
+footer {
+    background-color: #333333;
+    color: white;
+    padding: 15px;
+    height: 45px;
+    padding-bottom: 0;
+}
+
+footer h3 {
+    float: left;
+}
+
+footer div {
+    float: right;
+    display: block;
+}
+
+img.icon {
+    height: 32px;
+    width: 32px;
+    border-radius: 16px;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
+    border-width: 1px;
+    border-color: white;
 }

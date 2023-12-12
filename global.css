@@ -14,16 +14,86 @@
         background-color: goldenrod;
         color: #333333;
     }
-  }
+}
+
+@media screen and (max-width: 943px) {
+    .nav li a {
+        display: none;
+    }
+    .nav li a.icon {
+        float: right;
+        display: block;
+    }
+    .nav li a#welcome {
+        display: block;
+    }
+    div.left {
+        width: 100%;
+        float: none;
+        display: block;
+    }
+    div.right {
+        width: 100%;
+        float: none;
+        display: block;
+    }
+    .right img {
+        height: 50%;
+        width: 50%;
+    }
+    .left img {
+        height: 50%;
+        width: 50%;
+    }
+    div.info {
+        margin: 15px;
+        width: 100%;
+        float: none;
+        display: block;
+    }
+    .foot h3 { 
+        text-align: center;
+        width: 100%;
+    }
+    .foot div {
+        display: block;
+        width: 100%;
+    }
+
+    .foot div a {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 943px) {
+    .nav.responsive {
+        position: relative;
+    }
+    .nav.responsive li a.icon {
+        right: 0;
+        top: 0;
+        width: fit-content;
+        float: right;
+    }
+    .nav.responsive li a {
+        float: none;
+        display: block;
+        text-align: right;
+        width: auto;
+    }
+    .nav.responsive li a#welcome {
+        display: block;
+        width: auto;
+    }
+}
 
 nav {
     background-color: #333333;
-    overflow: auto;
+    overflow: hidden;
     width: 100%;
 }
 
 nav ul li a {
-    width: 200px;
     float: left;
     display: block;
     text-align: center;
@@ -46,12 +116,7 @@ nav ul li a:hover {
     color: #333333;
 }
 
-nav ul li a:active {
-    background-color: goldenrod;
-    color: #333333;
-}
-
-nav ul li a img.logo {
+nav ul li img.logo {
     height: 65px;
     padding-bottom: 0;
     width: 65px;
@@ -66,8 +131,10 @@ nav ul li a.image {
 
 img.banner {
     border-radius: 0;
-    height: 100%;
+    height: auto;
     width: 100%;
+    padding-bottom: 3vw;
+    text-align: center;
 }
 
 img {
@@ -136,10 +203,6 @@ blockquote {
     float: right;
 }
 
-section#our-car-design h1 {
-    margin-top: 30px;
-}
-
 img#car {
     height: 25%;
     width: 25%;
@@ -186,4 +249,8 @@ img.icon {
     padding: 0;
     border-width: 1px;
     border-color: white;
+}
+
+a.icon {
+    display: none;
 }

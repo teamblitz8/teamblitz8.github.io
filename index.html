@@ -3,6 +3,7 @@
     <head>
         <script src="scripts.js" defer></script>
         <link rel="stylesheet" type="text/css" href="global.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <title>Team Blitz - F1 In Schools</title>
 
         <meta charset="UTF-8">
@@ -15,9 +16,10 @@
     <body>
         <header>
             <nav>
-                <ul>
-                    <li><a href="https://teamblitzolaves.github.io/" class="image"><img src="Logo.png" class="logo"></a></li>
-                    <li><a href="#" class="active">Welcome!</a></li>
+                <ul id="nav" class="nav">
+                    <li><img src="Logo.png" class="logo"></li>
+                    <li><a href="javascript:void(0);" class="icon" onclick="hamburgerify()"><i class="fa fa-bars"></i></a></li>
+                    <li><a href="#" id="welcome">Welcome!</a></li>
                     <li><a href="#our-team">Our Team</a></li>
                     <li><a href="#our-car-design">Our Car Design</a></li>
                     <li><a href="#the-portfolio">The Portfolio</a></li>
@@ -31,7 +33,6 @@
 
         <section id="middle">
             <section id="our-team">
-                <br>
                 <h1>Who are we?</h1>
                 <p class="para">We are Team Blitz of Saint Olave's Grammar School, a group of 4 dedicated team members with a burning passion of STEM and DT. We all came together over the months, collaborating with each other with our own various different skillsets and thinking. We thoroughly enjoy the hands-on experience the F1 in Schools club provides us and the teamwork & collaboration skills we have developed on our journey, helping us get to where we are with our car, portfolio and brand today!</p>
                 <br>
@@ -71,7 +72,7 @@
                     </div>
                     <img src="Chen.jpg">
                     <div class="info">
-                        <p>Chen works on a crucial part of the Design-Test cycle: the testing phase. He manages the CFD testing to feedback results & figures such as drag to Pranit, helping us improve our car step by step, and being able to produce drag and lift values for us to compare against and log in our portfolio. In addition, he manages the social media (our Twitter and email) and digital presence side of our brand, even creating this very website! He has also set up our email and Github account to use for team-related activities.</p>
+                        <p>Chen works on a crucial part of the Design-Test cycle: the testing phase. He manages the CFD testing to feedback results & figures such as drag to Pranit, helping us improve our car, and being able to produce drag and lift values for us to compare other cars against and log in our portfolio. In addition, he manages digital presence side of our brand, even creating this very website! He has also set up our email and Twitter account to use for team-related activities.</p>
                         <blockquote>"f1 is very cool"</blockquote>
                     </div>
                 </div>
@@ -119,7 +120,7 @@
         </section>
 
         <br>
-        <footer>
+        <footer class="foot">
             <h3>© Chen Wang, 2022-2023. All rights reserved.</h3>
             <div>
                 <a href="mailto:teamblitz.f1.olaves@saintolaves.net" target="_blank"><img class="icon" src="mail.png"></a>

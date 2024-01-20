@@ -1,27 +1,176 @@
-ul {
-    list-style-type: none;
+* {
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    background-color: #333;
-  }
-  
-li {
-    float: left;
+    border: 0;
 }
-  
-li a {
-    display: block;
+
+body {
+    background-color: #2b2927;
     color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: large;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: bold;
 }
-  
-li a:hover {
-    background-color: goldenrod;
-    color: black;
+
+.topnav {
+    background-color: #1f2121;
+    width: 100%;
+    height: 60px;
+    overflow: hidden;
+}
+
+.logo {
+    float: left;
+    display: block;
+}
+
+.link {
+    display: inline-block;
+    text-align: center;
+    padding: 17px 25px;
+    font-size: 23px;
+    background-color: #1f2121;
+    color: white;
+    border-right: #f8ac29 1px solid;
+    font-weight: bold;
+    margin-left: -4px;
+    text-decoration: none;
+}
+
+.link:hover {
+    animation-name: selection;
+    animation-duration: 0.5s;
+    color: #f8ac29;
+}
+
+@keyframes selection {
+    from {
+        background-color: #1f2121;
+        color: white;
+    }
+    to {
+        color: #f8ac29;
+    }
+}
+
+.topnav .icon {
+    display: none;
+    color: white;
+    padding: 20px;
+}
+
+.topnav .icon:hover {
+    background-color: #f8ac29;
+}
+
+@media screen and (max-width: 1000px) {
+    .topnav a:not(:first-child) {
+        display: none;
+    }
+    .topnav a.icon {
+        float: right;
+        display: block;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .topnav.responsive {
+        position: relative;
+    }
+    .topnav.responsive a.icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    .topnav.responsive a {
+        float: none;
+        display: block;
+        text-align: left;
+    }
+}
+
+.banner {
+    background-image: url(./l-placeholder.png);
+    height: 1080px;
+    text-align: center;
+    color: #f8ac29;
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%
+}
+
+.banner h1 {
+    padding-top: 10%;
+    font-size: 350px;
+}
+
+.banner h3 {
+    font-size: 120px;
+}
+
+.info {
+    width: 65%;
+    margin: auto;
+}
+
+.info h1 {
+    font-weight: bolder;
+    padding: 8px 0;
+    font-size: 36px;
+}
+
+.info p {
+    padding-bottom: 20px;
+    font-size: 20px;
+}
+
+footer {
+    margin-top: 8px;
+    background-color: #1f2121;
+    padding: 24px;
+    height: 300px;
+}
+
+#sponsors {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#sponsors img {
+    height: 64px;
+    width: 500px;
+}
+
+.full {
+    width: 100%
+}
+
+.footnav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.footlink {
+    font-size: 25px;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    margin: auto;
+    color: white;
+    text-decoration: none;
+    height: 20px
+}
+
+.footlink:hover {
+    animation-name: selection;
+    animation-duration: 0.5s;
+    color:#f8ac29;
+}
+
+#copybox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

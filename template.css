@@ -7,6 +7,7 @@
 body {
     background-color: #2b2927;
     color: white;
+    font-family: "Dubai", "Comic Sans MS", "Arial Rounded MT Bold", sans-serif;
 }
 
 .topnav {
@@ -24,7 +25,7 @@ body {
 .link {
     display: inline-block;
     text-align: center;
-    padding: 17px 25px;
+    padding: 0.6% 28px;
     font-size: 23px;
     background-color: #1f2121;
     color: white;
@@ -98,7 +99,7 @@ body {
 }
 
 .banner h1 {
-    padding-top: 10%;
+    padding-top: 5%;
     font-size: 350px;
 }
 
@@ -122,6 +123,11 @@ body {
     font-size: 20px;
 }
 
+.info a {
+    padding-bottom: 20px;
+    font-size: 20px;
+}
+
 .article {
     border: #f8ac29 1px solid;
     border-radius: 5px;
@@ -131,11 +137,12 @@ footer {
     margin-top: 8px;
     background-color: #1f2121;
     padding: 24px;
-    height: 300px;
+    height: 335px;
 }
 
 #sponsors {
     width: 100%;
+    margin: auto;
     display: flex;
     justify-content: space-between;
 }
@@ -151,18 +158,18 @@ footer {
 
 .footnav {
     width: 100%;
+    margin: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 50px 0;
 }
 
 .footlink {
     font-size: 25px;
     display: inline-block;
-    text-align: center;
     width: 100%;
-    margin: auto;
+    text-align: center;
     color: white;
     text-decoration: none;
     height: 20px
@@ -174,8 +181,21 @@ footer {
     color:#f8ac29;
 }
 
-#copybox {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+#copyright {
+    padding-top: 10px;
+    width: 100%;
+    margin: auto;
+    font-size: 20px;
+    text-align: center;
+}
+
+.social-links {
+    padding-top: 25px;
+    text-align: center;
+}
+
+.social-links a {
+    padding-left: 8px;
+    padding-right: 8px;
+    display: inline-block;
 }

@@ -128,9 +128,24 @@ body {
     font-size: 20px;
 }
 
+a {
+    color: #f8ac29;
+}
+
 .article {
     border: #f8ac29 1px solid;
-    border-radius: 5px;
+    border-radius: 15px;
+    width: 49%;
+    display: inline-block;
+}
+
+.content {
+    padding: 20px;
+}
+
+.twitter-timeline {
+    padding-top: 20px;
+    float: left;
 }
 
 footer {

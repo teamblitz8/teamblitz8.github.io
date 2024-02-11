@@ -118,13 +118,17 @@ body {
     font-size: 36px;
 }
 
+.info h2 {
+    padding: 20px 0;
+    display: inline-block;
+}
+
 .info p {
     padding-bottom: 20px;
     font-size: 20px;
 }
 
 .info a {
-    padding-bottom: 20px;
     font-size: 20px;
 }
 
@@ -143,9 +147,26 @@ a {
     padding: 20px;
 }
 
-.twitter-timeline {
-    padding-top: 20px;
-    float: left;
+.chip {
+    display: inline-block;
+    margin: 0 20px;
+    padding: 0 16px;
+    background-color: #f8ac29;
+    color: #1f2121;
+    border-radius: 20px;
+    text-decoration: none;
+    float: right;
+    margin-top: 20px;
+}
+
+.chip .fa {
+    padding-top: 8px;
+    padding-right: 8px;
+}
+
+.chip .fab {
+    padding-top: 8px;
+    padding-right: 8px;
 }
 
 footer {

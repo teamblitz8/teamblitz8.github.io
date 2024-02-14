@@ -1,2 +1,2 @@
-# teamblitzolaves.github.io
+# teamblitz8.github.io
 cool website

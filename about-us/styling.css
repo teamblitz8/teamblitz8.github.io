@@ -1,0 +1,32 @@
+.first-line {
+    display: flex;
+    justify-content: left;
+}
+
+.second-line {
+    display: flex;
+    justify-content: center;
+}
+
+.person {
+    display: inline-block;
+    width: 33%;
+    padding: 0 17px;
+    border: solid 1px #f8ac29;
+    margin-bottom: 30px
+}
+
+.person img {
+    height: 256px;
+    width: 256px;
+    border-radius: 50%;
+}
+
+.join-info {
+    color: #f8ac29;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: 0;
+    display: block;
+    width: 100%;
+}

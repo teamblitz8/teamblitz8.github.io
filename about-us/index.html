@@ -4,6 +4,7 @@
         <title>Team Blitz | About Us</title>
 
         <link rel="stylesheet" type="text/css" href="../global/styling.css">
+        <link rel="stylesheet" type="text/css" href="./styling.css">
         <link rel="icon" type="image/x-icon" href="../global/xs-placeholder.png">
 
         <meta charset="UTF-8">
@@ -13,6 +14,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <script src="../global/scripts.js" defer></script>
+        <script src="./scripts.js" defer></script>
         <script src="https://kit.fontawesome.com/5de12ac90d.js" crossorigin="anonymous"></script>
     </head>
 
@@ -45,44 +47,77 @@
             
             <!--Include a sorting/filtering system like a shop, to sort by alphabet, date joined or filter by team part (e.g. Enterprise Team or Engineering Team)-->
             <h1>Meet the Team</h1>
-            <div id="Yash">
-                <h1>Yash Parekh</h1>
-                <h2>Team Manager & Graphic Designer</h2>
-                <img src="../global/m-placeholder.png">
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+            <div class="filtering">
+                <button onclick="showDropdown()" class="drop-button">Sort by..</button>
+                <input type="text" placeholder="Click to search.." class="searchbar" onkeyup="filterFunction()">
+                <button onclick="showDropdown()" class="drop-button">Filter by..</button>
+                <div class="filters">
+                    <a>Engineering Team</a>
+                    <a>Enterprise Team</a>
+                    <a>Joined in Entry Class</a>
+                    <a>Joined in Development Class</a>
+                    <a>Has no life</a>
+                    <a>Founding Member</a>
+                </div>
             </div>
+            <div class="team">
+                <div class="first-line">
+                    <div class="person">
+                        <h1>Yash Parekh</h1>
+                        <h2>ENGINEERING TEAM</h2>
+                        <h2>Team Manager & Design Engineer</h2>
+                        <h2 class="join-info">ENTRY CLASS</h2>
+                        <h2>Joined December 2022</h2>
+                        <img src="../global/m-placeholder.png">
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                    </div>
 
-            <div id="Pranit">
-                <h1>Pranit Malhotra</h1>
-                <h2>Head Design Engineer</h2>
-                <img src="../global/m-placeholder.png">
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-            </div>
+                    <div class="person">
+                        <h1>Pranit Malhotra</h1>
+                        <h2>ENGINEERING TEAM</h2>
+                        <h2>Design Engineer</h2>
+                        <h2 class="join-info">ENTRY CLASS</h2>
+                        <h2>Joined February 2022</h2>
+                        <img src="../global/m-placeholder.png">
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                    </div>
 
-            <div id="Chen">
-                <h1>Chen Hui Wang</h1>
-                <h2>Testing & Social Media Manager</h2>
-                <img src="../global/m-placeholder.png">
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-            </div>
+                    <div class="person">
+                        <h1>Chen Hui Wang</h1>
+                        <h2>ENGINEERING/ENTERPRISE TEAM</h2>
+                        <h2>Testing Engineer & Digital Manager</h2>
+                        <h2 class="join-info">FOUNDING MEMBER</h2>
+                        <h2>Joined October 2022</h2>
+                        <img src="../global/m-placeholder.png">
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                    </div>
+                </div>
+                <div class="second-line">
+                    <div class="person">
+                        <h1>Josh Abracadabra</h1>
+                        <h2>ENGINEERING/ENTERPRISE TEAM</h2>
+                        <h2>Testing Engineer & Business Manager</h2>
+                        <h2 class="join-info">DEVELOPMENT CLASS</h2>
+                        <h2>Joined January 2024</h2>
+                        <img src="../global/m-placeholder.png">
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                    </div>
 
-            <div id="Josh">
-                <h1>Josh Abracadabra</h1>
-                <h2>Assistant Design Engineer & Business Manager</h2>
-                <img src="../global/m-placeholder.png">
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-            </div>
-
-            <div id="Rayhaan">
-                <h1>Rayhaan Smith</h1>
-                <h2>Research Manager & Business Manager</h2>
-                <img src="../global/m-placeholder.png">
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
-                <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                    <div class="person">
+                        <h1>Rayhaan Smith</h1>
+                        <h2>ENTERPRISE TEAM</h2>
+                        <h2>Research & Resource Manager</h2>
+                        <h2 class="join-info">ENTRY CLASS</h2>
+                        <h2>Joined September 2023</h2>
+                        <img src="../global/m-placeholder.png">
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                    </div>
+                </div>
             </div>
         </section>
         <footer>

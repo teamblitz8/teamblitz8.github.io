@@ -48,10 +48,19 @@
             <!--Include a sorting/filtering system like a shop, to sort by alphabet, date joined or filter by team part (e.g. Enterprise Team or Engineering Team)-->
             <h1>Meet the Team</h1>
             <div class="filtering">
-                <button onclick="showDropdown()" class="drop-button">Sort by..</button>
-                <input type="text" placeholder="Click to search.." class="searchbar" onkeyup="filterFunction()">
-                <button onclick="showDropdown()" class="drop-button">Filter by..</button>
-                <div class="filters">
+                <button onclick="showSorts()" type="button" class="drop-button">Sort by..</button>
+                <div id="sorts">
+                    <a>Recommended</a>
+                    <a>Name A-Z</a>
+                    <a>Name Z-A</a>
+                    <a>Recently joined</a>
+                    <a>Joined earlier</a>
+                    <a>Role A-Z</a>
+                    <a>Role Z-A</a>
+                </div>
+                <input type="text" placeholder="Click to search.." id="searchbar" onkeyup="filterFunction()">
+                <button onclick="showFilters()" type="button" class="drop-button">Filter by..</button>
+                <div id="filters">
                     <a>Engineering Team</a>
                     <a>Enterprise Team</a>
                     <a>Joined in Entry Class</a>
@@ -59,10 +68,11 @@
                     <a>Has no life</a>
                     <a>Founding Member</a>
                 </div>
+                <button onclick="" type="button" class="drop-button" style="float: right;">Reset filters to default</button>
             </div>
             <div class="team">
                 <div class="first-line">
-                    <div class="person">
+                    <div class="person" id="yash">
                         <h1>Yash Parekh</h1>
                         <h2>ENGINEERING TEAM</h2>
                         <h2>Team Manager & Design Engineer</h2>
@@ -70,10 +80,10 @@
                         <h2>Joined December 2022</h2>
                         <img src="../global/m-placeholder.png">
                         <p>As well as leading the team, Yash has dedicated himself to learning many skills to aid each one of us in our roles, including himself - being the first to start learning CAD (Fusion 360) and organising & delegating tasks. He has also played a massive role in manufacturing: priming, painting, assembling, attaching vinyls and so much more, dedicating hours to the car.</p>
-                        <p>"Working smarter and harder can lead to success" - Yash, 2023</p>
+                        <p>"Working smarter and harder can lead to success"</p>
                     </div>
 
-                    <div class="person">
+                    <div class="person" id="pranit">
                         <h1>Pranit Malhotra</h1>
                         <h2>ENGINEERING TEAM</h2>
                         <h2>Design Engineer</h2>
@@ -84,7 +94,7 @@
                         <p>"F1 in Schools is an enriching & fun experience!"</p>
                     </div>
 
-                    <div class="person">
+                    <div class="person" id="chen">
                         <h1>Chen Hui Wang</h1>
                         <h2>ENGINEERING/ENTERPRISE TEAM</h2>
                         <h2>Testing Engineer & Digital Manager</h2>
@@ -96,10 +106,10 @@
                     </div>
                 </div>
                 <div class="second-line">
-                    <div class="person">
+                    <div class="person" id="josh">
                         <h1>Josh Abracadabra</h1>
                         <h2>ENGINEERING/ENTERPRISE TEAM</h2>
-                        <h2>Testing Engineer & Business Manager</h2>
+                        <h2>Testing Engineer & Business</h2>
                         <h2 class="join-info">JOINED DEVELOPMENT CLASS</h2>
                         <h2>Joined January 2024</h2>
                         <img src="../global/m-placeholder.png">
@@ -107,7 +117,7 @@
                         <p>"yash has no life"</p>
                     </div>
 
-                    <div class="person">
+                    <div class="person" id="rayhaan">
                         <h1>Rayhaan Smith</h1>
                         <h2>ENTERPRISE TEAM</h2>
                         <h2>Research & Resource Manager</h2>
@@ -117,7 +127,20 @@
                         <p>Rayhaan has been interested from F1 for a long time, meaning he was able to contribute a lot to our Initial Ideas from his knowledge of successful F1 cars. He is also very skilled at PowerPoint, laying out our presentations extremely effectively. As Resource Manager, he managed the portfolio, gave a helping hand during the manufacturing process and has a creative vision for the car through his expertise and passion for F1.</p>
                         <p>"F1 in Schools is extremely fun and rewarding"</p>
                     </div>
+
+                    <div class="person" id="anu">
+                        <h1>Anuoluwapo Silva</h1>
+                        <h2>ENTERPRISE TEAM</h2>
+                        <h2>Graphics Designer</h2>
+                        <h2 class="join-info">JOINED DEVELOPMENT CLASS</h2>
+                        <h2>Joined March 2024</h2>
+                        <img src="../global/m-placeholder.png">
+                        <p>Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life Yash has no life</p>
+                        <p>"sigmaa"</p>
+                    </div>
                 </div>
+                <h2>No results found..</h2>
+                <button>Reset filters</button>
             </div>
         </section>
         <footer>

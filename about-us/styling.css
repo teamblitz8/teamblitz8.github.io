@@ -98,3 +98,8 @@
     width: 30%;
     border: solid 1px #f8ac29
 }
+
+li {
+    padding-bottom: 20px;
+    font-size: 20px;
+}

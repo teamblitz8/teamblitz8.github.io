@@ -1,11 +1,8 @@
-.left {
-    display: inline-block;
-    float:left;
-    width: 75%;
+.contain {
+    display: flex;
+    justify-content: space-between;
 }
 
 .right {
-    display: inline-block;
-    float: right;
-    width: 25%;
+    margin-bottom: 25px;
 }

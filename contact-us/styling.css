@@ -16,3 +16,19 @@
     width: 45%;
     text-align: center;
 }
+
+.chippy {
+    background-color: #f8ac29;
+    color: #1f2121;
+    padding: 5px 25px;
+    border-radius: 25px;
+    margin: 5px 25px;
+    display: inline-block;
+    width: 45%;
+    text-align: center;
+    text-decoration: none;
+}
+
+.chippy i {
+    margin-right: 8px;
+}

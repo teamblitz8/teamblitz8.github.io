@@ -1,5 +1,6 @@
 #titre {
     display: block;
+    padding-bottom: 10px;
 }
 .row {
     display: flex;

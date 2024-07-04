@@ -238,3 +238,7 @@ footer {
     padding-right: 8px;
     display: inline-block;
 }
+
+ul {
+    padding-left: 40px;
+}

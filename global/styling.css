@@ -242,3 +242,22 @@ footer {
 ul {
     padding-left: 40px;
 }
+
+#heh {
+    display: flex;
+    justify-content: space-between;
+}
+
+#hehehe {
+    border-radius: 50%;
+    width: 33%;
+}
+
+.but {
+    display: block;
+    background-color: #f8ac29;
+    color: white;
+    border-radius: 25px;
+    padding: 20px;
+    font-size: 30px;
+}

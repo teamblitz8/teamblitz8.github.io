@@ -246,6 +246,12 @@ ul {
 #heh {
     display: flex;
     justify-content: space-between;
+    margin-top: 8%;
+    margin-bottom: 8%;
+}
+
+#heh div {
+    margin-top: 4%;
 }
 
 #hehehe {
@@ -254,10 +260,21 @@ ul {
 }
 
 .but {
-    display: block;
     background-color: #f8ac29;
     color: white;
-    border-radius: 25px;
-    padding: 20px;
+    border-radius: 100px;
+    padding: 5px 12%;
+    margin: 5px;
     font-size: 30px;
+    font-family: "Dubai", "Comic Sans MS", "Arial Rounded MT Bold", sans-serif;
+}
+
+#plzwork {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+#plzwork2 {
+    padding-bottom: 0;
+    margin-bottom: 0;
 }

@@ -21,6 +21,7 @@ body {
 .logo {
     float: left;
     display: block;
+    height: 60px;
 }
 
 .link {

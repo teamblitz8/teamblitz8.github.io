@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>snek</title>
+        <style>
+            body {
+                border: 0;
+                margin: 0;
+                padding: 0;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #gaem {
+                display: block;
+                margin: auto;
+                margin-top: 2%
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="gaem"></canvas>
+    </body>
+    <script>
+        const isThatGlock = 64;
+        const rows = 15;
+        const columns = 20;
+
+        let snekX = isThatGlock * 5
+        let snekY = isThatGlock * 5
+        let foodX;
+        let foodY;
+
+        let speedX = 0;
+        let speedY = 0;
+
+        let bod = [];
+
+        let board;
+        let context;
+
+        let snake = new Image();
+        let food = new Image();
+
+        let score = 0;
+        let over = false;
+
+        snake.src = "https://media.discordapp.net/attachments/1046176833600753676/1321531335155650631/image.png?ex=676d9377&is=676c41f7&hm=d1bed47f2dc23d624f2424be443b0ec3088a87aac437543bcc5996595a89a8cc&=&format=webp&quality=lossless&width=64&height=64";
+        food.src = "https://media.discordapp.net/attachments/1046176833600753676/1321531709249949777/image.png?ex=676d93d0&is=676c4250&hm=f8974ed8cdc7d003ecbc590f7879dbb1c48f52e6f6fbaa502ec9a4f1c6c6daac&=&format=webp&quality=lossless&width=64&height=64";
+
+        window.onload = () => {
+            board = document.getElementById("gaem");
+            board.height = rows * isThatGlock;
+            board.width = columns * isThatGlock;
+            context = board.getContext("2d");
+
+            let placement = placeFood();
+            while (placement) {
+                placement = placeFood();
+            }
+            placement = initialiseSnek();
+            while (placement) {
+                placement = initialiseSnek();
+            }
+
+            setInterval(update, 250);
+            document.addEventListener("keyup", move);
+        }
+
+        const update = () => {
+            if (over) {
+                return;
+            }
+            
+            // gameboard
+            context.fillStyle = "#1f2121";
+            context.fillRect(0, 0, board.width, board.height);
+
+            snekX += speedX * isThatGlock;
+            snekY += speedY * isThatGlock;
+
+            // when snake eats food
+            if (snekX === foodX && snekY === foodY) {
+                score++;
+                bod.push([foodX, foodY]);
+                placeFood();
+            }
+
+            for (let i = bod.length - 1; i > 0; i--) {
+                bod[i] = bod[i - 1];
+            }
+
+            bod[0] = [snekX, snekY];
+
+            // snake
+            const snak = context.createPattern(snake, null)
+            context.fillStyle = snak;
+            context.fillRect(snekX, snekY, isThatGlock, isThatGlock);
+
+            for (let i = 0; i < bod.length; i++) {
+                context.fillRect(bod[i][0], bod[i][1], isThatGlock, isThatGlock);
+            }
+
+            // food
+            const fod = context.createPattern(food, null)
+            context.fillStyle = fod;
+            context.fillRect(foodX, foodY, isThatGlock, isThatGlock);
+            
+            if (snekX < 0 || snekY >= rows * isThatGlock || snekY < 0 || snekX >= columns * isThatGlock) {
+                over = true;
+                alert("game over\nscore: " + score)
+                return;
+            }
+
+            /* this code doesnt work
+            for (let i of bod) {
+                if (bod.length !== 1) {
+                    if (snekX == i[0] && snekY == i[1]) {
+                        over = true;
+                        alert("game over")
+                    }
+                }
+            }
+            */
+        }
+
+        const initialiseSnek = () => {
+            snekX = Math.floor(Math.random() * columns) * isThatGlock;
+            snekY = Math.floor(Math.random() * rows) * isThatGlock;
+
+            if (foodX == snekX || foodY == snekY) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        const placeFood = () => {
+            foodX = Math.floor(Math.random() * columns) * isThatGlock;
+            foodY = Math.floor(Math.random() * rows) * isThatGlock;
+
+            if (foodX == snekX || foodY == snekY) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        const move = (event) => {
+            if (event.code === "ArrowUp" && speedY != 1) {
+                speedX = 0;
+                speedY = -1;
+            }
+            else if (event.code === "ArrowDown" && speedY != -1) {
+                speedX = 0;
+                speedY = 1;
+            }
+            else if (event.code === "ArrowLeft" && speedX != 1) {
+                speedX = -1;
+                speedY = 0;
+            }
+            else if (event.code === "ArrowRight" && speedX != -1) {
+                speedX = 1;
+                speedY = 0;
+            }
+        }
+    </script>
+</html>

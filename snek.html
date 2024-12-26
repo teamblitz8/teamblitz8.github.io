@@ -5,23 +5,72 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>snek</title>
         <style>
-            body {
+            * {
                 border: 0;
                 margin: 0;
                 padding: 0;
-                font-family: Arial, Helvetica, sans-serif;
+                font-family: Dubai;
+            }
+            #container {
+                position:relative;
             }
             #gaem {
                 display: block;
                 margin: auto;
-                margin-top: 2%
+                margin-top: 2%;
+                z-index: 1;
+            }
+            #overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 11px;
+                display: none;
+                margin: auto;
+                background-color: #ff0000;
+                opacity: 50%;
+                z-index: 1000;
+                width: 1280px;
+                height: 960px;
+                padding: 0;
+            }
+            .text {
+                color: white;
+                text-align: center;
+                scale: 200%;
+                padding: 10px;
+            }
+            #container-text {
+                position: relative;
+                top:350px;
+            }
+            button {
+                position: relative;
+                top: 380px;
+                background-color: #f8ac29;
+                margin: auto;
+                display: block;
             }
         </style>
     </head>
     <body>
-        <canvas id="gaem"></canvas>
+        <div id="container">
+            <canvas id="gaem"></canvas>
+            <div id="overlay">
+                <div id="container-text">
+                    <h1 class="text" id="scream">Game Over!</h1>
+                    <p id="score" class="text">Score: Something didn't work lol</p>
+                    <p id="record" class="text">Record: _ set by _</p>
+                    <p id="is" class="text">You were _ away from the record!</p>
+                </div>
+                <button class="text" onclick="restart()">Try again</button>
+            </div>
+        </div>
     </body>
     <script>
+        document.getElementById("overlay").style.display = "none";
+
         const isThatGlock = 64;
         const rows = 15;
         const columns = 20;
@@ -47,6 +96,8 @@
         let soz = new Image();
 
         let score = 0;
+        let record = 10000;
+        let recorder = "Chen";
         let over = false;
 
         bro.src = "https://media.discordapp.net/attachments/1046176833600753676/1321584648903594065/image.png?ex=676dc51e&is=676c739e&hm=8525835aa58411c5d012f648ec65d6a4f20d458f38ef17921416e0965b81e2eb&=&format=webp&quality=lossless&width=64&height=64";
@@ -81,7 +132,7 @@
             if (over) {
                 return;
             }
-            
+
             // gameboard
             context.fillStyle = "#1f2121";
             context.fillRect(0, 0, board.width, board.height);
@@ -129,18 +180,14 @@
             context.fillRect(foodX, foodY, isThatGlock, isThatGlock);
             
             if (snekX < 0 || snekY >= rows * isThatGlock || snekY < 0 || snekX >= columns * isThatGlock) {
-                over = true;
-                hit.play();
-                alert("game over\nscore: " + score);
+                end()
                 return;
             }
 
             for (let i of bod) {
                 if (bod.length !== 1) {
                     if (snekX == i[0] && snekY == i[1]) {
-                        over = true;
-                        hit.play();
-                        alert("game over");
+                        end()
                     }
                 }
             }
@@ -182,29 +229,63 @@
 
         const move = (event) => {
             if (event.code === "ArrowUp" && speedY != 1) {
-                bro.style.transform = "rotate(0)";
                 speedX = 0;
                 speedY = -1;
-                bro.style.transform = "rotate(0)";
             }
             else if (event.code === "ArrowDown" && speedY != -1) {
-                bro.style.transform = "rotate(0)";
                 speedX = 0;
                 speedY = 1;
-                bro.style.transform = "rotate(180)";
             }
             else if (event.code === "ArrowLeft" && speedX != 1) {
-                bro.style.transform = "rotate(0)";
                 speedX = -1;
                 speedY = 0;
-                bro.style.transform = "rotate(270)";
             }
             else if (event.code === "ArrowRight" && speedX != -1) {
-                bro.style.transform = "rotate(0)";
                 speedX = 1;
                 speedY = 0;
-                bro.style.transform = "rotate(90)";
             }
+        }
+
+        const restart = () => {
+            over = false;
+            score = 0;
+            snekX = isThatGlock * 5
+            snekY = isThatGlock * 5
+            foodX = 0;
+            foodY = 0;
+            speedX = 0;
+            speedY = 0;
+            bod = [];
+
+            let placement = placeFood();
+            while (placement) {
+                placement = placeFood();
+            }
+            placement = initialiseSnek();
+            while (placement) {
+                placement = initialiseSnek();
+            }
+
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        const end = () => {
+            hit.play();
+            document.getElementById("is").innerText = `The gap to pole was ${record - score}`;
+            document.getElementById("scream").innerText = "Chequered flag!"
+            document.getElementById("score").innerText = `Score: ${score}`;
+            document.getElementById("record").innerText = `Record: ${record} set by ${recorder}`;
+            if (score > record) {
+                const prev = record;
+                record = score;
+                let name = prompt("You broke a record! Enter your name: ");
+                recorder = name;
+                document.getElementById("is").innerText = `The gap to P2 was ${record - prev}`;
+                document.getElementById("scream").innerText = ["And that's pole position.", "P1 baby P1!!", `And the chequered flag comes out for ${name}!`, `${name} comes across the line to take victory!`][Math.floor(Math.random() * 4)]
+                document.getElementById("record").innerText = `${recorder} demolished the competition with a top score of ${score}`;
+            }
+            over = true;
+            document.getElementById("overlay").style.display = "block";
         }
     </script>
 </html>

@@ -57,7 +57,7 @@ window.onload = () => {
 
     // move the snake every few milliseconds, which decreases as the score goes up. listen for any keys
     setInterval(update, difficulty);
-    document.addEventListener("keyup", move);
+    document.addEventListener("keydown", move);
 }
 
 const update = () => {
@@ -174,28 +174,28 @@ const placeFood = () => {
 
 const move = (event) => {
     // if an arrow key is hit, adjust the direction via the x/y speed variables and rotate the snake body (this sucks but the nice solution is too complicated)
-    if (event.code === "ArrowUp" && speedY != 1) {
+    if ((event.code === "ArrowUp" || "KeyW") && speedY != 1) {
         speedX = 0;
         speedY = -1;
         bro.src = "image-top.webp";
         snake.src = "image (2)-top.webp";
         soz.src = "image (3)-top.webp";
     }
-    else if (event.code === "ArrowDown" && speedY != -1) {
+    else if ((event.code === "ArrowDown" || "KeyS") && speedY != -1) {
         speedX = 0;
         speedY = 1;
         bro.src = "image-bottom.webp";
         snake.src = "image (2)-bottom.webp";
         soz.src = "image (3)-bottom.webp";
     }
-    else if (event.code === "ArrowLeft" && speedX != 1) {
+    else if ((event.code === "ArrowLeft" || "KeyA") && speedX != 1) {
         speedX = -1;
         speedY = 0;
         bro.src = "image-left.webp";
         snake.src = "image (2)-left.webp";
         soz.src = "image (3)-left.webp";
     }
-    else if (event.code === "ArrowRight" && speedX != -1) {
+    else if ((event.code === "ArrowRight" || "KeyD") && speedX != -1) {
         speedX = 1;
         speedY = 0;
         bro.src = "image-right.webp";

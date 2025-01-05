@@ -51,70 +51,6 @@ body {
     padding: 1.25rem;
 }
 
-@media screen and (max-width: 1000px) {
-    .topnav .icon {
-        display: block;
-    }
-
-    .links.link {
-        display: none;
-        flex-direction: column;
-        background-color: #1f2121;
-        position: absolute;
-        top: 3.75rem;
-        width: 100%;
-        z-index: 10;
-    }
-
-    .links .link:nth-child(-n+2) {
-        display: inline-block;
-    }
-
-    .links.show .link {
-        display: inline-block;
-    }
-
-    .links.show {
-        display: flex;
-    }
-
-    .link {
-        padding: 0.625rem;
-        text-align: left;
-        width: 100%;
-    }
-
-    .banner h1 {
-        font-size: 12vw;
-    }
-
-    .banner h3 {
-        font-size: 5vw;
-    }
-
-    .info {
-        width: 90%;
-    }
-
-    .article {
-        width: 100%;
-        margin-bottom: 1.25rem;
-    }
-
-    .footnav {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .social-links a img {
-        width: 32px;
-    }
-
-    #sponsors img {
-        height: 48px;
-    }
-}
-
 @keyframes selection {
     from {
         background-color: #1f2121;
@@ -222,15 +158,14 @@ a {
 footer {
     margin-top: 8px;
     background-color: #1f2121;
-    padding: 24px;
-    height: 335px;
+    padding: 1.25vw 2.294455067vh;
+    height: 40.02676864vh
 }
 
 #sponsors {
-    width: 100%;
     margin: auto;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 #sponsors img {
@@ -326,25 +261,68 @@ ul {
 }
 
 @media screen and (max-width: 1000px) {
-    .topnav.link:not(:first-child) {
-        display: none;
-    }
-    .topnav a.icon {
-        float: right;
+    .topnav .icon {
         display: block;
     }
 
-    .topnav.responsive {
-        position: relative;
-    }
-    .topnav.responsive a.icon {
+    .links.link {
+        display: none;
+        flex-direction: column;
+        background-color: #1f2121;
         position: absolute;
-        right: 0;
-        top: 0;
+        top: 3.75rem;
+        width: 100%;
+        z-index: 10;
     }
-    .topnav.responsive a {
-        float: none;
-        display: block;
+
+    .links .link:nth-child(-n+2) {
+        display: inline-block;
+    }
+
+    .links.show .link {
+        display: inline-block;
+    }
+
+    .links.show {
+        display: flex;
+    }
+
+    .link {
+        padding: 0.625rem;
         text-align: left;
+        width: 100%;
+    }
+
+    .banner h1 {
+        font-size: 12vw;
+    }
+
+    .banner h3 {
+        font-size: 5vw;
+    }
+
+    .info {
+        width: 90%;
+    }
+    
+    .content {
+        width: 70vw;
+    }
+
+    .article {
+        width: 90vw;
+    }
+
+    .footnav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .social-links a img {
+        width: 32px;
+    }
+
+    #sponsors img {
+        height: 48px;
     }
 }

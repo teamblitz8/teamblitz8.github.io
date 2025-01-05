@@ -78,6 +78,8 @@ body {
     width: 100%;
     height: 100vh;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     position: relative;
     z-index: 0;
@@ -86,7 +88,9 @@ body {
 .banner h1 {
     padding-top: 5%;
     font-size: 18.22916667vw;
+    position: relative;
     width: 99vw;
+    text-align: center;
 }
 
 .banner h3 {
@@ -163,7 +167,7 @@ footer {
     margin-top: 8px;
     background-color: #1f2121;
     padding: 1.25vw 2.294455067vh;
-    height: 50vh
+    height: auto;
 }
 
 #sponsors {
@@ -283,11 +287,11 @@ ul {
     }
 
     .banner h1 {
-        font-size: 12vw;
+        font-size: 25vw;
     }
 
     .banner h3 {
-        font-size: 5vw;
+        font-size: 15vw;
     }
 
     .info {
@@ -300,6 +304,10 @@ ul {
 
     .article {
         width: 90vw;
+    }
+
+    .footlink {
+        margin-bottom: 20px;
     }
 
     .footnav {

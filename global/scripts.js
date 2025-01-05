@@ -4,12 +4,7 @@
   e=d.getElementsByTagName(s)[0];e.parentNode.insertBefore(i, e);
   })();
 
-/* Toggle between adding and removing the "responsive" class to topnav when the user clicks on the icon */
 function hamburgerify() {
-  var x = document.getElementById("links");
-  if (x.className === "links") {
-    x.className += " responsive";
-  } else {
-    x.className = "links";
-  }
+    const links = document.querySelector('.links');
+    links.classList.toggle('show');
 }

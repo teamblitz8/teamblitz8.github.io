@@ -14,32 +14,29 @@ body {
 .topnav {
     background-color: #1f2121;
     width: 100%;
-    height: 5.736137667vh;
+    height: 3.75rem;
     overflow: hidden;
 }
 
 .logo {
     float: left;
     display: block;
-    height: 5.736vh;
-    width: 3.125vw;
-}
-
-.links {
-    height: 5.736137667vh;
+    height: 3.75rem;
+    width: 3.75rem;
 }
 
 .link {
     display: inline-block;
     text-align: center;
-    padding: 1.003824092vh 1.458333333vw;
-    font-size: 2.198852772vh;
+    padding: 0.625rem 1.75rem;
+    font-size: 1.4375rem;
     background-color: #1f2121;
     color: white;
-    border-right: #f8ac29 1px solid;
+    border-right: #f8ac29 0.0625rem solid;
     font-weight: bold;
-    margin-left: -4px;
+    margin-left: -0.25rem;
     text-decoration: none;
+    height: 3.75rem;
 }
 
 .link:hover {
@@ -59,8 +56,9 @@ body {
 }
 
 .topnav .icon {
+    display: none;
     color: white;
-    padding: 16.5px;
+    padding: 1.25rem;
 }
 
 .topnav .icon:hover {
@@ -69,21 +67,21 @@ body {
 
 .banner {
     background-image: url(./banner.png);
-    height: 94.26386233vh;
     text-align: center;
     color: #f8ac29;
-    margin-bottom: 2.868vh;
+    margin-bottom: 30px;
     margin-left: auto;
     margin-right: auto;
     width: 100%;
 }
 
 .banner h1 {
-    font-size: 33.461vh;
+    padding-top: 5%;
+    font-size: 21.875rem;
 }
 
 .banner h3 {
-    font-size: 11.472vh;
+    font-size: 8rem;
 }
 
 .info {
@@ -93,22 +91,22 @@ body {
 
 .info h1 {
     font-weight: bolder;
-    padding: 0.417vw 0;
-    font-size: 3.442vh;
+    padding: 8px 0;
+    font-size: 36px;
 }
 
 .info h2 {
-    padding: 1.042vw 0;
+    padding: 1.25rem 0;
     display: inline-block;
 }
 
 .info p {
-    padding-bottom: 1.912vh;
-    font-size: 1.912vh;
+    padding-bottom: 1.25rem;
+    font-size: 1.25rem;
 }
 
 .info a {
-    font-size: 1.912vh;
+    font-size: 1.25rem;
 }
 
 a {
@@ -116,14 +114,14 @@ a {
 }
 
 .article {
-    border: #f8ac29 1px solid;
+    border: #f8ac29 0.0625rem solid;
     border-radius: 15px;
     width: 49%;
     display: inline-block;
 }
 
 .content {
-    padding: 1.042vw 1.912vh;
+    padding: 1.25rem;
 }
 
 .content h2 {
@@ -132,31 +130,31 @@ a {
 
 .chip {
     display: inline-block;
-    margin: 0 1.912vh;
-    padding: 0 1.53vh;
+    margin: 0 1.25rem;
+    padding: 0 16px;
     background-color: #f8ac29;
     color: #1f2121;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     text-decoration: none;
     float: right;
-    margin-top: 1.912vh;
+    margin-top: 1.25rem;
 }
 
 .chip .fa {
-    padding-top: 0.765vh;
-    padding-right: 0.417vw;
+    padding-top: 8px;
+    padding-right: 8px;
 }
 
 .chip .fab {
-    padding-top: 0.765vh;
-    padding-right: 0.417vw;
+    padding-top: 8px;
+    padding-right: 8px;
 }
 
 footer {
-    margin-top: 0.765vh;
+    margin-top: 8px;
     background-color: #1f2121;
-    padding: 1.25vw 2.294vh;
-    height: 32.027vh;
+    padding: 24px;
+    height: 335px;
 }
 
 #sponsors {
@@ -167,7 +165,7 @@ footer {
 }
 
 #sponsors img {
-    height: 6.119vh;
+    height: 64px;
 }
 
 .full {
@@ -180,17 +178,17 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2.604vw 0;
+    padding: 50px 0;
 }
 
 .footlink {
-    font-size: 2.39vh;
+    font-size: 25px;
     display: inline-block;
     width: 100%;
     text-align: center;
     color: white;
     text-decoration: none;
-    height: 1.912vh;
+    height: 1.25rem
 }
 
 .footlink:hover {
@@ -200,25 +198,26 @@ footer {
 }
 
 #copyright {
-    padding-top: 0.956vh;
+    padding-top: 0.625rem;
     width: 100%;
     margin: auto;
-    font-size: 1.912vh;
+    font-size: 1.25rem;
     text-align: center;
 }
 
 .social-links {
-    padding-top: 2.39vh;
+    padding-top: 25px;
     text-align: center;
 }
 
 .social-links a {
-    padding: 0.417vw 0;
+    padding-left: 8px;
+    padding-right: 8px;
     display: inline-block;
 }
 
 ul {
-    padding-left: 2.083vw;
+    padding-left: 40px;
 }
 
 #heh {
@@ -241,9 +240,9 @@ ul {
     background-color: #f8ac29;
     color: white;
     border-radius: 100px;
-    padding: 0.26vw 12%;
-    margin: 0.26vw 0.478vh;
-    font-size: 2.868vh;
+    padding: 5px 12%;
+    margin: 5px;
+    font-size: 30px;
     font-family: "Dubai", "Comic Sans MS", "Arial Rounded MT Bold", sans-serif;
 }
 

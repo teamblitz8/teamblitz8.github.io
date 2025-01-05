@@ -3,8 +3,3 @@
   i.src="https://cdn.curator.io/published/41ac22fb-1cfa-42ef-9b66-90aca1f9988d.js";
   e=d.getElementsByTagName(s)[0];e.parentNode.insertBefore(i, e);
   })();
-
-function hamburgerify() {
-    const links = document.querySelector('.links');
-    links.classList.toggle('show');
-}

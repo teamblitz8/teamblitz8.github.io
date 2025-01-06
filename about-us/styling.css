@@ -1,6 +1,6 @@
 .first-line {
     display: flex;
-    justify-content: left;
+    justify-content: center;
 }
 
 .second-line {
@@ -102,4 +102,24 @@
 li {
     padding-bottom: 20px;
     font-size: 20px;
+}
+
+@media (max-width: 1000px) {
+    .first-line, .second-line {
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+    }
+
+    .person {
+        display: block;
+        width: 90vw !important;
+        margin: 0 0 20px 0;
+        box-sizing: border-box;
+    }
+
+    .person img {
+        width: 100%;
+        height: auto;
+    }
 }

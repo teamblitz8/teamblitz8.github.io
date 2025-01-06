@@ -32,3 +32,25 @@
 .chippy i {
     margin-right: 8px;
 }
+
+@media screen and (max-width: 1000px) {
+    .row {
+        display: block;
+    }
+    .button {
+        display: block;
+        width: 70vw !important;
+        margin: 10px auto;
+    }
+    .chippy {
+        display: block;
+        width: 70vw !important;
+        margin: 10px auto;
+    }
+    .link {
+        display: block;
+        padding-right: 0;
+        padding-left: 0;
+        border: 0;
+    }
+}

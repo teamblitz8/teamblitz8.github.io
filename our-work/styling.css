@@ -1,6 +1,5 @@
 .container {
     display:inline-block;
-    justify-content: space-evenly;
     width: 50%;
     border: 5px solid #f8ac29;
     padding: 5px 25px;
@@ -27,4 +26,28 @@ h3 {
     display: inline-block;
     width: 25%;
     float:right;
+}
+
+@media screen and (max-width: 1000px) {
+    .containerer {
+        display: block;
+    }
+    .container {
+        margin-left: 0;
+        width: 70vw;
+    }
+    #entry-car {
+        display: block;
+        width: 67.5vw !important;
+        height: auto;
+    }
+    .para {
+        width: 100%;
+        float: none;
+    }
+
+    .img {
+        float: none;
+        width: 100%;
+    }
 }

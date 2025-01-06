@@ -3,6 +3,26 @@
     justify-content: space-between;
 }
 
+pre {
+    font-size: 1.25em;
+    color: white;
+    font-family: "Dubai", "Arial Rounded MT Bold", sans-serif;
+    white-space: pre-wrap;
+}
+
 .right {
+    display: block;
     margin-bottom: 25px;
+    height: 18vh;
+}
+
+@media screen and (max-width: 1000px) {
+    .contain {
+        display: block;
+        width: 100%;
+    }
+
+    .right {
+        margin: 25px auto;
+    }
 }

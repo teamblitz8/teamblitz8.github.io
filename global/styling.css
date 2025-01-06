@@ -14,35 +14,45 @@ body {
 .topnav {
     background-color: #1f2121;
     width: 100%;
-    height: 60px;
+    height: auto;
     overflow: hidden;
+    position: relative;
+    z-index: 1000;
 }
 
 .logo {
     float: left;
     display: block;
-    height: 60px;
-    width: 60px;
+    height: 3.75rem;
+    width: 3.75rem;
 }
 
 .link {
     display: inline-block;
     text-align: center;
-    padding: 10px 28px;
-    font-size: 23px;
+    padding: 0 1.75rem;
+    font-size: 1.4375rem;
+    line-height: 2.5em;
     background-color: #1f2121;
     color: white;
-    border-right: #f8ac29 1px solid;
+    border-right: #f8ac29 0.0625rem solid;
+    border-left: #f8ac29 0.0625rem solid;
     font-weight: bold;
-    margin-left: -4px;
+    margin-left: -0.25rem;
     text-decoration: none;
-    height: 60px;
+    height: 3.75rem;
 }
 
 .link:hover {
     animation-name: selection;
     animation-duration: 0.5s;
     color: #f8ac29;
+}
+
+.topnav .icon {
+    display: none;
+    color: white;
+    padding: 1.25rem;
 }
 
 @keyframes selection {
@@ -55,58 +65,38 @@ body {
     }
 }
 
-.topnav .icon {
-    display: none;
-    color: white;
-    padding: 20px;
-}
-
 .topnav .icon:hover {
     background-color: #f8ac29;
 }
 
-/* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
-@media screen and (max-width: 1000px) {
-    .links a:not(:first-child) {display: none;}
-    .links a.icon {
-        float: right;
-        display: block;
-    }
-}
-  
-/* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
-@media screen and (max-width: 1000px) {
-    .links.responsive {position: relative;}
-    .links.responsive a.icon {
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-    .links.responsive a {
-        float: none;
-        display: block;
-        text-align: left;
-    }
-}
-
 .banner {
     background-image: url(./banner.png);
-    height: 1080px;
     text-align: center;
     color: #f8ac29;
     margin-bottom: 30px;
     margin-left: auto;
     margin-right: auto;
     width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 0;
 }
 
 .banner h1 {
     padding-top: 5%;
-    font-size: 350px;
+    font-size: 18.22916667vw;
+    position: relative;
+    width: 99vw;
+    text-align: center;
 }
 
 .banner h3 {
-    font-size: 120px;
+    font-size: 6.6666666667vw;
+    width: 99vw;
 }
 
 .info {
@@ -121,17 +111,16 @@ body {
 }
 
 .info h2 {
-    padding: 20px 0;
-    display: inline-block;
+    padding: 1.2rem 0;
 }
 
 .info p {
-    padding-bottom: 20px;
-    font-size: 20px;
+    padding-bottom: 1.25rem;
+    font-size: 1.25rem;
 }
 
 .info a {
-    font-size: 20px;
+    font-size: 1.25rem;
 }
 
 a {
@@ -139,14 +128,14 @@ a {
 }
 
 .article {
-    border: #f8ac29 1px solid;
+    border: #f8ac29 0.0625rem solid;
     border-radius: 15px;
     width: 49%;
     display: inline-block;
 }
 
 .content {
-    padding: 20px;
+    padding: 1.25rem;
 }
 
 .content h2 {
@@ -155,14 +144,14 @@ a {
 
 .chip {
     display: inline-block;
-    margin: 0 20px;
+    margin: 0 1.25rem;
     padding: 0 16px;
     background-color: #f8ac29;
     color: #1f2121;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     text-decoration: none;
     float: right;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 }
 
 .chip .fa {
@@ -178,12 +167,11 @@ a {
 footer {
     margin-top: 8px;
     background-color: #1f2121;
-    padding: 24px;
-    height: 335px;
+    padding: 1.25vw 2.294455067vh;
+    height: auto;
 }
 
 #sponsors {
-    width: 100%;
     margin: auto;
     display: flex;
     justify-content: space-around;
@@ -213,7 +201,7 @@ footer {
     text-align: center;
     color: white;
     text-decoration: none;
-    height: 20px
+    height: 1.25rem
 }
 
 .footlink:hover {
@@ -223,10 +211,10 @@ footer {
 }
 
 #copyright {
-    padding-top: 10px;
+    padding-top: 0.625rem;
     width: 100%;
     margin: auto;
-    font-size: 20px;
+    font-size: 1.25rem;
     text-align: center;
 }
 
@@ -279,4 +267,81 @@ ul {
 #plzwork2 {
     padding-bottom: 0;
     margin-bottom: 0;
+}
+
+@media screen and (max-width: 1000px) {
+    .topnav {
+        overflow: visible;
+    }
+    .topnav .icon {
+        display: block;
+    }
+
+    .link {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .banner {
+        position: relative;
+    }
+
+    .banner h1 {
+        font-size: 25vw;
+    }
+
+    .banner h3 {
+        font-size: 15vw;
+    }
+
+    .info {
+        width: 90%;
+    }
+    
+    .content {
+        width: 70vw;
+    }
+
+    .article {
+        width: 90vw;
+    }
+
+    .footlink {
+        margin-bottom: 20px;
+    }
+
+    .footnav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .social-links a img {
+        width: 32px;
+    }
+
+    #sponsors img {
+        height: 48px;
+    }
+
+    #curator-feed-default-feed-layout {
+        display: none;
+    }
+
+    .tik {
+        display: none;
+    }
+
+    .chip {
+        margin: 0;
+        width: 80%;
+        margin-bottom: 3vh;
+    }
+
+    .link {
+        display: block;
+        padding-right: 0;
+        padding-left: 0;
+        border: 0;
+    }
 }

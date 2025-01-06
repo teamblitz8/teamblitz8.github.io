@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>snek</title>
+        <link rel="stylesheet" href="./styling.css">
+    </head>
+    <body>
+        <div id="container">
+            <canvas id="gaem"></canvas>
+            <div id="overlay">
+                <div id="container-text">
+                    <h1 class="text" id="scream">Game Over!</h1>
+                    <p id="score" class="text">Score: Something didn't work lol</p>
+                    <p id="record" class="text">Record: _ set by _</p>
+                    <p id="is" class="text">You were _ away from the record!</p>
+                </div>
+                <button class="text" onclick="restart()">Try again</button>
+            </div>
+        </div>
+    </body>
+    <script src="./snek.js"></script>
+</html>

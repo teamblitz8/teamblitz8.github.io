@@ -1,0 +1,53 @@
+* {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    font-family: "Dubai";
+}
+body {
+    background-color: #1f2121;
+}
+#container {
+    position:relative;
+}
+#gaem {
+    display: block;
+    margin: auto;
+    margin-top: 2%;
+    z-index: 1;
+    border: #f8ac29 3px solid;
+}
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 11px;
+    display: none;
+    margin: auto;
+    background-color: #ff0000;
+    opacity: 60%;
+    z-index: 1000;
+    width: 1280px;
+    height: 960px;
+    padding: 0;
+}
+.text {
+    color: white;
+    text-align: center;
+    scale: 200%;
+    padding: 10px;
+    text-shadow: 1px 0 0 #1f2121, 0 -1px 0 #1f2121, 0 1px 0 #1f2121, -1px 0 0 #1f2121;
+}
+#container-text {
+    position: relative;
+    top:350px;
+}
+button {
+    position: relative;
+    top: 380px;
+    background-color: #f8ac29;
+    border: 1px #1f2121 solid;
+    margin: auto;
+    display: block;
+}

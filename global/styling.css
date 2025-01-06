@@ -36,6 +36,7 @@ body {
     background-color: #1f2121;
     color: white;
     border-right: #f8ac29 0.0625rem solid;
+    border-left: #f8ac29 0.0625rem solid;
     font-weight: bold;
     margin-left: -0.25rem;
     text-decoration: none;
@@ -110,7 +111,7 @@ body {
 }
 
 .info h2 {
-    padding: 1.25rem 0;
+    padding: 1.2rem 0;
 }
 
 .info p {

@@ -1,0 +1,8 @@
+.contain {
+    display: flex;
+    justify-content: space-between;
+}
+
+.right {
+    margin-bottom: 25px;
+}

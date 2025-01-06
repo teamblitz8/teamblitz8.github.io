@@ -173,7 +173,7 @@ footer {
 #sponsors {
     margin: auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
 #sponsors img {
@@ -335,5 +335,54 @@ ul {
         margin: 0;
         width: 80%;
         margin-bottom: 3vh;
+    }
+
+    .link {
+        display: block;
+        padding-right: 0;
+        padding-left: 0;
+        border: 0;
+    }
+
+    #plzwork2 {
+        display: block;
+        width: 100%;
+    }
+
+    #plzwork {
+        display: block;
+        width: 100%;
+    }
+
+    #hehehe {
+        display: block;
+        float: none;
+        width: 100%;
+        height: auto;
+    }
+
+    #heh div {
+        display: block;
+        width: 100%;
+    }
+
+    .info {
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+        text-align: center; /* Center-align content */
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .info div, .info img {
+        display: flex;
+        flex: none; /* Reset flex sizing */
+        width: 100%; /* Make elements span the full width */
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .info img {
+        margin-top: 1rem; /* Add spacing above the image */
     }
 }

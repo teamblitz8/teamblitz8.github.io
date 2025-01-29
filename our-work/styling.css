@@ -1,15 +1,17 @@
+.containerer {
+    display: inline-block;
+    width: 69.4vw;
+}
+
 .container {
     display:inline-block;
-    width: 50%;
+    width: 44%;
+    height: auto;
     border: 5px solid #f8ac29;
     padding: 5px 25px;
 }
-.containerer {
-    display: flex;
-    width: 100%;
-}
 
-#entry-car {
+.entry-car {
     width: 100%;
 }
 
@@ -20,12 +22,11 @@ h3 {
 .para {
     display: inline-block;
     width: 75%;
-    float: left;
 }
 .img {
-    display: inline-block;
+    display: block;
     width: 25%;
-    float:right;
+    float: right;
 }
 
 @media screen and (max-width: 1000px) {
@@ -36,7 +37,7 @@ h3 {
         margin-left: 0;
         width: 70vw;
     }
-    #entry-car {
+    .entry-car {
         display: block;
         width: 67.5vw !important;
         height: auto;

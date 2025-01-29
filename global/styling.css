@@ -71,6 +71,10 @@ body {
 
 .banner {
     background-image: url(./banner.png);
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    background-position: center;
+    float: left;
     text-align: center;
     color: #f8ac29;
     margin-bottom: 30px;
@@ -87,7 +91,6 @@ body {
 }
 
 .banner h1 {
-    padding-top: 5%;
     font-size: 18.22916667vw;
     position: relative;
     width: 99vw;
@@ -112,11 +115,12 @@ body {
 
 .info h2 {
     padding: 1.2rem 0;
+    font-size: 1.35em;
 }
 
 .info p {
     padding-bottom: 1.25rem;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
 }
 
 .info a {

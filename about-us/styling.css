@@ -8,6 +8,10 @@
     justify-content: center;
 }
 
+ul {
+    list-style-position: inside;
+}
+
 #yash {
     display: inline-block;
     width: 33%;

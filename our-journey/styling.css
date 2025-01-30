@@ -6,10 +6,10 @@
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
-  }
+}
   
-  /* The actual timeline (the vertical ruler) */
 .info::after {
+    margin-top: 50px;
     content: '';
     position: absolute;
     width: 6px;
@@ -20,7 +20,6 @@
     margin-left: -3px;
 }
   
-  /* Container around content */
 .container {
     padding: 10px 40px;
     position: relative;
@@ -28,7 +27,6 @@
     width: 50%;
 }
   
-  /* The circles on the timeline */
 .container::after {
     content: '';
     position: absolute;
@@ -42,23 +40,24 @@
     z-index: 1;
 }
   
-  /* Place the container to the left */
 .left {
     left: 0;
-  }
+}
+
+.left::after {
+    margin-top: 50px;
+}
   
-  /* Place the container to the right */
 .right {
     left: 50%;
 }
   
-  /* Fix the circle for containers on the right side */
 .right::after {
     left: -16px;
 }
   
-  /* The actual content */
 .contained {
+    margin-top: 50px;
     padding: 20px 30px;
     background-color: #1f2121;
     position: relative;
@@ -67,19 +66,16 @@
 }
   
 @media screen and (max-width: 1000px) {
-  /* Place the timelime to the left */
     .info::after {
         left: 31px;
     }
   
-  /* Full-width containers */
     .container {
         width: 100%;
         padding-left: 70px;
         padding-right: 25px;
     }
   
-  /* Make sure that all arrows are pointing leftwards */
     .container::before {
         left: 60px;
         border: medium solid white;
@@ -87,12 +83,10 @@
         border-color: transparent white transparent transparent;
     }
   
-  /* Make sure all circles are at the same spot */
     .left::after, .right::after {
         left: 15px;
     }
   
-  /* Make all right containers behave like the left ones */
     .right {
         left: 0%;
     }
@@ -100,4 +94,9 @@
     .link {
       border: 0;
     }
+}
+
+.info {
+    position: relative;
+    margin-top: 100vh;
 }

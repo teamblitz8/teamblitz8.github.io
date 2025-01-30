@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     border: 0;
+    text-align: center;
 }
 
 body {
@@ -18,6 +19,7 @@ body {
     overflow: hidden;
     position: relative;
     z-index: 1000;
+    text-align: left;
 }
 
 .logo {
@@ -25,6 +27,10 @@ body {
     display: block;
     height: 3.75rem;
     width: 3.75rem;
+}
+
+.links {
+    text-align: left;
 }
 
 .link {
@@ -88,6 +94,7 @@ body {
     align-items: center;
     position: relative;
     z-index: 0;
+    text-shadow: 10px 0 0 #000, 0 -10px 0 #000, 0 10px 0 #000, -10px 0 0 #000;
 }
 
 .banner h1 {

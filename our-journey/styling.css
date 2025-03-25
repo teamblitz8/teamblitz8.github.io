@@ -3,9 +3,10 @@
 }
 
 .info {
-    position: relative;
+    position: relative !important;
     max-width: 1200px;
     margin: 0 auto;
+    height: auto;
 }
   
 .info::after {
@@ -14,10 +15,12 @@
     position: absolute;
     width: 6px;
     background-color: #f8ac29;
-    top: 0;
+    top: 100vh;
     bottom: 0;
     left: 50%;
     margin-left: -3px;
+    height: auto;
+    overflow: hidden;
 }
   
 .container {
@@ -25,8 +28,14 @@
     position: relative;
     background-color: inherit;
     width: 50%;
+    height: auto;
+}
+
+.contained {
+    overflow: hidden;
 }
   
+/* circles */
 .container::after {
     content: '';
     position: absolute;
@@ -35,9 +44,15 @@
     right: -17px;
     background-color: #1f2121;
     border: 4px solid #f8ac29;
-    top: 15px;
     border-radius: 50%;
     z-index: 1;
+    overflow: hidden;
+    top: 50%; /* Centers the circles in each box */
+    transform: translateY(-50%);
+}
+
+.container:first-child::after {
+    top: 115vh; /* Centers the circles in each box */
 }
   
 .left {
@@ -56,6 +71,7 @@
     left: -16px;
 }
   
+/* fine */
 .contained {
     margin-top: 50px;
     padding: 20px 30px;
@@ -63,9 +79,10 @@
     position: relative;
     border-radius: 15px;
     border: 1px solid #f8ac29;
+    height: auto;
 }
   
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
     .info::after {
         left: 31px;
     }
@@ -92,11 +109,6 @@
     }
 
     .link {
-      border: 0;
+        border: 0;
     }
-}
-
-.info {
-    position: relative;
-    margin-top: 100vh;
 }

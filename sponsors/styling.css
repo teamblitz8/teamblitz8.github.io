@@ -8,6 +8,7 @@ pre {
     color: white;
     font-family: "Dubai", "Arial Rounded MT Bold", sans-serif;
     white-space: pre-wrap;
+    text-align: left;
 }
 
 .right {

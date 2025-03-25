@@ -3,7 +3,7 @@
 }
 
 .info {
-    position: relative;
+    position: relative !important;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -65,7 +65,7 @@
     border: 1px solid #f8ac29;
 }
   
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
     .info::after {
         left: 31px;
     }
@@ -92,11 +92,10 @@
     }
 
     .link {
-      border: 0;
+        border: 0;
     }
 }
 
 .info {
     position: relative;
-    margin-top: 100vh;
 }

@@ -37,6 +37,9 @@ body {
     line-height: 5vh;
     transition: color 0.5s ease-in-out;
     white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .link:hover {
@@ -49,8 +52,57 @@ body {
     padding: 0 1vw;
 }
 
+#nav-hamburger-logo-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .final-link {
     padding-right: 2vw;
+}
+
+.hamburger {
+    display: none;
+}
+
+@media screen and (max-width: 1000px) {
+    #nav {
+        width: 90vw;
+        height: fit-content;
+    }
+
+    #nav-hamburger-logo-group {
+        width: 100%;
+        justify-content: space-between;
+        height: fit-content;
+    }
+
+    #nav-logo {
+        padding-left: 5vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .hamburger {
+        display: inline-block;
+        padding-right: 5vw;
+    }
+    
+    .text-link {
+        display: none;
+    }
+
+    #nav.phone {
+        flex-direction: column;
+        justify-content: center;
+        border-radius: 2.5vw;
+    }
+
+    .phone .text-link {
+        display: none;
+    }
 }
 
 .banner {

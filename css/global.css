@@ -69,7 +69,7 @@ body {
 @media screen and (max-width: 1000px) {
     #nav {
         width: 90vw;
-        height: fit-content;
+        height: auto;
     }
 
     #nav-hamburger-logo-group {
@@ -98,6 +98,7 @@ body {
         flex-direction: column;
         justify-content: center;
         border-radius: 2.5vw;
+        flex-wrap: wrap
     }
 
     .phone .text-link {

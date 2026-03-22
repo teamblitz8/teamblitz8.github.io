@@ -4,14 +4,8 @@ const phone = () => {
 
     if (nav.className === "phone") {
         nav.className = "";
-        for (let i of links) {
-            i.style.display = "none";
-        }
     }
     else {
         nav.className = "phone";
-        for (let i of links) {
-            i.style.display = "inline-block";
-        }
     }
 }

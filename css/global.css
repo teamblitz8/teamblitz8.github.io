@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     border: 0;
-    font-family: "Dubai";
+    font-family: "Dubai", sans-serif;
 }
 
 body {
@@ -49,7 +49,7 @@ body {
 #nav-logo {
     height: 5vh;
     width: auto;
-    padding: 0 1vw;
+    padding: 0 5vh;
 }
 
 #nav-hamburger-logo-group {
@@ -59,50 +59,90 @@ body {
 }
 
 .final-link {
-    padding-right: 2vw;
+    padding-right: 5vh;
 }
 
 .hamburger {
     display: none;
 }
 
+#nav-text-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @media screen and (max-width: 1000px) {
     #nav {
         width: 90vw;
-        height: auto;
+        height: fit-content;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .final-link {
+        padding-right: 1.5vw;
+    }
+
+    #nav-text-links {
+        flex-direction: column;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.8s ease;
     }
 
     #nav-hamburger-logo-group {
         width: 100%;
+        height: 100%;
         justify-content: space-between;
         height: fit-content;
     }
 
     #nav-logo {
-        padding-left: 5vw;
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 0 2.5vw;
     }
     
     .hamburger {
         display: inline-block;
-        padding-right: 5vw;
+        padding: 0 5vw;
+    }
+
+    .phone .final-link {
+        padding: 0;
+    }
+
+    .phone .hamburger {
+        padding: 0 5vw;
     }
     
+    .phone #nav-text-links {
+        max-height: 56vh;
+    }
+
     .text-link {
-        display: none;
+        display: inline-block;
+        height: 8vh;
+        line-height: 8vh;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: transform 0.8s ease, opacity 0.8s ease 0.1s;
     }
 
     #nav.phone {
+        height: fit-content;
         flex-direction: column;
         justify-content: center;
-        border-radius: 2.5vw;
-        flex-wrap: wrap
+        flex-wrap: wrap;
+        align-items: center;
     }
 
     .phone .text-link {
-        display: none;
+        opacity: 1;
+        transform: translateY(0);
+        transition: transform 0.8s ease, opacity 0.8s ease;
     }
 }
 

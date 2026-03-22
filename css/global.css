@@ -73,6 +73,10 @@ body {
 }
 
 @media screen and (max-width: 1000px) {
+    #nav-hamburger-logo-group h1 {
+        display: inline-block;
+    }
+
     #nav {
         width: 90vw;
         height: fit-content;

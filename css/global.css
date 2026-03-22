@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     border: 0;
-    font-family: "Dubai", sans-serif;
+    font-family: "Dubai", "Helvetica";
     color: white;
 }
 
@@ -90,8 +90,13 @@ body {
     margin: auto;
     display: flex;
     justify-content: space-between;
-    height: 30vh;
+    height: auto;
     padding: 8vh;
+}
+
+.block-of-text .images {
+    position: relative;
+    height: calc(27.5vw/6000*4000);
 }
 
 .below-banner {
@@ -115,14 +120,19 @@ body {
     padding: 1.8vh;
 }
 
+.block-of-text div button {
+    position: relative;
+    z-index: -1;
+}
+
 .block-of-text div button img {
     height: auto;
     width: 27.5vw;
-    position: absolute;
-    z-index: -1;
     border-radius: 5vh;
     border: 1px solid #f8ac29;
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    position: absolute;
+    z-index: -1;
 }
 
 .top {
@@ -216,5 +226,38 @@ body {
         opacity: 1;
         transform: translateY(0);
         transition: transform 0.8s ease, opacity 0.8s ease;
+    }
+
+    .block-of-text {
+        flex-direction: column;
+        width: 90vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .block-of-text div {
+        display: block;
+        width: 90vw;
+        height: auto;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .block-of-text div button img {
+        width: 65vw;
+        height: auto;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .block-of-text .images {
+        position: relative;
+        height: calc(65vw/6000*4000);
+    }
+
+    .block-of-text div button {
+        position: absolute;
+        top: 0;
+        margin: auto;
     }
 }

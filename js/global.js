@@ -5,7 +5,9 @@ window.onload = (e) => {
         if (Math.random() > 0.5) {
             posOrNeg = "-"
         }
-        i.style.transform = `rotate(${posOrNeg}${Math.floor(Math.random() * 20)}deg)`;
+        const para = `rotate(${posOrNeg}${Math.floor(Math.random() * 10)}deg)`
+        i.style.transform = para;
+        i.parentElement.style.transform = para;
     }
 }
 

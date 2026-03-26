@@ -2,12 +2,12 @@
     margin: 0;
     padding: 0;
     border: 0;
-    font-family: "Dubai", "Helvetica";
     color: white;
 }
 
 body {
     background-color: #1f2121;
+    font-family: "Dubai", "Helvetica";
 }
 
 #nav {
@@ -30,7 +30,7 @@ body {
 .link {
     height: 100%;
     width: auto;
-    padding: 0 1.5vw;
+    padding-right: 3vw;
     font-size: 2.5vh;
     font-weight: 500;
     text-decoration: none;
@@ -58,10 +58,6 @@ body {
     align-items: center;
 }
 
-.final-link {
-    padding-right: 5vh;
-}
-
 .hamburger {
     display: none;
 }
@@ -85,66 +81,73 @@ body {
     background-position: center;
 }
 
-.block-of-text {
-    width: 60vw;
-    margin: auto;
+.section {
+    width: 80vw;
+    height: 30vw;
+    padding: 2vw;
     display: flex;
-    justify-content: space-between;
-    height: auto;
-    padding: 8vh;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
 }
 
-.block-of-text .images {
-    position: relative;
-    height: calc(27.5vw/6000*4000);
+.half {
+    width: 30vw;
+    height: 30vw;
+    padding: 0 2vw;
 }
 
-.below-banner {
-    padding-top: 6vh;
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.block-of-text div h1 {
+.img {
     display: block;
-    font-size: 3vh;
-    text-align: center;
-    padding-top: 0;
-}
-
-.block-of-text div p {
-    font-size: 2vh;
-    text-align: center;
-}
-
-.block-of-text div {
-    width: 50%;
-    padding: 1.8vh;
-}
-
-.block-of-text div button {
-    position: relative;
-    z-index: -1;
-}
-
-.block-of-text div button img {
-    height: auto;
-    width: 27.5vw;
+    position: absolute;
+    width: 30vw;
+    height: 20vw;
+    background-size: cover;
     border-radius: 5vh;
     border: 1px solid #f8ac29;
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
-    position: absolute;
-    z-index: -1;
 }
 
-.top {
-    z-index: 3;
+.imgs {
+    position: relative;
 }
 
-.middle {
-    z-index: 2;
+h1 {
+    font-size: 3.2vh;
 }
 
-.bottom {
-    z-index: 1;
+p {
+    font-size: 2.2vh;
+}
+
+#top-team {
+    background-image: url("../imgs/nats/1-1MDH2485.jpg");
+}
+
+#mid-team {
+    background-image: url("../imgs/nats/1-1MDH3005.jpg");
+}
+
+#bottom-team {
+    background-image: url("../imgs/nats/1-2MDH1013.jpg");
+}
+
+#top-sr {
+    background-image: url("../imgs/nats/1-094A5324.jpg");
+}
+
+#mid-sr {
+    background-image: url("../imgs/nats/1-072A3966.jpg");
+}
+
+#bottom-sr {
+    background-image: url("../imgs/nats/1-1MDH2998.jpg");
 }
 
 @media screen and (max-width: 1000px) {
@@ -226,38 +229,5 @@ body {
         opacity: 1;
         transform: translateY(0);
         transition: transform 0.8s ease, opacity 0.8s ease;
-    }
-
-    .block-of-text {
-        flex-direction: column;
-        width: 90vw;
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    .block-of-text div {
-        display: block;
-        width: 90vw;
-        height: auto;
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    .block-of-text div button img {
-        width: 65vw;
-        height: auto;
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    .block-of-text .images {
-        position: relative;
-        height: calc(65vw/6000*4000);
-    }
-
-    .block-of-text div button {
-        position: absolute;
-        top: 0;
-        margin: auto;
     }
 }

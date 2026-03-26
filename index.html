@@ -16,7 +16,7 @@
             <div id="nav-hamburger-logo-group">
                 <a class="link" href="./index.html"><img src="./imgs/blitzLogo_Transparent.svg" id="nav-logo"></a>
                 <h1>Team Blitz</h1>
-                <a class="hamburger link final-link" onclick="phone()"><i class="fa-solid fa-bars"></i></a>
+                <a class="hamburger link" onclick="phone()"><i class="fa-solid fa-bars"></i></a>
             </div>
             <div id="nav-text-links">
                 <a class="link text-link" href="./index.html" style="color:#f8ac29">Home</a>
@@ -25,31 +25,42 @@
                 <a class="link text-link" href="./index.html">Work</a>
                 <a class="link text-link" href="./index.html">Sponsors</a>
                 <a class="link text-link" href="./index.html">Contact</a>
-                <a class="link text-link final-link" href="./index.html">Blog</a>
+                <a class="link text-link" href="./index.html">Blog</a>
             </div>
         </div>
         <div class="banner"></div>
-        <div id="team-intro" class="block-of-text below-banner">
-            <div class="left images">
-                <button onclick="flick('team')" type="button"><img class="bottom team img" src="./imgs/nats/1-1MDH2485.jpg"></button>
-                <button onclick="flick('team')" type="button"><img class="middle team img" src="./imgs/nats/1-1MDH3005.jpg"></button>
-                <button onclick="flick('team')" type="button"><img class="top team img" src="./imgs/nats/1-2MDH1013.jpg"></button>
-            </div>
-            <div class="right text">
-                <h1>A team, led by precision and excellence.</h1>
-                <p>We are a dedicated STEM Racing (formerly F1 in Schools) team from St Olave's Grammar School, consisting of five students united by a passion for STEM and engineering. After achieving 3rd place nationally in the Development Class, we have demonstrated both technical capability and competitive consistency. We are now preparing to enter Professional Class, aiming to further develop our engineering expertise and compete at the highest level.</p>
+        <div class="section">
+            <div class="container">
+                <div class="half">
+                    <div class="imgs">
+                        <div class="img" id="bottom-team"></div>
+                        <div class="img" id="mid-team"></div>
+                        <div class="img" id="top-team"></div>
+                    </div>
+                </div>
+                <div class="half">
+                    <h1>A team, led by precision and excellence.</h1>
+                    <p>We are a dedicated STEM Racing (formerly F1 in Schools) team from St Olave's Grammar School, consisting of five students united by a passion for STEM and engineering. After achieving 3rd place nationally in the Development Class, we have demonstrated both technical capability and competitive consistency. We are now preparing to enter Professional Class, aiming to further develop our engineering expertise and compete at the highest level.</p>
+                </div>
             </div>
         </div>
-        <div id="sr-intro" class="block-of-text">
-            <div class="left text">
-                <h1>STEM Racing: From Textbook to Track</h1>
-                <p>STEM Racing is a global competition where students design, manufacture, and race miniature F1-style cars. Formerly known as F1 in Schools, it challenges teams to showcase their skills in every aspect, from aerodynamics to marketing. Participants apply real-world engineering principles, use CAD/CAM/CAE software, whilst also gaining experience in business and finance at regional, national, and international levels.</p>
-            </div>
-            <div class="right images">
-                <button onclick="flick('team')" type="button"><img class="bottom sr img" src="./imgs/nats/1-072A3966.jpg"></button>
-                <button onclick="flick('team')" type="button"><img class="middle sr img" src="./imgs/nats/1-1MDH2998.jpg"></button>
-                <button onclick="flick('team')" type="button"><img class="top sr img" src="./imgs/nats/1-094A5324.jpg"></button>
+        <div class="section">
+            <div class="container">
+                <div class="half">
+                    <h1>STEM Racing: From Textbook to Track</h1>
+                    <p>STEM Racing is a global competition where students design, manufacture, and race miniature F1-style cars. Formerly known as F1 in Schools, it challenges teams to showcase their skills in every aspect, from aerodynamics to marketing. Participants apply real-world engineering principles, use CAD/CAM/CAE software, whilst also gaining experience in business and finance at regional, national, and international levels.</p>
+                </div>
+                <div class="half">
+                    <div class="imgs">
+                        <div class="img" id="bottom-sr"></div>
+                        <div class="img" id="mid-sr"></div>
+                        <div class="img" id="top-sr"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
 </html>
+
+<!--SR Images: ./imgs/nats/1-094A5324.jpg, ./imgs/nats/1-072A3966.jpg, ./imgs/nats/1-1MDH2998.jpg-->
+<!--Team Images: ./imgs/nats/1-1MDH2485.jpg, ./imgs/nats/1-1MDH3005.jpg, ./imgs/nats/1-2MDH1013.jpg-->

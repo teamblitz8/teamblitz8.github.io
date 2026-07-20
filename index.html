@@ -9,13 +9,14 @@
         <link rel="stylesheet" href="./css/global.css">
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script src="./js/global.js" defer></script>
+        <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
     </head>
 
     <body>
         <div id="nav">
             <div id="nav-hamburger-logo-group">
                 <a class="link" href="./index.html"><img src="./imgs/blitzLogo_Transparent.svg" id="nav-logo"></a>
-                <h1>Team Blitz</h1>
+                <h1 class="link">Team Blitz</h1>
                 <a class="hamburger link" onclick="phone()"><i class="fa-solid fa-bars"></i></a>
             </div>
             <div id="nav-text-links">
@@ -29,36 +30,156 @@
             </div>
         </div>
         <div class="banner"></div>
-        <div class="section">
-            <div class="container">
-                <div class="half">
-                    <div class="imgs">
-                        <div class="img" id="bottom-team"></div>
-                        <div class="img" id="mid-team"></div>
-                        <div class="img" id="top-team"></div>
-                    </div>
+        <div class="half-section">
+            <div class="half right">
+                <div class="imgs">
+                    <div class="img bottom sec-1" id="img-1"></div>
+                    <div class="img mid sec-1" id="img-2"></div>
+                    <div class="img top sec-1" id="img-3"></div>
+                    <button onclick="sec1()"></button>
                 </div>
-                <div class="half">
-                    <h1>A team, led by precision and excellence.</h1>
-                    <p>We are a dedicated STEM Racing (formerly F1 in Schools) team from St Olave's Grammar School, consisting of five students united by a passion for STEM and engineering. After achieving 3rd place nationally in the Development Class, we have demonstrated both technical capability and competitive consistency. We are now preparing to enter Professional Class, aiming to further develop our engineering expertise and compete at the highest level.</p>
+            </div>
+            <div class="half left text" id="first-paragraph">
+                <h1>A team, led by precision and excellence.</h1>
+                <p>We are a dedicated STEM Racing (formerly F1 in Schools) team from St Olave's Grammar School, consisting of five students united by a passion for STEM and engineering. After achieving 3rd place nationally in the Development Class, we have demonstrated both technical capability and competitive consistency. We are now preparing to enter Professional Class, aiming to further develop our engineering expertise and compete at the highest level.</p>
+            </div>
+        </div>
+        <div class="half-section">
+            <div class="half right text">
+                <h1>STEM Racing: From textbook, to track.</h1>
+                <p>STEM Racing is a global competition where students design, manufacture, and race miniature F1-style cars. Formerly known as F1 in Schools, it challenges teams to showcase their skills in every aspect, from aerodynamics to marketing. Participants apply real-world engineering principles, use CAD/CAM/CAE software, whilst also gaining experience in business and finance at regional, national, and international levels.</p>
+            </div>
+            <div class="half left">
+                <div class="imgs">
+                    <div class="img bottom sec-2" id="img-4"></div>
+                    <div class="img mid sec-2" id="img-5"></div>
+                    <div class="img top sec-2" id="img-6"></div>
+                    <button onclick="sec2()"></button>
                 </div>
             </div>
         </div>
-        <div class="section">
-            <div class="container">
-                <div class="half">
-                    <h1>STEM Racing: From Textbook to Track</h1>
-                    <p>STEM Racing is a global competition where students design, manufacture, and race miniature F1-style cars. Formerly known as F1 in Schools, it challenges teams to showcase their skills in every aspect, from aerodynamics to marketing. Participants apply real-world engineering principles, use CAD/CAM/CAE software, whilst also gaining experience in business and finance at regional, national, and international levels.</p>
+        <div class="half-section">
+            <div class="half right">
+                <div class="imgs">
+                    <div class="img bottom sec-3" id="img-7"></div>
+                    <div class="img mid sec-3" id="img-8"></div>
+                    <div class="img top sec-3" id="img-9"></div>
+                    <button onclick="sec3()"></button>
                 </div>
-                <div class="half">
-                    <div class="imgs">
-                        <div class="img" id="bottom-sr"></div>
-                        <div class="img" id="mid-sr"></div>
-                        <div class="img" id="top-sr"></div>
+            </div>
+            <div class="half left">
+                <h1>You're in good hands.</h1>
+                <div id="awards" class="text">
+                    <div class="award-container">
+                        <div class="back award">London North Regional Finals, 2023/24, Entry Class</div>
+                        <div class="forward award">1x Verbal Presentation Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">
+                            <pre>London North Regional Finals, 2023/24, Entry Class
+London South Regional Finals, 2024/25, Development Class</pre>
+                        </div>
+                        <div class="forward award">2x Research & Development Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">London South Regional Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x Portfolio Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">London South Regional Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x Fastest Car Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">London South Regional Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x 2nd Place Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">UK National Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x 3rd Place Award</div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="half-section">
+            <div class="half right text">
+                <h1>BL3, our flagship national challenger.</h1>
+                <p>STEM Racing is a global competition where students design, manufacture, and race miniature F1-style cars. Formerly known as F1 in Schools, it challenges teams to showcase their skills in every aspect, from aerodynamics to marketing. Participants apply real-world engineering principles, use CAD/CAM/CAE software, whilst also gaining experience in business and finance at regional, national, and international levels.</p>
+            </div>
+            <div class="half left">
+                <model-viewer src="./imgs/car.glb" camera-controls disable-zoom class="imgs"></model-viewer>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1>Building upward, brick by brick.</h1>
+            <div class="carousel">
+                <div class="controls">
+                    <button class="prev" onclick="prev()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="next" onclick="next()"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="imgs">
+                    <div class="img carousel-first">
+                        <h2>Team Formation</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar"></i> Nov 2022</p>
+                            <p><i class="fa-solid fa-location-dot"></i> St Olave's Grammar School, Orpington</p>
+                        </div>
+                        <p>The beginning of our journey, as Team Omega, founded by Yash, Chen, Ifti and Pamoda. From our very first brainstorming sessions came innovative concepts which evolved into key features of our 2023 Regional Finals car, marking the beginning of our engineering journey.</p>
+                    </div>
+                    <div class="img carousel-second">
+                        <h2>Rebrand</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar"></i> Mar 2023</p>
+                            <p><i class="fa-solid fa-location-dot"></i> St Olave's Grammar School, Orpington</p>
+                        </div>
+                        <p>We</p>
+                    </div>
+                    <div class="img carousel-third">
+                        <h2>Entry Class Regional Finals</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar"></i> Dec 2023</p>
+                            <p><i class="fa-solid fa-location-dot"></i> Harlow College, Harlow</p>
+                        </div>
+                        <p>Our first competition. Our first taste of success. Forever hooked.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1>More is coming.</h1>
+            <div class="img countdown">
+                <div class="timer-container">
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>days</p>
+                    </div>
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>hours</p>
+                    </div>
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>minutes</p>
+                    </div>
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>seconds</p>
+                    </div>
+                </div>
+                <p class="countdown-description">to the Regional Finals</p>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1>Trusted by many.</h1>
+        </div>
+        <div class="full-section">
+            <h1>Blog</h1>
+        </div>
+        <div class="full-section">
+            <h1>Stay tuned.</h1>
+        </div>
+        <div id="footer"></div>
+        <!--Next sections: nf car (drag, track time, position), journey carousel (placeholder for pro), countdown to regionals, Trusted by Many, blog preview, socials, footer-->
+        <!--Include place (subdomain?) to put in car development details e.g. changelog, development tree, name, secured by login portal, which can also be where blog posts are added-->
     </body>
 </html>
 

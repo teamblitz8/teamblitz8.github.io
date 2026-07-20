@@ -3,6 +3,7 @@
     padding: 0;
     border: 0;
     color: white;
+    text-align: center;
 }
 
 body {
@@ -25,6 +26,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     flex-wrap: nowrap;
+    z-index: 5;
 }
 
 .link {
@@ -40,6 +42,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
 }
 
 .link:hover {
@@ -76,78 +79,317 @@ body {
     display: block;
     width: 100%;
     height: 100vh;
-    background-image: url("../imgs/nats/1-072A9764.jpg");
+    background-image: url("../imgs/nats-og/1-072A9764.webp");
     background-size: cover;
     background-position: center;
 }
 
-.section {
-    width: 80vw;
-    height: 30vw;
-    padding: 2vw;
-    display: flex;
-    justify-content: center;
+.half-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5vw;
     align-items: center;
-    margin: auto;
+    width: 100%;
+    margin: 5vh 0;
 }
 
-.half {
-    width: 30vw;
-    height: 30vw;
-    padding: 0 2vw;
+.left {
+    justify-self: start;
+    text-align: left;
 }
 
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.right {
+    justify-self: end;
+    text-align: right;
 }
 
 .img {
     display: block;
     position: absolute;
-    width: 30vw;
-    height: 20vw;
+    width: 32vw;
+    height: 36vh;
     background-size: cover;
     border-radius: 5vh;
     border: 1px solid #f8ac29;
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
 }
 
+.half {
+    display: flex;
+    flex-direction: column;
+}
+
 .imgs {
-    position: relative;
+    display: block;
+    height: 36vh;
+    width: 32vw;
 }
 
 h1 {
-    font-size: 3.2vh;
+    font-size: 1.777vw;
+    width: 100%;
 }
 
 p {
-    font-size: 2.2vh;
+    font-size: 1.222vw;
 }
 
-#top-team {
-    background-image: url("../imgs/nats/1-1MDH2485.jpg");
+#img-3 {
+    background-image: url("../imgs/nats-compressed/1-1MDH2485.jpg");
 }
 
-#mid-team {
-    background-image: url("../imgs/nats/1-1MDH3005.jpg");
+#img-2 {
+    background-image: url("../imgs/nats-compressed/1-1MDH3005.jpg");
 }
 
-#bottom-team {
-    background-image: url("../imgs/nats/1-2MDH1013.jpg");
+#img-1 {
+    background-image: url("../imgs/nats-compressed/1-2MDH1013.jpg");
 }
 
-#top-sr {
-    background-image: url("../imgs/nats/1-094A5324.jpg");
+#img-6 {
+    background-image: url("../imgs/nats-compressed/1-094A5324.jpg");
 }
 
-#mid-sr {
-    background-image: url("../imgs/nats/1-072A3966.jpg");
+#img-5 {
+    background-image: url("../imgs/nats-compressed/1-072A3966.jpg");
 }
 
-#bottom-sr {
-    background-image: url("../imgs/nats/1-1MDH2998.jpg");
+#img-4 {
+    background-image: url("../imgs/nats-compressed/1-1MDH2998.jpg");
+}
+
+.top {
+    z-index: 3;
+}
+
+.mid {
+    z-index: 2;
+}
+
+.bottom {
+    z-index: 1;
+}
+
+#awards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.imgs button {
+    position: absolute;
+    display: block;
+    height: 36vh;
+    width: 32vw;
+    z-index: 4;
+    background-color: transparent;
+}
+
+.award {
+    position: absolute;
+    display: block;
+    background: linear-gradient(
+        145deg,
+        #1f2121 0%,
+        #3a3d3d 20%,
+        #f8ac29 45%,
+        #f5d53d 65%,
+        #f8ac29 85%,
+        #1f2121 100%
+    );
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,0.2),
+        0 6px 16px rgba(0,0,0,0.35);
+    border-radius: 2vh;
+    border: 1px solid rgba(248, 172, 41, 1);
+    width: 100%;
+    height: 4vh;
+    margin: 0;
+    padding: 0;
+    font-size: 1.111vw;
+    font-weight: 300;
+    line-height: 4vh;
+    transition: opacity 0.6s ease-in-out;
+}
+
+model-viewer {
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f8ac29 25%,
+        #f5d53d 50%,
+        #f8ac29 75%,
+        #1f2121 100%
+    );
+    border-radius: 5vh;
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+}
+
+.award-container {
+    position: relative;
+    height: 4vh;
+    width: 100%;
+    padding: 0;
+}
+
+.forward {
+    z-index: 2;
+}
+
+.back {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 2vh;
+}
+
+pre {
+    font-size: 1.111vw;
+    font-family: "Dubai", "Helvetica";
+}
+
+.forward:hover {
+    opacity: 0;
+}
+
+.full-section {
+    width: 85%;
+    margin: 5vh auto;
+    text-align: center;
+}
+
+.full-section h1 {
+    margin-bottom: 2.5vh;
+}
+
+.carousel {
+    display: flex;
+    align-items: center;
+}
+
+.carousel .imgs {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border-radius: 5vh;
+}
+
+.carousel .img {
+    position: relative;
+    border: 0;
+    border-radius: 0;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-first {
+    border-radius: 5vh 0 0 5vh !important;
+}
+
+.carousel-third {
+    border-radius: 0 5vh 5vh 0 !important;
+}
+
+.controls {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    width: 85%;
+}
+
+.controls button {
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f8ac29 25%,
+        #f5d53d 50%,
+        #f8ac29 75%,
+        #1f2121 100%
+    );
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,0.2),
+        0 6px 16px rgba(0,0,0,0.35);
+    border-radius: 5vh;
+    height: 2.777vw;
+    width: 2.777vw;
+}
+
+.controls button i {
+    color: #1f2121;
+    font-size: 1.3885vw;
+}
+
+.prev {
+    transform: translateX(-50%);
+}
+
+.next {
+    transform: translateX(50%);
+}
+
+.carousel .img h2 {
+    font-size: 1.4vw;
+}
+
+.carousel .img p {
+    font-size: 1vw;
+    width: 85%;
+    margin: 0 auto;
+}
+
+.carousel .img .additional-details {
+    margin-bottom: 2vh;
+}
+
+.date {
+    color: #f8ac29;
+}
+
+.date i {
+    color: #f8ac29;
+}
+
+i {
+    padding-right: 0.25vw;
+}
+
+.countdown {
+    position: relative;
+    margin: auto;
+    padding: 0;
+    width: 50%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.timer-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8vh;
+    margin-bottom: 0;
+}
+
+.timer-container h1 {
+    margin-bottom: 1vh;
+    font-size: 4vw;
+    line-height: 4vw;
+    color: #f5d53d;
+}
+
+.countdown-description {
+    margin: 4vh 0;
+    font-weight: 300;
 }
 
 @media screen and (max-width: 1000px) {

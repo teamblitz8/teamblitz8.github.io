@@ -10,6 +10,13 @@
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script src="./js/global.js" defer></script>
         <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
+        <script>
+            (() => {
+                if(window.__bhldScript)return;window.__bhldScript=true;
+                const d=document,s=d.createElement("script");s.type="module";
+                s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
+            })();
+        </script>
     </head>
 
     <body>
@@ -36,7 +43,7 @@
                     <div class="img bottom sec-1" id="img-1"></div>
                     <div class="img mid sec-1" id="img-2"></div>
                     <div class="img top sec-1" id="img-3"></div>
-                    <button onclick="sec1()"></button>
+                    <button onclick="sec('sec-1')"></button>
                 </div>
             </div>
             <div class="half left text" id="first-paragraph">
@@ -54,7 +61,7 @@
                     <div class="img bottom sec-2" id="img-4"></div>
                     <div class="img mid sec-2" id="img-5"></div>
                     <div class="img top sec-2" id="img-6"></div>
-                    <button onclick="sec2()"></button>
+                    <button onclick="sec('sec-2')"></button>
                 </div>
             </div>
         </div>
@@ -64,7 +71,7 @@
                     <div class="img bottom sec-3" id="img-7"></div>
                     <div class="img mid sec-3" id="img-8"></div>
                     <div class="img top sec-3" id="img-9"></div>
-                    <button onclick="sec3()"></button>
+                    <button onclick="sec('sec-3')"></button>
                 </div>
             </div>
             <div class="half left">
@@ -116,7 +123,7 @@ London South Regional Finals, 2024/25, Development Class</pre>
                     <button class="prev" onclick="prev()"><i class="fa-solid fa-chevron-left"></i></button>
                     <button class="next" onclick="next()"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
-                <div class="imgs">
+                <div class="carousel-container">
                     <div class="img carousel-first">
                         <h2>Team Formation</h2>
                         <div class="additional-details">
@@ -170,14 +177,60 @@ London South Regional Finals, 2024/25, Development Class</pre>
         </div>
         <div class="full-section">
             <h1>Trusted by many.</h1>
+            <div class="marquee">
+                <div class="marquee-container">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/blitzLogo_Black.svg">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/blitzLogo_Black.svg">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                </div>
+            </div>
         </div>
         <div class="full-section">
             <h1>Blog</h1>
+            <div class="articles">
+                <div class="article">
+                    <div class="article-img"></div>
+                    <h1>Yash has no life</h1>
+                    <p><i class="fa-regular fa-calendar"></i> For always</p>
+                </div>
+                <div class="article">
+                    <div class="article-img"></div>
+                    <h1>Yash has no life</h1>
+                    <p><i class="fa-regular fa-calendar"></i> For always</p>
+                </div>
+                <div class="article">
+                    <div class="article-img"></div>
+                    <h1>Yash has no life</h1>
+                    <p><i class="fa-regular fa-calendar"></i> For always</p>
+                </div>
+            </div>
         </div>
         <div class="full-section">
             <h1>Stay tuned.</h1>
+            <behold-widget feed-id="9KkC8tX1PVg8O4gmiCEr"></behold-widget>
         </div>
-        <div id="footer"></div>
+        <div class="footer">
+            <p>If you like what you see, <a href="https://youtu.be/dQw4w9WgXcQ?t=0" style="color:#f8ac29">buy us a coffee.</a></p>
+            <div class="socials">
+                <a href="https://www.instagram.com/team_blitz8/" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+                <a href="https://www.linkedin.com/company/teamblitz/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="mailto:business@teamblitz.uk" target="_blank"><i class="fa-solid fa-at"></i></a>
+            </div>
+        </div>
         <!--Next sections: nf car (drag, track time, position), journey carousel (placeholder for pro), countdown to regionals, Trusted by Many, blog preview, socials, footer-->
         <!--Include place (subdomain?) to put in car development details e.g. changelog, development tree, name, secured by login portal, which can also be where blog posts are added-->
     </body>

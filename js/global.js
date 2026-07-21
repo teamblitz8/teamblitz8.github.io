@@ -41,46 +41,59 @@ const format = () => {
         text.style.width = `${best}px`;
         document.getElementById("awards").style.width = `${document.getElementById("img-4").offsetWidth}px`;
     });
-
-    document.getElementsByClassName("p-container")[0].style.height = `${document.getElementsByClassName("countdown")[0].style.height - document.getElementsByClassName("timer-container")[0].offsetHeight}px`
 };
 
-const sec1 = () => {
-    let imgs = document.querySelectorAll(".sec-1");
+const sec = (cl) => {
+    let imgs = document.querySelectorAll(`.${cl}`);
     imgs.forEach(img => {
         if (img.classList.contains("bottom")) {
             img.classList.remove("bottom");
             img.classList.add("mid");
+            img.style.transform = "translateX(1.5%) translateY(-2.5%)";
+            img.style.transition = "transform 0.3s ease-in";
         }
         else if (img.classList.contains("mid")) {
             img.classList.remove("mid");
             img.classList.add("top");
+            img.style.transform = "translateX(0) translateY(0)";
         }
         else if (img.classList.contains("top")) {
             img.classList.remove("top");
             img.classList.add("bottom");
-        }
-    });
-}
-
-const sec2 = () => {
-    console.log("Running");
-    let imgs = document.querySelectorAll(".sec-2");
-    imgs.forEach(img => {
-        if (img.classList.contains("bottom")) {
-            img.classList.remove("bottom");
-            img.classList.add("mid");
-        }
-        else if (img.classList.contains("mid")) {
-            img.classList.remove("mid");
-            img.classList.add("top");
-        }
-        else if (img.classList.contains("top")) {
-            img.classList.remove("top");
-            img.classList.add("bottom");
+            img.style.transform = "translateX(3%) translateY(-5%)";
+            img.style.transition = "transform 0.3s ease-in";
         }
     });
 }
 
 window.addEventListener('load', format);
 window.addEventListener('resize', format);
+
+const images = document.getElementsByClassName("imgs");
+
+for (let i of images) {
+    i.children[3].addEventListener("mouseenter", (e) => {
+        for (let j of e.target.parentElement.children) {
+            if (j.classList.contains("mid")) {
+                j.style.transform = "translateX(1.5%) translateY(-2.5%)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+            else if (j.classList.contains("bottom")) {
+                j.style.transform = "translateX(3%) translateY(-5%)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+        }
+    });
+    i.children[3].addEventListener("mouseleave", (e) => {
+        for (let j of e.target.parentElement.children) {
+            if (j.classList.contains("bottom")) {
+                j.style.transform = "translateX(0) translateY(0)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+            else if (j.classList.contains("mid")) {
+                j.style.transform = "translateX(0) translateY(0)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+        }
+    });
+}

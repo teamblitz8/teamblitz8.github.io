@@ -8,7 +8,7 @@
 
 body {
     background-color: #1f2121;
-    font-family: "Dubai", "San Francisco", "Helvetica", sans-serif;
+    font-family: "Dubai", -apple-system, "Helvetica", sans-serif;
 }
 
 #nav {

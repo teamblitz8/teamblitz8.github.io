@@ -8,7 +8,7 @@
 
 body {
     background-color: #1f2121;
-    font-family: "Dubai", "San Fransisco", "Helvetica", sans-serif;
+    font-family: "Dubai", "San Francisco", "Helvetica", sans-serif;
 }
 
 #nav {
@@ -738,8 +738,8 @@ i {
     }
 
     .countdown .timer-container .timer p {
-        font-size: 1.5vh;
-        line-height: 1.5vh;
+        font-size: 2vh;
+        line-height: 2vh;
     }
 
     .countdown-description {

@@ -10,37 +10,56 @@ const phone = () => {
 }
 
 const format = () => {
-    document.querySelectorAll(".half-section").forEach(section => {
-        const text = section.querySelector(".text");
-        const imgs = section.querySelector(".imgs");
-
-        const target = imgs.offsetHeight;
-
-        if (text.id === "awards") {
-            document.getElementById("awards").style.height = `${target - document.getElementById("awards").parentElement.children[0].offsetHeight}px`;
+    const section = document.getElementById("inverted");
+    const first = section.children[0];
+    const second = section.children[1];
+    if (window.innerWidth > 1000) {
+        if (!first.classList.contains("text")) {
+            section.insertBefore(second, first);
         }
+        document.querySelectorAll(".half-section").forEach(section => {
+            const text = section.querySelector(".text");
+            const imgs = section.querySelector(".imgs");
 
-        let low = 100;
-        let high = window.innerWidth;
-        let best = high;
+            const target = imgs.offsetHeight;
 
-        while (low <= high) {
-            const mid = Math.floor((low + high) / 2);
-
-            text.style.width = `${mid}px`;
-
-            if (text.offsetHeight > target) {
-                low = mid + 1;
+            if (text.id === "awards") {
+                document.getElementById("awards").style.height = `${target - document.getElementById("awards").parentElement.children[0].offsetHeight}px`;
             }
-            else {
-                best = mid;
-                high = mid - 1;
+
+            let low = 100;
+            let high = window.innerWidth;
+            let best = high;
+
+            while (low <= high) {
+                const mid = Math.floor((low + high) / 2);
+
+                text.style.width = `${mid}px`;
+
+                if (text.offsetHeight > target) {
+                    low = mid + 1;
+                }
+                else {
+                    best = mid;
+                    high = mid - 1;
+                }
             }
+
+            text.style.width = `${best}px`;
+            document.getElementById("awards").style.width = `${document.getElementById("img-4").offsetWidth}px`;
+        });
+        document.querySelectorAll(".excess").forEach(article => {
+            article.style.display = "inline-block";
+        })
+    }
+    else {
+        if (first.classList.contains("text")) {
+            section.insertBefore(second, first);
         }
-
-        text.style.width = `${best}px`;
-        document.getElementById("awards").style.width = `${document.getElementById("img-4").offsetWidth}px`;
-    });
+        document.querySelectorAll(".excess").forEach(article => {
+            article.style.display = "none";
+        })
+    }
 };
 
 const sec = (cl) => {
@@ -69,9 +88,10 @@ const sec = (cl) => {
 window.addEventListener('load', format);
 window.addEventListener('resize', format);
 
-const images = document.getElementsByClassName("imgs");
+const images = document.querySelectorAll(".imgs");
 
 for (let i of images) {
+    if (i.id === "car-model") continue;
     i.children[3].addEventListener("mouseenter", (e) => {
         for (let j of e.target.parentElement.children) {
             if (j.classList.contains("mid")) {
@@ -97,3 +117,21 @@ for (let i of images) {
         }
     });
 }
+
+const countdown = document.querySelectorAll(".timer-container")[0];
+const countdownDate = new Date("Jan 21, 2027 09:00:00").getTime();
+
+setInterval(() => {
+    const now = new Date().getTime();
+    const distance = countdownDate - now;
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdown.children[0].children[0].innerText = days;
+    countdown.children[1].children[0].innerText = hours;
+    countdown.children[2].children[0].innerText = minutes;
+    countdown.children[3].children[0].innerText = seconds;
+}, 1000);

@@ -158,6 +158,18 @@ p {
     background-image: url("../imgs/nats-compressed/1-1MDH2998.jpg");
 }
 
+#img-9 {
+    background-image: url("../imgs/nats-compressed/1-094A7308.jpg");
+}
+
+#img-8 {
+    background-image: url("../imgs/regs24-25/dev-awards-lowres.jpeg");
+}
+
+#img-7 {
+    background-image: url("../imgs/regs24-25/entry-awards.jpeg");
+}
+
 .top {
     z-index: 3;
 }
@@ -441,6 +453,58 @@ i {
     padding: 0 0.2vw;
 }
 
+.article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    border-radius: 5vh;
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f5d53d 40%,
+        #f8ac29 50%,
+        #f8ac29 60%,
+        #f5d53d 100%
+    );
+}
+
+.articles {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+}
+
+.article h1 {
+    font-size: 1.6vw;
+    line-height: 1.6vw;
+    padding: 1vh 0;
+    margin: 0;
+}
+
+.article p {
+    font-size: 1.111vw;
+    line-height: 1.111vw;
+}
+
+.article a {
+    font-size: 1.111vw;
+    line-height: 1.111vw;
+    padding: 0.5vh 0;
+}
+
+.article-date {
+    margin-bottom: 2.5vh;
+}
+
+.article-img {
+    display: block;
+    width: 25vw;
+    height: 25vw;
+}
+
 @media screen and (max-width: 1000px) {
     #nav-hamburger-logo-group h1 {
         display: inline-block;
@@ -451,10 +515,6 @@ i {
         height: fit-content;
         flex-direction: column;
         align-items: stretch;
-    }
-
-    .text {
-        width: 90vw;
     }
 
     .final-link {
@@ -520,5 +580,215 @@ i {
         opacity: 1;
         transform: translateY(0);
         transition: transform 0.8s ease, opacity 0.8s ease;
+    }
+
+    .half-section {
+        display: inline-block;
+        width: 100%;
+        margin: 0;
+    }
+
+    .full-section {
+        margin: 3vh auto;
+    }
+
+    .imgs {
+        width: 80vw;
+        height: 50vw;
+        margin: auto;
+    }
+
+    .img {
+        width: 80vw;
+        height: 50vw;
+    }
+
+    .text {
+        width: 100%;
+        margin: auto;
+    }
+
+    .half {
+        width: 90%;
+        margin-top: 3vh;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    h1 {
+        font-size: 3.5vh;
+    }
+
+    p {
+        font-size: 2.5vh;
+    }
+
+    .award {
+        font-size: 2.5vh;
+        padding: 0.5vh;
+    }
+
+    pre {
+        font-size: 2.1vh;
+    }
+
+    .forward:active {
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .award-container {
+        margin: 1vh;
+    }
+
+    .carousel {
+        display: block;
+        position: relative;
+        width: 80vw;
+        height: 50vw;
+        margin: auto;
+    }
+
+    .carousel .carousel-container {
+        display: block;
+        position: absolute;
+        width: 80vw;
+        height: 50vw;
+    }
+
+    .carousel .carousel-container .img {
+        position: absolute;
+        display: block;
+        width: 80vw;
+        height: 50vw;
+        padding: 0;
+        border-radius: 0 !important;
+    }
+
+    .controls {
+        height: 100%;
+        width: 100%;
+        z-index: 4;
+    }
+
+    .controls button {
+        height: 5vh;
+        width: 5vh;
+    }
+
+    .controls button i {
+        font-size: 2.5vh;
+    }
+
+    .prev {
+        position: absolute;
+        top: 22.5vw;
+    }
+
+    .next {
+        position: absolute;
+        top: 22.5vw;
+        left: calc(100% - 5vh);
+    }
+
+    .carousel-first {
+        z-index: 3;
+        background-color: #1f2121;
+    }
+
+    .carousel-second {
+        z-index: 2;
+        background-color: #1f2121;
+    }
+
+    .carousel-third {
+        z-index: 1;
+        background-color: #1f2121;
+    }
+
+    .carousel .img h2 {
+        font-size: 2.8vh;
+    }
+
+    .carousel .img .additional-details p {
+        font-size: 2vh;
+    }
+
+    .carousel .img p {
+        font-size: 2vh;
+    }
+
+    .carousel .carousel-container .img {
+        display: flex;
+        justify-content: center;
+        border-radius: 5vh !important;
+    }
+
+    .countdown {
+        height: auto;
+    }
+
+    .countdown .timer-container {
+        margin: 5vh;
+    }
+
+    .countdown .timer-container .timer h1 {
+        font-size: 8vh;
+        line-height: 8vh;
+    }
+
+    .countdown .timer-container .timer p {
+        line-height: 2.5vh;
+    }
+
+    .countdown-description {
+        margin: 0;
+        padding-bottom: 5vh;
+    }
+
+    .marquee-container img {
+        height: 30vh;
+        width: auto;
+    }
+
+    .articles {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .article {
+        width: 100%;
+    }
+
+    .article img {
+        width: 100%;
+        height: auto;
+    }
+
+    .article h1 {
+        font-size: 4vh;
+        line-height: 4vh;
+        margin-top: 1vh;
+    }
+
+    .article p {
+        font-size: 2vh;
+        line-height: 2vh;
+    }
+
+    .article a {
+        font-size: 2vh;
+        line-height: 2vh;
+        margin: 0.5vh 0;
+    }
+
+    .footer p {
+        font-size: 2vh;
+        line-height: 2vh;
+    }
+
+    .footer .socials a i {
+        font-size: 3vh;
+        line-height: 2vh;
     }
 }

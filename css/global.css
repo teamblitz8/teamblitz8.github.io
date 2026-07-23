@@ -8,7 +8,7 @@
 
 body {
     background-color: #1f2121;
-    font-family: "Dubai", "Helvetica";
+    font-family: "Dubai", "San Fransisco", "Helvetica", sans-serif;
 }
 
 #nav {
@@ -616,7 +616,7 @@ i {
     }
 
     h1 {
-        font-size: 3.5vh;
+        font-size: 3vh;
     }
 
     p {
@@ -629,7 +629,7 @@ i {
     }
 
     pre {
-        font-size: 2.1vh;
+        font-size: 1.8vh;
     }
 
     .forward:active {
@@ -707,7 +707,7 @@ i {
     }
 
     .carousel .img h2 {
-        font-size: 2.8vh;
+        font-size: 2.5vh;
     }
 
     .carousel .img .additional-details p {
@@ -715,7 +715,7 @@ i {
     }
 
     .carousel .img p {
-        font-size: 2vh;
+        font-size: 1.8vh;
     }
 
     .carousel .carousel-container .img {
@@ -733,12 +733,13 @@ i {
     }
 
     .countdown .timer-container .timer h1 {
-        font-size: 8vh;
-        line-height: 8vh;
+        font-size: 5vh;
+        line-height: 5vh;
     }
 
     .countdown .timer-container .timer p {
-        line-height: 2.5vh;
+        font-size: 1.5vh;
+        line-height: 1.5vh;
     }
 
     .countdown-description {

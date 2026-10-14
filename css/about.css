@@ -1,0 +1,86 @@
+.banner#about {
+    background-image: url("../imgs/regs23-24/yash-mug.JPG");
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: top;
+}
+
+.member-container {
+    width: 20vw;
+    margin: 1vw;
+    height: auto;
+}
+
+.member {
+    width: 20vw;
+    position: relative;
+    padding: 1vh 0;
+    height: auto;
+}
+
+.member img {
+    padding: 2vh 0;
+    width: 20vw;
+}
+
+h1 {
+    margin: 0;
+}
+
+h2 {
+    font-size: 1.6vw;
+}
+
+h3 {
+    font-size: 1.1vw;
+    line-height: 1.1vw;
+}
+
+.bio {
+    font-size: 1vw;
+    margin: 2vh;
+    margin-top: 0;
+    max-height: 0px;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease, transform 0.8s ease, opacity 0.8s ease;
+}
+
+.expanded {
+    opacity: 1;
+    max-height: 56vh;
+    transition: max-height 0.8s ease, transform 0.8s ease, opacity 0.8s ease;
+}
+
+.more {
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f8ac29 25%,
+        #f5d53d 50%,
+        #f8ac29 75%,
+        #1f2121 100%
+    );
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,0.2),
+        0 6px 16px rgba(0,0,0,0.35);
+    border-radius: 2vw;
+    height: 2vw;
+    width: 2vw;
+}
+
+.more i {
+    color: #1f2121;
+    font-size: 1vw;
+}
+
+.button-container {
+    width: 20vw;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    transform: translateY(-50%)
+}

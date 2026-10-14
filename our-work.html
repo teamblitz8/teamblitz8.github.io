@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+    <head>
+        <title>Team Blitz - Home</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
+        <link rel="stylesheet" href="./css/global.css">
+        <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
+        <script src="./js/global.js" defer></script>
+        <script>
+            (() => {
+                if(window.__bhldScript)return;window.__bhldScript=true;
+                const d=document,s=d.createElement("script");s.type="module";
+                s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
+            })();
+        </script>
+    </head>
+
+    <body>
+        <div id="nav">
+            <div id="nav-hamburger-logo-group">
+                <a class="link" href="./index.html"><img src="./imgs/blitzLogo_Transparent.svg" id="nav-logo"></a>
+                <h1 class="link">Team Blitz</h1>
+                <a class="hamburger link" onclick="phone()"><i class="fa-solid fa-bars"></i></a>
+            </div>
+            <div id="nav-text-links">
+                <a class="link text-link" href="./index.html" style="color:#f8ac29">Home</a>
+                <a class="link text-link" href="./about-us.html">About Us</a>
+                <a class="link text-link" href="./our-journey.html">Journey</a>
+                <a class="link text-link" href="./our-work.html">Work</a>
+                <a class="link text-link" href="./sponsors.html">Sponsors</a>
+                <a class="link text-link" href="./contact-us.html">Contact</a>
+                <a class="link text-link" href="./blog">Blog</a>
+            </div>
+        </div>
+        <div class="banner" id="work"></div>
+    </body>
+</html>

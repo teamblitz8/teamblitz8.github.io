@@ -79,7 +79,6 @@ body {
     display: block;
     width: 100%;
     height: 100vh;
-    background-image: url("../imgs/nats-og/1-072A9764.webp");
     background-size: cover;
     background-position: center;
 }
@@ -134,42 +133,6 @@ p {
     font-size: 1.222vw;
 }
 
-#img-3 {
-    background-image: url("../imgs/nats-compressed/1-1MDH2485.jpg");
-}
-
-#img-2 {
-    background-image: url("../imgs/nats-compressed/1-1MDH3005.jpg");
-}
-
-#img-1 {
-    background-image: url("../imgs/nats-compressed/1-2MDH1013.jpg");
-}
-
-#img-6 {
-    background-image: url("../imgs/nats-compressed/1-094A5324.jpg");
-}
-
-#img-5 {
-    background-image: url("../imgs/nats-compressed/1-072A3966.jpg");
-}
-
-#img-4 {
-    background-image: url("../imgs/nats-compressed/1-1MDH2998.jpg");
-}
-
-#img-9 {
-    background-image: url("../imgs/nats-compressed/1-094A7308.jpg");
-}
-
-#img-8 {
-    background-image: url("../imgs/regs24-25/dev-awards-lowres.jpeg");
-}
-
-#img-7 {
-    background-image: url("../imgs/regs24-25/entry-awards.jpeg");
-}
-
 .top {
     z-index: 3;
 }
@@ -182,14 +145,6 @@ p {
     z-index: 1;
 }
 
-#awards {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    text-align: center;
-}
-
 .imgs button {
     position: absolute;
     display: block;
@@ -198,31 +153,6 @@ p {
     z-index: 4;
     background-color: transparent;
     cursor: pointer;
-}
-
-.award {
-    position: absolute;
-    display: block;
-    background: linear-gradient(
-        150deg,
-        #f5d53d 0%,
-        #f8ac29 25%,
-        #f8ac29 75%,
-        #f5d53d 100%
-    );
-    box-shadow:
-        inset 0 1px 2px rgba(255,255,255,0.2),
-        0 6px 16px rgba(0,0,0,0.35);
-    border-radius: 2vh;
-    border: 1px solid black;
-    width: 100%;
-    height: 4vh;
-    margin: 0;
-    padding: 0;
-    font-size: 1.111vw;
-    font-weight: 300;
-    line-height: 4vh;
-    transition: opacity 0.6s ease-in-out;
 }
 
 model-viewer {
@@ -239,33 +169,9 @@ model-viewer {
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
 }
 
-.award-container {
-    position: relative;
-    height: 4vh;
-    width: 100%;
-    padding: 0;
-}
-
-.forward {
-    z-index: 2;
-}
-
-.back {
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    line-height: 2vh;
-}
-
 pre {
     font-size: 0.9vw;
     font-family: "Dubai", "Helvetica";
-}
-
-.forward:hover {
-    opacity: 0;
-    cursor: pointer;
 }
 
 .full-section {
@@ -274,166 +180,8 @@ pre {
     text-align: center;
 }
 
-.full-section h1 {
+.non-text {
     margin-bottom: 2.5vh;
-}
-
-.carousel {
-    display: flex;
-    align-items: center;
-}
-
-.carousel .carousel-container {
-    margin: auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    border-radius: 5vh;
-}
-
-.carousel .img {
-    position: relative;
-    border: 0;
-    border-radius: 0;
-    padding: 1vw;
-    display: flex;
-    flex-direction: column;
-}
-
-.carousel-first {
-    border-radius: 5vh 0 0 5vh !important;
-}
-
-.carousel-third {
-    border-radius: 0 5vh 5vh 0 !important;
-}
-
-.controls {
-    position: absolute;
-    display: flex;
-    justify-content: space-between;
-    width: 85%;
-}
-
-.controls button {
-    background: linear-gradient(
-        135deg,
-        #1f2121 0%,
-        #f8ac29 25%,
-        #f5d53d 50%,
-        #f8ac29 75%,
-        #1f2121 100%
-    );
-    box-shadow:
-        inset 0 1px 2px rgba(255,255,255,0.2),
-        0 6px 16px rgba(0,0,0,0.35);
-    border-radius: 5vh;
-    height: 2.777vw;
-    width: 2.777vw;
-}
-
-.controls button i {
-    color: #1f2121;
-    font-size: 1.3885vw;
-}
-
-.prev {
-    transform: translateX(-50%);
-}
-
-.next {
-    transform: translateX(50%);
-}
-
-.carousel .img h2 {
-    font-size: 1.4vw;
-}
-
-.carousel .img p {
-    font-size: 1vw;
-    width: 85%;
-    margin: 0 auto;
-}
-
-.carousel .img .additional-details {
-    margin-bottom: 2vh;
-}
-
-.date {
-    color: #f8ac29;
-}
-
-.date i {
-    color: #f8ac29;
-}
-
-i {
-    padding-right: 0.25vw;
-}
-
-.countdown {
-    position: relative;
-    margin: auto;
-    padding: 0;
-    width: 50%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-}
-
-.timer-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin: 8vh;
-    margin-bottom: 0;
-}
-
-.timer-container h1 {
-    margin-bottom: 1vh;
-    font-size: 4vw;
-    line-height: 4vw;
-    color: #f5d53d;
-}
-
-.countdown-description {
-    margin: 4vh 0;
-    font-weight: 300;
-}
-
-.marquee {
-    width: 100%;
-    overflow: hidden;
-}
-
-.marquee-container {
-    display: flex;
-    width: max-content;
-    animation: marquee 15s linear infinite;
-}
-
-.marquee-container img {
-    height: 36vh;
-    width: 36vh;
-    flex-shrink: 0;
-}
-
-@keyframes marquee {
-    from {
-        transform: translateX(0);
-    }
-    to {
-        transform: translateX(-50%);
-    }
-}
-
-.carousel-container {
-    display: block;
-    height: 36vh;
-    width: 32vw;
 }
 
 .footer {
@@ -451,59 +199,6 @@ i {
     font-size: 1.6vw;
     line-height: 1.6vw;
     padding: 0 0.2vw;
-}
-
-.article {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    border-radius: 5vh;
-    background: linear-gradient(
-        135deg,
-        #1f2121 0%,
-        #f5d53d 40%,
-        #f8ac29 50%,
-        #f8ac29 60%,
-        #f5d53d 100%
-    );
-    width: 25vw;
-}
-
-.articles {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-}
-
-.article h1 {
-    font-size: 1.6vw;
-    line-height: 1.6vw;
-    padding: 1vh 0;
-    margin: 0;
-}
-
-.article p {
-    font-size: 1.111vw;
-    line-height: 1.111vw;
-}
-
-.article a {
-    font-size: 1.111vw;
-    line-height: 1.111vw;
-    padding: 0.5vh 0;
-}
-
-.article-date {
-    margin-bottom: 2.5vh;
-}
-
-.article-img {
-    display: block;
-    width: 25vw;
-    height: 25vw;
 }
 
 @media screen and (max-width: 1000px) {
@@ -624,164 +319,8 @@ i {
         font-size: 2.5vh;
     }
 
-    .award {
-        font-size: 2.5vh;
-        padding: 0.5vh;
-    }
-
     pre {
         font-size: 1.8vh;
-    }
-
-    .forward:active {
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .award-container {
-        margin: 1vh;
-    }
-
-    .carousel {
-        display: block;
-        position: relative;
-        width: 80vw;
-        height: 50vw;
-        margin: auto;
-    }
-
-    .carousel .carousel-container {
-        display: block;
-        position: absolute;
-        width: 80vw;
-        height: 50vw;
-    }
-
-    .carousel .carousel-container .img {
-        position: absolute;
-        display: block;
-        width: 80vw;
-        height: 50vw;
-        padding: 0;
-        border-radius: 0 !important;
-    }
-
-    .controls {
-        height: 100%;
-        width: 100%;
-        z-index: 4;
-    }
-
-    .controls button {
-        height: 5vh;
-        width: 5vh;
-    }
-
-    .controls button i {
-        font-size: 2.5vh;
-    }
-
-    .prev {
-        position: absolute;
-        top: 22.5vw;
-    }
-
-    .next {
-        position: absolute;
-        top: 22.5vw;
-        left: calc(100% - 5vh);
-    }
-
-    .carousel-first {
-        z-index: 3;
-        background-color: #1f2121;
-    }
-
-    .carousel-second {
-        z-index: 2;
-        background-color: #1f2121;
-    }
-
-    .carousel-third {
-        z-index: 1;
-        background-color: #1f2121;
-    }
-
-    .carousel .img h2 {
-        font-size: 2.5vh;
-    }
-
-    .carousel .img .additional-details p {
-        font-size: 2vh;
-    }
-
-    .carousel .img p {
-        font-size: 1.8vh;
-    }
-
-    .carousel .carousel-container .img {
-        display: flex;
-        justify-content: center;
-        border-radius: 5vh !important;
-    }
-
-    .countdown {
-        height: auto;
-    }
-
-    .countdown .timer-container {
-        margin: 5vh;
-    }
-
-    .countdown .timer-container .timer h1 {
-        font-size: 5vh;
-        line-height: 5vh;
-    }
-
-    .countdown .timer-container .timer p {
-        font-size: 2vh;
-        line-height: 2vh;
-    }
-
-    .countdown-description {
-        margin: 0;
-        padding-bottom: 5vh;
-    }
-
-    .marquee-container img {
-        height: 30vh;
-        width: auto;
-    }
-
-    .articles {
-        display: inline-block;
-        width: 100%;
-    }
-
-    .article {
-        width: 100%;
-    }
-
-    .article img {
-        width: 100%;
-        height: auto;
-    }
-
-    .article h1 {
-        font-size: 4vh;
-        line-height: 4vh;
-        margin-top: 1vh;
-    }
-
-    .article p {
-        font-size: 2vh;
-        line-height: 2vh;
-    }
-
-    .article a {
-        font-size: 2vh;
-        line-height: 2vh;
-        margin: 0.5vh 0;
     }
 
     .footer p {

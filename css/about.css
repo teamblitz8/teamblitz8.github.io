@@ -85,6 +85,43 @@ h3 {
     transform: translateY(-50%)
 }
 
+#cool-boxes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 70vw;
+    margin: auto;
+    margin-top: 2vh;
+}
+
+.cool-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    border-radius: 5vh;
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    width: 20vw;
+    margin: auto;
+    padding: 2vh;
+    height: 20vw;
+}
+
+.cool-box h2 {
+    font-size: 1.5vw;
+}
+
+.cool-box p {
+    font-size: 0.8vw;
+}
+
+.cool-box i {
+    font-size: 12vw;
+    margin-bottom: 2vh;
+}
+
 @media screen and (max-width: 1000px) {
     .row {
         flex-direction: column;
@@ -129,5 +166,31 @@ h3 {
     h3 {
         font-size: 2.5vh;
         line-height: 2.5vh;
+    }
+
+    #cool-boxes {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .cool-box {
+        width: calc(100% - 16vh);
+        height: 30vh;
+        margin: 3vh auto;
+        flex-direction: row;
+        justify-content: space-evenly;
+        padding: 2vh 8vh;
+        gap: 10vh;
+    }
+    
+    .cool-box h2 {
+        font-size: 5.1vh;
+    }
+    .cool-box i {
+        font-size: 19vh;
+    }
+    .cool-box p {
+        font-size: 1.5vh;
     }
 }

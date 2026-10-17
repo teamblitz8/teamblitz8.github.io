@@ -37,6 +37,8 @@ h2 {
 h3 {
     font-size: 1.1vw;
     line-height: 1.1vw;
+    font-weight: 300;
+    color: #f5d53d;
 }
 
 .bio {
@@ -111,10 +113,12 @@ h3 {
 
 .cool-box h2 {
     font-size: 1.5vw;
+    color: #f5d53d;
 }
 
 .cool-box p {
     font-size: 0.8vw;
+    font-weight: 300;
 }
 
 .cool-box i {

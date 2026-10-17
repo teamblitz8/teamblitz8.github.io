@@ -201,6 +201,15 @@ pre {
     padding: 0 0.2vw;
 }
 
+
+.location {
+    color: #f5d53d;
+}
+
+.date {
+    color: #f8ac29;
+}
+
 @media screen and (max-width: 1000px) {
     #nav-hamburger-logo-group h1 {
         display: inline-block;

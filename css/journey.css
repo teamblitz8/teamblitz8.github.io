@@ -55,3 +55,76 @@
 i {
     margin-right: 0.35vw;
 }
+
+h2 {
+    font-size: 1.6vw;
+}
+
+h3 {
+    font-size: 1vw;
+}
+
+.stuff p {
+    font-size: 1vw;
+}
+
+@media screen and (max-width: 1000px) {
+    .event:nth-child(even) {
+        flex-direction: row;
+    }
+
+    .event:nth-child(even) .stuff {
+        transform: translateX(0)
+    }
+
+    .event {
+        width: 90%;
+        margin: 5vh auto;
+    }
+
+    .event .stuff {
+        width: 90%;
+        transform: translateX(0);
+        padding: 3vh;
+    }
+
+    h2 {
+        font-size: 2.5vh;
+    }
+
+    h3 {
+        font-size: 2vh;
+    }
+
+    .stuff p {
+        font-size: 2vh;
+    }
+
+    i {
+        margin-right: 0.5vh;
+    }
+
+    #timeline::before {
+        top: 0;
+        left: 100%;
+        margin-left: 2vw;
+    }
+
+    .marker {
+        left: calc(100% - 16px + 2vw);
+        width: 32px;
+        height: 32px;
+    }
+    
+    .larger {
+        cx: 16;
+        cy: 16;
+        r: 16;
+    }
+
+    .smaller {
+        cx: 16;
+        cy: 16;
+        r: 10;
+    }
+}

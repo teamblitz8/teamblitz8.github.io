@@ -2,7 +2,17 @@ const format = () => {
     const section = document.getElementById("inverted");
     const first = section.children[0];
     const second = section.children[1];
-    if (window.innerWidth > 1000) {
+
+    const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+    let maxHeight = 0;
+
+    for (let i of arr) {
+        if (i.offsetHeight > maxHeight) {
+            maxHeight = i.offsetHeight;
+        }
+    }
+
+    if (window.innerWidth >= 1000) {
         if (!first.classList.contains("text")) {
             section.insertBefore(second, first);
         }
@@ -40,6 +50,18 @@ const format = () => {
         document.querySelectorAll(".excess").forEach(article => {
             article.style.display = "inline-block";
         })
+
+        const newWidth = document.querySelector(".carousel-container").offsetWidth / 3
+        document.querySelector(".i1").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i2").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i3").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i4").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i5").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i6").style.width = `calc(${newWidth}px - 1vw)`;
+
+        document.querySelector(".carousel-container").style.height = `calc(${maxHeight}px + 2vw)`;
+        document.querySelector(".carousel").style.height = `calc(${maxHeight}px + 2vw)`;
+        document.querySelector(".controls").style.height = `calc(${maxHeight}px + 2vw)`;
     }
     else {
         if (first.classList.contains("text")) {
@@ -48,32 +70,24 @@ const format = () => {
         document.querySelectorAll(".excess").forEach(article => {
             article.style.display = "none";
         })
+
+        document.querySelector(".carousel-container").style.height = `calc(${maxHeight}px + 6vh)`;
+        document.querySelector(".carousel").style.height = `calc(${maxHeight}px + 6vh)`;
+        document.querySelector(".controls").style.height = `calc(${maxHeight}px + 6vh)`;
     }
 
-    const newWidth = document.querySelector(".carousel-container").offsetWidth / 3
-    document.querySelector(".i1").style.width = `calc(${newWidth}px - 1vw)`;
-    document.querySelector(".i2").style.width = `calc(${newWidth}px - 1vw)`;
-    document.querySelector(".i3").style.width = `calc(${newWidth}px - 1vw)`;
-    document.querySelector(".i4").style.width = `calc(${newWidth}px - 1vw)`;
-    document.querySelector(".i5").style.width = `calc(${newWidth}px - 1vw)`;
-    document.querySelector(".i6").style.width = `calc(${newWidth}px - 1vw)`;
-
-    const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
-    let maxHeight = 0;
-
-    for (let i of arr) {
-        if (i.offsetHeight > maxHeight) {
-            maxHeight = i.offsetHeight;
-        }
-    }
-
-    document.querySelector(".carousel-container").style.height = `${maxHeight}px`;
     document.querySelector(".i1").style.height = `${maxHeight}px`;
     document.querySelector(".i2").style.height = `${maxHeight}px`;
     document.querySelector(".i3").style.height = `${maxHeight}px`;
     document.querySelector(".i4").style.height = `${maxHeight}px`;
     document.querySelector(".i5").style.height = `${maxHeight}px`;
     document.querySelector(".i6").style.height = `${maxHeight}px`;
+
+    document.querySelector(".i2").className = `img i2 inactive-right`;
+    document.querySelector(".i3").style.height = `img i2 inactive-right`;
+    document.querySelector(".i4").style.height = `img i2 inactive-right`;
+    document.querySelector(".i5").style.height = `img i2 inactive-right`;
+    document.querySelector(".i6").style.height = `img i2 inactive-left`;
 };
 
 const sec = (cl) => {
@@ -150,34 +164,68 @@ setInterval(() => {
     countdown.children[3].children[0].innerText = seconds;
 }, 1000);
 
-const prev = () => {
-    const lefted = document.querySelector(".i1");
-    const moved = document.querySelector(".i2");
-    const fromRight = document.querySelector(".i3");
-    const appearer = document.querySelector(".i4");
-    const hidden = document.querySelector(".i5");
-    const gone = document.querySelector(".i6");
+const next = () => {
+    if (window.innerWidth >= 1000) {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
 
-    lefted.className = "img inactive-left i6";
-    moved.className = `img carousel-first i1`;
-    fromRight.className = `img carousel-second i2`;
-    appearer.className = `img carousel-third i3`;
-    hidden.className = "img inactive-right i4";
-    gone.className = "img inactive-right i5";
+        lefted.className = "img inactive-left i6";
+        moved.className = `img carousel-first i1`;
+        fromRight.className = `img carousel-second i2`;
+        appearer.className = `img carousel-third i3`;
+        hidden.className = "img inactive-right i4";
+        gone.className = "img inactive-right i5";
+    }
+    else {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
+
+        lefted.className = "img inactive-left i6";
+        moved.className = "img carousel-first i1";
+        fromRight.className = `img inactive-right i2`;
+        appearer.className = `img inactive-right i3`;
+        hidden.className = "img inactive-right i4";
+        gone.className = "img inactive-right i5";
+    }
 }
 
-const next = () => {
-    const lefted = document.querySelector(".i1");
-    const moved = document.querySelector(".i2");
-    const fromRight = document.querySelector(".i3");
-    const appearer = document.querySelector(".i4");
-    const hidden = document.querySelector(".i5");
-    const gone = document.querySelector(".i6");
+const prev = () => {
+    if (window.innerWidth >= 1000) {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
 
-    lefted.className = "img carousel-second i2";
-    moved.className = `img carousel-third i3`;
-    fromRight.className = `img inactive-right i4`;
-    appearer.className = `img inactive-right i5`;
-    hidden.className = "img inactive-left i6";
-    gone.className = "img carousel-first i1";
+        lefted.className = "img carousel-second i2";
+        moved.className = `img carousel-third i3`;
+        fromRight.className = `img inactive-right i4`;
+        appearer.className = `img inactive-right i5`;
+        hidden.className = "img inactive-left i6";
+        gone.className = "img carousel-first i1";
+    }
+    else {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
+
+        lefted.className = "img inactive-right i2";
+        gone.className = "img carousel-first i1";
+        fromRight.className = `img inactive-right i4`;
+        moved.className = `img inactive-right i3`;
+        hidden.className = "img inactive-left i6";
+        appearer.className = "img inactive-right i5";
+    }
 }

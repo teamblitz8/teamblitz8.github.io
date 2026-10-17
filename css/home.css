@@ -84,6 +84,7 @@
     position: relative;
     overflow: hidden;
     padding: 1vw;
+    box-sizing: border-box;
 }
 
 .carousel-container .img {
@@ -133,6 +134,7 @@
     position: absolute;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
 }
 
@@ -340,29 +342,23 @@ i {
     .carousel {
         display: block;
         position: relative;
-        width: 80vw;
-        height: 80vw;
+        width: 100%;
         margin: auto;
     }
 
     .carousel .carousel-container {
         display: block;
         position: absolute;
-        width: 80vw;
-        height: 80vw;
+        padding: 3vh;
     }
 
     .carousel .carousel-container .img {
         position: absolute;
-        display: block;
-        width: 80vw;
-        height: 80vw;
+        width: calc(100% - 6vh);
         padding: 0;
-        border-radius: 0 !important;
     }
 
     .controls {
-        height: 100%;
         width: 100%;
         z-index: 4;
     }
@@ -374,17 +370,6 @@ i {
 
     .controls button i {
         font-size: 1.25em;
-    }
-
-    .prev {
-        position: absolute;
-        top: 37.5vw;
-    }
-
-    .next {
-        position: absolute;
-        top: 37.5vw;
-        left: calc(100% - 5vh);
     }
 
     .carousel-first {

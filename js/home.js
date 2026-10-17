@@ -3,15 +3,6 @@ const format = () => {
     const first = section.children[0];
     const second = section.children[1];
 
-    const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
-    let maxHeight = 0;
-
-    for (let i of arr) {
-        if (i.offsetHeight > maxHeight) {
-            maxHeight = i.offsetHeight;
-        }
-    }
-
     if (window.innerWidth >= 1000) {
         if (!first.classList.contains("text")) {
             section.insertBefore(second, first);
@@ -59,6 +50,15 @@ const format = () => {
         document.querySelector(".i5").style.width = `calc(${newWidth}px - 1vw)`;
         document.querySelector(".i6").style.width = `calc(${newWidth}px - 1vw)`;
 
+        const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+        let maxHeight = 0;
+
+        for (let i of arr) {
+            if (i.offsetHeight > maxHeight) {
+                maxHeight = i.offsetHeight;
+            }
+        }
+
         document.querySelector(".carousel-container").style.height = `calc(${maxHeight}px + 2vw)`;
         document.querySelector(".carousel").style.height = `calc(${maxHeight}px + 2vw)`;
         document.querySelector(".controls").style.height = `calc(${maxHeight}px + 2vw)`;
@@ -71,9 +71,28 @@ const format = () => {
             article.style.display = "none";
         })
 
+        const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+        let maxHeight = 0;
+
+        for (let i of arr) {
+            if (i.offsetHeight > maxHeight) {
+                maxHeight = i.offsetHeight;
+            }
+        }
+
+
         document.querySelector(".carousel-container").style.height = `calc(${maxHeight}px + 6vh)`;
         document.querySelector(".carousel").style.height = `calc(${maxHeight}px + 6vh)`;
         document.querySelector(".controls").style.height = `calc(${maxHeight}px + 6vh)`;
+    }
+
+    const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+    let maxHeight = 0;
+
+    for (let i of arr) {
+        if (i.offsetHeight > maxHeight) {
+            maxHeight = i.offsetHeight;
+        }
     }
 
     document.querySelector(".i1").style.height = `${maxHeight}px`;
@@ -83,11 +102,11 @@ const format = () => {
     document.querySelector(".i5").style.height = `${maxHeight}px`;
     document.querySelector(".i6").style.height = `${maxHeight}px`;
 
-    document.querySelector(".i2").className = `img i2 inactive-right`;
-    document.querySelector(".i3").style.height = `img i2 inactive-right`;
-    document.querySelector(".i4").style.height = `img i2 inactive-right`;
-    document.querySelector(".i5").style.height = `img i2 inactive-right`;
-    document.querySelector(".i6").style.height = `img i2 inactive-left`;
+    document.querySelector(".i2").className = `img i2 carousel-second`;
+    document.querySelector(".i3").style.height = `img i3 inactive-right`;
+    document.querySelector(".i4").style.height = `img i4 inactive-right`;
+    document.querySelector(".i5").style.height = `img i5 inactive-right`;
+    document.querySelector(".i6").style.height = `img i6 inactive-left`;
 };
 
 const sec = (cl) => {

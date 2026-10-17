@@ -57,15 +57,15 @@ i {
 }
 
 h2 {
-    font-size: 1.6vw;
+    font-size: 1.6em;
 }
 
 h3 {
-    font-size: 1vw;
+    font-size: 1em;
 }
 
 .stuff p {
-    font-size: 1vw;
+    font-size: 1em;
 }
 
 @media screen and (max-width: 1000px) {
@@ -89,15 +89,15 @@ h3 {
     }
 
     h2 {
-        font-size: 2.5vh;
+        font-size: 2.5em;
     }
 
     h3 {
-        font-size: 2vh;
+        font-size: 2em;
     }
 
     .stuff p {
-        font-size: 2vh;
+        font-size: 2em;
     }
 
     i {

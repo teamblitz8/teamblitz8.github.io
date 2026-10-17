@@ -6,9 +6,14 @@
     text-align: center;
 }
 
+html {
+    font-size: 1vw;
+}
+
 body {
     background-color: #1f2121;
     font-family: "Dubai", -apple-system, "Helvetica", sans-serif;
+    font-size: 1em;
 }
 
 #nav {
@@ -125,12 +130,12 @@ body {
 }
 
 h1 {
-    font-size: 1.777vw;
+    font-size: 1.777em;
     width: 100%;
 }
 
 p {
-    font-size: 1.222vw;
+    font-size: 1.222em;
 }
 
 .top {
@@ -170,7 +175,7 @@ model-viewer {
 }
 
 pre {
-    font-size: 0.9vw;
+    font-size: 0.9em;
     font-family: "Dubai", "Helvetica";
 }
 
@@ -196,7 +201,7 @@ pre {
 }
 
 .footer a i {
-    font-size: 1.6vw;
+    font-size: 1.6em;
     line-height: 1.6vw;
     padding: 0 0.2vw;
 }
@@ -211,6 +216,10 @@ pre {
 }
 
 @media screen and (max-width: 1000px) {
+    html {
+        font-size: 1vh;
+    }
+
     #nav-hamburger-logo-group h1 {
         display: inline-block;
     }
@@ -321,24 +330,24 @@ pre {
     }
 
     h1 {
-        font-size: 3vh;
+        font-size: 3em;
     }
 
     p {
-        font-size: 2.5vh;
+        font-size: 2.5em;
     }
 
     pre {
-        font-size: 1.8vh;
+        font-size: 1.8em;
     }
 
     .footer p {
-        font-size: 2.5vh;
+        font-size: 2.5em;
         line-height: 3vh;
     }
 
     .footer .socials a i {
-        font-size: 3.5vh;
+        font-size: 3.5em;
         line-height: 4vh;
     }
 }

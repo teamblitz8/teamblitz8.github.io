@@ -65,7 +65,7 @@
     height: 4vh;
     margin: 0;
     padding: 0;
-    font-size: 1.111vw;
+    font-size: 1.111em;
     font-weight: 300;
     line-height: 4vh;
     transition: opacity 0.6s ease-in-out;
@@ -129,7 +129,7 @@
 
 .controls button i {
     color: #1f2121;
-    font-size: 1.3885vw;
+    font-size: 1.3885em;
 }
 
 .prev {
@@ -141,11 +141,11 @@
 }
 
 .carousel .img h2 {
-    font-size: 1.4vw;
+    font-size: 1.4em;
 }
 
 .carousel .img p {
-    font-size: 1vw;
+    font-size: 1em;
     width: 85%;
     margin: 0 auto;
 }
@@ -187,7 +187,7 @@ i {
 
 .timer-container h1 {
     margin-bottom: 1vh;
-    font-size: 4vw;
+    font-size: 4em;
     line-height: 4vw;
     color: #f5d53d;
 }
@@ -255,19 +255,19 @@ i {
 }
 
 .article h1 {
-    font-size: 1.6vw;
+    font-size: 1.6em;
     line-height: 1.6vw;
     padding: 1vh 0;
     margin: 0;
 }
 
 .article p {
-    font-size: 1.111vw;
+    font-size: 1.111em;
     line-height: 1.111vw;
 }
 
 .article a {
-    font-size: 1.111vw;
+    font-size: 1.111em;
     line-height: 1.111vw;
     padding: 0.5vh 0;
 }
@@ -352,7 +352,7 @@ i {
     }
 
     .controls button i {
-        font-size: 2.5vh;
+        font-size: 2.5em;
     }
 
     .prev {
@@ -382,15 +382,15 @@ i {
     }
 
     .carousel .img h2 {
-        font-size: 2.5vh;
+        font-size: 2.5em;
     }
 
     .carousel .img .additional-details p {
-        font-size: 2vh;
+        font-size: 2em;
     }
 
     .carousel .img p {
-        font-size: 1.8vh;
+        font-size: 1.8em;
     }
 
     .carousel .carousel-container .img {
@@ -408,12 +408,12 @@ i {
     }
 
     .countdown .timer-container .timer h1 {
-        font-size: 5vh;
+        font-size: 5em;
         line-height: 5vh;
     }
 
     .countdown .timer-container .timer p {
-        font-size: 2vh;
+        font-size: 2em;
         line-height: 2vh;
     }
 
@@ -442,24 +442,24 @@ i {
     }
 
     .article h1 {
-        font-size: 4vh;
+        font-size: 4em;
         line-height: 4vh;
         margin-top: 1vh;
     }
 
     .article p {
-        font-size: 2vh;
+        font-size: 2em;
         line-height: 2vh;
     }
 
     .article a {
-        font-size: 2vh;
+        font-size: 2em;
         line-height: 2vh;
         margin: 0.5vh 0;
     }
 
     .award {
-        font-size: 2.5vh;
+        font-size: 2.5em;
         padding: 0.5vh;
     }
 }

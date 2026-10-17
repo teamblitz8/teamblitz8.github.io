@@ -14,13 +14,13 @@
 
 #file-finder h1 {
     text-align: left;
-    font-size: 1.4vw;
+    font-size: 1.4em;
     line-height: 2.8vw;
 }
 
 #file-finder h2 {
     text-align: left;
-    font-size: 1vw;
+    font-size: 1em;
     line-height: 1.3vw;
 }
 
@@ -35,7 +35,7 @@
 .container-title {
     background-color: #f8ac29;
     border-radius: 5vh 5vh 0 0;
-    font-size: 1.4vw;
+    font-size: 1.4em;
     text-align: center !important;
 }
 
@@ -58,7 +58,7 @@
 
 .expand i {
     color: #1f2121;
-    font-size: 2.5vh;
+    font-size: 2.5em;
 }
 
 .button-container {

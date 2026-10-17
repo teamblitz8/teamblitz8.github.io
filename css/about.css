@@ -31,18 +31,18 @@ h1 {
 }
 
 h2 {
-    font-size: 1.6vw;
+    font-size: 1.6em;
 }
 
 h3 {
-    font-size: 1.1vw;
+    font-size: 1.1em;
     line-height: 1.1vw;
     font-weight: 300;
     color: #f5d53d;
 }
 
 .bio {
-    font-size: 1vw;
+    font-size: 1em;
     margin: 2vh;
     margin-top: 0;
     max-height: 0px;
@@ -76,7 +76,7 @@ h3 {
 
 .more i {
     color: #1f2121;
-    font-size: 1vw;
+    font-size: 1em;
 }
 
 .button-container {
@@ -112,17 +112,17 @@ h3 {
 }
 
 .cool-box h2 {
-    font-size: 1.5vw;
+    font-size: 1.5em;
     color: #f5d53d;
 }
 
 .cool-box p {
-    font-size: 0.8vw;
+    font-size: 0.8em;
     font-weight: 300;
 }
 
 .cool-box i {
-    font-size: 12vw;
+    font-size: 12em;
     margin-bottom: 2vh;
 }
 
@@ -156,19 +156,19 @@ h3 {
     }
 
     .more i {
-        font-size: 3vh;
+        font-size: 3em;
     }
 
     .bio {
-        font-size: 2.25vh;
+        font-size: 2.25em;
     }
 
     h2 {
-        font-size: 3vh;
+        font-size: 3em;
     }
 
     h3 {
-        font-size: 2.5vh;
+        font-size: 2.5em;
         line-height: 2.5vh;
     }
 
@@ -189,12 +189,12 @@ h3 {
     }
     
     .cool-box h2 {
-        font-size: 5.1vh;
+        font-size: 5.1em;
     }
     .cool-box i {
-        font-size: 19vh;
+        font-size: 19em;
     }
     .cool-box p {
-        font-size: 1.5vh;
+        font-size: 1.5em;
     }
 }

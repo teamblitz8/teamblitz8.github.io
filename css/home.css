@@ -74,40 +74,66 @@
 .carousel {
     display: flex;
     align-items: center;
+    position: relative;
 }
 
 .carousel .carousel-container {
     margin: auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     border-radius: 5vh;
+    position: relative;
+    overflow: hidden;
+    padding: 1vw;
+}
+
+.carousel-container .img {
+    transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
 .carousel .img {
-    position: relative;
+    position: absolute;
     border: 0;
     border-radius: 0;
     padding: 1vw;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: auto;
+    box-sizing:border-box;
 }
 
 .carousel-first {
     border-radius: 5vh 0 0 5vh !important;
+    opacity: 1;
+    transform: translateX(0%);
+}
+
+.carousel-second {
+    opacity: 1;
+    transform: translateX(100%);
 }
 
 .carousel-third {
     border-radius: 0 5vh 5vh 0 !important;
+    opacity: 1;
+    transform: translateX(200%);
+}
+
+.inactive-left {
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+.inactive-right {
+    opacity: 0;
+    transform: translateX(300%);
 }
 
 .controls {
     position: absolute;
     display: flex;
     justify-content: space-between;
-    width: 85%;
+    width: 100%;
 }
 
 .controls button {
@@ -125,6 +151,7 @@
     border-radius: 5vh;
     height: 2.777vw;
     width: 2.777vw;
+    z-index: 100;
 }
 
 .controls button i {
@@ -133,11 +160,11 @@
 }
 
 .prev {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% + 1vw));
 }
 
 .next {
-    transform: translateX(50%);
+    transform: translateX(calc(50% - 2vw));
 }
 
 .carousel .img h2 {
@@ -223,12 +250,6 @@ i {
     }
 }
 
-.carousel-container {
-    display: block;
-    height: 36vh;
-    width: 32vw;
-}
-
 .article {
     display: flex;
     flex-direction: column;
@@ -307,7 +328,7 @@ i {
 }
 
 @media screen and (max-width: 1000px) {
-        .forward:active {
+    .forward:active {
         opacity: 0;
         cursor: pointer;
     }
@@ -320,7 +341,7 @@ i {
         display: block;
         position: relative;
         width: 80vw;
-        height: 50vw;
+        height: 80vw;
         margin: auto;
     }
 
@@ -328,14 +349,14 @@ i {
         display: block;
         position: absolute;
         width: 80vw;
-        height: 50vw;
+        height: 80vw;
     }
 
     .carousel .carousel-container .img {
         position: absolute;
         display: block;
         width: 80vw;
-        height: 50vw;
+        height: 80vw;
         padding: 0;
         border-radius: 0 !important;
     }
@@ -352,17 +373,17 @@ i {
     }
 
     .controls button i {
-        font-size: 2.5em;
+        font-size: 1.25em;
     }
 
     .prev {
         position: absolute;
-        top: 22.5vw;
+        top: 37.5vw;
     }
 
     .next {
         position: absolute;
-        top: 22.5vw;
+        top: 37.5vw;
         left: calc(100% - 5vh);
     }
 
@@ -401,6 +422,7 @@ i {
 
     .countdown {
         height: auto;
+        width: 100%;
     }
 
     .countdown .timer-container {
@@ -459,7 +481,7 @@ i {
     }
 
     .award {
-        font-size: 2.5em;
+        font-size: 2em;
         padding: 0.5vh;
     }
 }

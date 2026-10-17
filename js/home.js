@@ -49,6 +49,31 @@ const format = () => {
             article.style.display = "none";
         })
     }
+
+    const newWidth = document.querySelector(".carousel-container").offsetWidth / 3
+    document.querySelector(".i1").style.width = `calc(${newWidth}px - 1vw)`;
+    document.querySelector(".i2").style.width = `calc(${newWidth}px - 1vw)`;
+    document.querySelector(".i3").style.width = `calc(${newWidth}px - 1vw)`;
+    document.querySelector(".i4").style.width = `calc(${newWidth}px - 1vw)`;
+    document.querySelector(".i5").style.width = `calc(${newWidth}px - 1vw)`;
+    document.querySelector(".i6").style.width = `calc(${newWidth}px - 1vw)`;
+
+    const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+    let maxHeight = 0;
+
+    for (let i of arr) {
+        if (i.offsetHeight > maxHeight) {
+            maxHeight = i.offsetHeight;
+        }
+    }
+
+    document.querySelector(".carousel-container").style.height = `${maxHeight}px`;
+    document.querySelector(".i1").style.height = `${maxHeight}px`;
+    document.querySelector(".i2").style.height = `${maxHeight}px`;
+    document.querySelector(".i3").style.height = `${maxHeight}px`;
+    document.querySelector(".i4").style.height = `${maxHeight}px`;
+    document.querySelector(".i5").style.height = `${maxHeight}px`;
+    document.querySelector(".i6").style.height = `${maxHeight}px`;
 };
 
 const sec = (cl) => {
@@ -124,3 +149,35 @@ setInterval(() => {
     countdown.children[2].children[0].innerText = minutes;
     countdown.children[3].children[0].innerText = seconds;
 }, 1000);
+
+const prev = () => {
+    const lefted = document.querySelector(".i1");
+    const moved = document.querySelector(".i2");
+    const fromRight = document.querySelector(".i3");
+    const appearer = document.querySelector(".i4");
+    const hidden = document.querySelector(".i5");
+    const gone = document.querySelector(".i6");
+
+    lefted.className = "img inactive-left i6";
+    moved.className = `img carousel-first i1`;
+    fromRight.className = `img carousel-second i2`;
+    appearer.className = `img carousel-third i3`;
+    hidden.className = "img inactive-right i4";
+    gone.className = "img inactive-right i5";
+}
+
+const next = () => {
+    const lefted = document.querySelector(".i1");
+    const moved = document.querySelector(".i2");
+    const fromRight = document.querySelector(".i3");
+    const appearer = document.querySelector(".i4");
+    const hidden = document.querySelector(".i5");
+    const gone = document.querySelector(".i6");
+
+    lefted.className = "img carousel-second i2";
+    moved.className = `img carousel-third i3`;
+    fromRight.className = `img inactive-right i4`;
+    appearer.className = `img inactive-right i5`;
+    hidden.className = "img inactive-left i6";
+    gone.className = "img carousel-first i1";
+}

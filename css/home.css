@@ -154,6 +154,7 @@
     height: 2.777vw;
     width: 2.777vw;
     z-index: 100;
+    cursor: pointer;
 }
 
 .controls button i {
@@ -380,11 +381,13 @@ i {
     .carousel-second {
         z-index: 2;
         background-color: #1f2121;
+        opacity: 0;
     }
 
     .carousel-third {
         z-index: 1;
         background-color: #1f2121;
+        opacity: 0;
     }
 
     .carousel .img h2 {

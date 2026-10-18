@@ -179,20 +179,21 @@ h3 {
     }
 
     .cool-box {
-        width: calc(100% - 16vh);
-        height: 30vh;
-        margin: 3vh auto;
+        width: 85%;
+        height: auto;
+        margin: 2vh auto;
         flex-direction: row;
-        justify-content: space-evenly;
-        padding: 2vh 8vh;
-        gap: 10vh;
+        justify-content: space-between;
+        padding: 3vh;
     }
     
     .cool-box h2 {
-        font-size: 5.1em;
+        font-size: 3em;
     }
     .cool-box i {
-        font-size: 19em;
+        font-size: 10em;
+        padding: 0 2vh;
+        margin: 0;
     }
     .cool-box p {
         font-size: 1.5em;

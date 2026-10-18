@@ -77,3 +77,28 @@ input {
 form div {
     margin: 1vh 0;
 }
+
+@media screen and (max-width: 1000px) {
+    form {
+        width: 100%;
+        margin-top: 1vh;
+        padding: 0;
+    }
+    label {
+        font-size: 2em;
+    }
+    input {
+        font-size: 2em;
+        width: 90%;
+    }
+    textarea {
+        font-size: 2em;
+        width: 90%;
+    }
+    #flexed {
+        display: block;
+    }
+    #submit {
+        width: 90%;
+    }
+}

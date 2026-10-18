@@ -1,10 +1,18 @@
 const format = () => {
-    document.querySelector("embed").style.width = `${document.querySelector("embed").offsetHeight * (0.96)}px`;
-    document.querySelector("textarea").style.width = `${document.querySelector("#company").offsetWidth}px`;
-    document.querySelector("#submit").style.width = `${document.querySelector("#company").offsetWidth}px`;
-    document.querySelector("#first-name").style.width = `calc(${document.querySelector("#company").offsetWidth / 2}px - 1.75vh)`;
-    document.querySelector("#last-name").style.width = `calc(${document.querySelector("#company").offsetWidth / 2}px - 1.75vh)`;
-    document.querySelector("textarea").style["min-height"] = `${document.querySelector("#company").offsetWidth * 0.25}px`;
+    if (window.innerWidth >= 1000) {
+        document.querySelector("embed").style.width = `${document.querySelector("embed").offsetHeight * (0.96)}px`;
+        document.querySelector("textarea").style.width = `${document.querySelector("#company").offsetWidth}px`;
+        document.querySelector("#submit").style.width = `${document.querySelector("#company").offsetWidth}px`;
+        document.querySelector("#first-name").style.width = `calc(${document.querySelector("#company").offsetWidth / 2}px - 1.75vh)`;
+        document.querySelector("#last-name").style.width = `calc(${document.querySelector("#company").offsetWidth / 2}px - 1.75vh)`;
+        document.querySelector("textarea").style["min-height"] = `${document.querySelector("#company").offsetWidth * 0.25}px`;
+    }
+    else {
+        document.querySelector("embed").style.width = `100%`;
+        document.querySelector("#email").removeAttribute("size");
+        document.querySelector("#company").removeAttribute("size");
+        document.querySelector("textarea").style["min-height"] = `${document.querySelector("#company").offsetWidth * 0.5}px`;
+    }
 }
 
 window.addEventListener('load', format);

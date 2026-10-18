@@ -2,6 +2,18 @@
     background-image: url("../imgs/renders/portfolio-cover.jpg");
 }
 
+#img-1 {
+    background-image: url("../imgs/nats-compressed/1-072A3784.jpg");
+}
+
+#img-2 {
+    background-image: url("../imgs/nats-compressed/1-072A3784.jpg");
+}
+
+#img-3 {
+    background-image: url("../imgs/nats-compressed/1-072A3784.jpg");
+}
+
 #file-finder {
     display: block;
     background-size: cover;

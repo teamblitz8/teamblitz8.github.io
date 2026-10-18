@@ -63,5 +63,35 @@ const sec = (cl) => {
     });
 }
 
+const images = document.querySelectorAll(".imgs");
+
+for (let i of images) {
+    if (i.id === "car-model") continue;
+    i.children[3].addEventListener("mouseenter", (e) => {
+        for (let j of e.target.parentElement.children) {
+            if (j.classList.contains("mid")) {
+                j.style.transform = "translateX(1.5%) translateY(-2.5%)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+            else if (j.classList.contains("bottom")) {
+                j.style.transform = "translateX(3%) translateY(-5%)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+        }
+    });
+    i.children[3].addEventListener("mouseleave", (e) => {
+        for (let j of e.target.parentElement.children) {
+            if (j.classList.contains("bottom")) {
+                j.style.transform = "translateX(0) translateY(0)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+            else if (j.classList.contains("mid")) {
+                j.style.transform = "translateX(0) translateY(0)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+        }
+    });
+}
+
 window.addEventListener('load', format);
 window.addEventListener('resize', format);

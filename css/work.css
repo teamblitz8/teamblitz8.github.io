@@ -53,7 +53,7 @@
 
 .container-title {
     background-color: #f8ac29;
-    border-radius: 5vh 5vh 0 0;
+    border-radius: calc(5vh - 1px) calc(5vh - 1px) 0 0;
     font-size: 1.4em;
     text-align: center !important;
 }
@@ -73,6 +73,7 @@
     border-radius: 2vh;
     height: 4vh;
     width: 4vh;
+    cursor: pointer;
 }
 
 .expand i {
@@ -183,4 +184,64 @@
     font-weight: 600;
     font-size: 1.5em;
     padding: 0.5vh;
+}
+
+@media screen and (max-width: 1000px) {
+    #file-finder {
+        width: 85%;
+    }
+    #file-finder h1 {
+        width: 100%;
+        font-size: 2.75em;
+        line-height: 5vh;
+        text-align: center;
+    }
+    #file-finder h2 {
+        width: 100%;
+        font-size: 2.5em;
+        line-height: 1.25em;
+        text-align: center;
+    }
+    .content {
+        flex-direction: column;
+    }
+    .show {
+        width: 99%;
+        margin-bottom: 1vh;
+    }
+    .stats-container {
+        flex-direction: column;
+        width: 95%;
+        margin: auto;
+    }
+    .statistics {
+        flex-direction: column;
+        width: 95%;
+        margin: auto;
+    }
+    .statistics div {
+        margin: 1vh;
+        padding: 3vh 0;
+    }
+    .statistics div h1 {
+        font-size: 5em !important;
+    }
+    .statistics div p {
+        font-size: 2.5em;
+    }
+    .button {
+        font-size: 2.5em;
+        width: 95%;
+        margin-top: 1vh;
+    }
+    .button-container {
+        position: relative;
+        display: block;
+        height: auto;
+        width: 100%;
+        margin-top: 2vh;
+    }
+    .expand i {
+        font-size: 1.25em;
+    }
 }

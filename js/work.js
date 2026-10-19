@@ -29,16 +29,20 @@ const format = () => {
         document.querySelectorAll(".excess").forEach(article => {
             article.style.display = "inline-block";
         })
+
+        for (let i of document.querySelectorAll(".season")) {
+            i.style['max-height'] = `${i.querySelector(".button-container").offsetHeight}px`;
+        }
     }
     else {
         const section = document.getElementById("inverted");
         const first = section.children[0];
         const second = section.children[1];
         section.insertBefore(second, first);
-    }
 
-    for (let i of document.querySelectorAll(".season")) {
-        i.style['max-height'] = `${i.querySelector(".button-container").offsetHeight}px`
+        for (let i of document.querySelectorAll(".season")) {
+            i.insertBefore(i.querySelector(".button-container"), i.querySelector(".content"));
+        }
     }
 };
 

@@ -102,11 +102,11 @@ const format = () => {
     document.querySelector(".i5").style.height = `${maxHeight}px`;
     document.querySelector(".i6").style.height = `${maxHeight}px`;
 
-    document.querySelector(".i2").className = `img i2 carousel-second`;
-    document.querySelector(".i3").style.height = `img i3 inactive-right`;
-    document.querySelector(".i4").style.height = `img i4 inactive-right`;
-    document.querySelector(".i5").style.height = `img i5 inactive-right`;
-    document.querySelector(".i6").style.height = `img i6 inactive-left`;
+    document.querySelector(".i2").className = "img i2 carousel-second";
+    document.querySelector(".i3").className = "img i3 carousel-third";
+    document.querySelector(".i4").className = "img i4 inactive-right";
+    document.querySelector(".i5").className = "img i5 inactive-right";
+    document.querySelector(".i6").className = "img i6 inactive-left";
 };
 
 const sec = (cl) => {

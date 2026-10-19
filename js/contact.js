@@ -1,17 +1,31 @@
 const format = () => {
+    const embed = document.querySelector("embed");
+    const company = document.querySelector("#company");
+    const textarea = document.querySelector("textarea");
+
+    if (embed && window.innerWidth >= 1000) {
+        embed.style.width = `${embed.offsetHeight * 0.96}px`;
+    }
+    else if (embed) {
+        embed.style.width = "100%";
+    }
+
+    if (!company || !textarea) {
+        return;
+    }
+
     if (window.innerWidth >= 1000) {
-        document.querySelector("embed").style.width = `${document.querySelector("embed").offsetHeight * (0.96)}px`;
-        document.querySelector("textarea").style.width = `${document.querySelector("#company").offsetWidth}px`;
-        document.querySelector("#submit").style.width = `${document.querySelector("#company").offsetWidth}px`;
-        document.querySelector("#first-name").style.width = `calc(${document.querySelector("#company").offsetWidth / 2}px - 1.75vh)`;
-        document.querySelector("#last-name").style.width = `calc(${document.querySelector("#company").offsetWidth / 2}px - 1.75vh)`;
-        document.querySelector("textarea").style["min-height"] = `${document.querySelector("#company").offsetWidth * 0.25}px`;
+        const companyWidth = company.offsetWidth;
+        textarea.style.width = `${companyWidth}px`;
+        document.querySelector("#submit").style.width = `${companyWidth}px`;
+        document.querySelector("#first-name").style.width = `calc(${companyWidth / 2}px - 1.75vh)`;
+        document.querySelector("#last-name").style.width = `calc(${companyWidth / 2}px - 1.75vh)`;
+        textarea.style.minHeight = `${companyWidth * 0.25}px`;
     }
     else {
-        document.querySelector("embed").style.width = `100%`;
         document.querySelector("#email").removeAttribute("size");
-        document.querySelector("#company").removeAttribute("size");
-        document.querySelector("textarea").style["min-height"] = `${document.querySelector("#company").offsetWidth * 0.5}px`;
+        company.removeAttribute("size");
+        textarea.style.minHeight = `${company.offsetWidth * 0.5}px`;
     }
 }
 
@@ -22,82 +36,29 @@ const form = document.querySelector("#contact-form");
 
 const inputValidation = (event) => {
     event.preventDefault();
-    let fullyValid = true;
+    ["first-name", "last-name", "email", "company", "message"].forEach((id, index) => {
+        const field = document.querySelector(`#${id}`);
 
-    const firstName = document.querySelector("#first-name");
-    const lastName = document.querySelector("#last-name");
-    const email = document.querySelector("#email");
-    const company = document.querySelector("#company");
-    const message = document.querySelector("#message");
-
-    if (firstName.validity.valid) {
-        firstName.nextElementSibling.style.display = "none";
-        firstName.className = "";
-    }
-    else {
-        error(1);
-        fullyValid = false;
-    }
-
-    if (lastName.validity.valid) {
-        lastName.nextElementSibling.style.display = "none";
-        lastName.className = "";
-    }
-    else {
-        error(2);
-        fullyValid = false;
-    }
-
-    if (email.validity.valid) {
-        email.nextElementSibling.style.display = "none";
-        email.className = "";
-    }
-    else {
-        error(3);
-        fullyValid = false;
-    }
-
-    if (company.validity.valid) {
-        company.nextElementSibling.style.display = "none";
-        company.className = "";
-    }
-    else {
-        error(4);
-        fullyValid = false;
-    }
-
-    if (message.validity.valid) {
-        message.nextElementSibling.style.display = "none";
-        message.className = "";
-    }
-    else {
-        error(5);
-        fullyValid = false;
-    }
+        if (field.validity.valid) {
+            field.nextElementSibling.style.display = "none";
+            field.className = "";
+        }
+        else {
+            error(index + 1);
+        }
+    });
 };
 
-form.addEventListener("submit", inputValidation);
+if (form) {
+    form.addEventListener("submit", inputValidation);
+}
 
 const error = (field) => {
-    let type = 0;
-    switch (field) {
-        case 1:
-            type = document.querySelector("#first-name");
-            break;
-        case 2:
-            type = document.querySelector("#last-name");
-            break;
-        case 3:
-            type = document.querySelector("#email");
-            break;
-        case 4:
-            type = document.querySelector("#company");
-            break;
-        case 5:
-            type = document.querySelector("#message");
-            break;
-        default:
-            type = false;
+    const ids = ["first-name", "last-name", "email", "company", "message"];
+    const type = document.querySelector(`#${ids[field - 1]}`);
+
+    if (!type) {
+        return;
     }
 
     if (type.validity.valueMissing) {

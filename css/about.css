@@ -163,6 +163,10 @@ h3 {
         font-size: 2.25em;
     }
 
+    .expanded {
+        max-height: 150vh;
+    }
+
     h2 {
         font-size: 3em;
     }

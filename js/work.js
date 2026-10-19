@@ -69,11 +69,17 @@ const sec = (cl) => {
     });
 }
 
-const images = document.querySelectorAll(".imgs");
+for (const image of document.querySelectorAll(".imgs")) {
+    if (["regs-23", "regs-24", "nats-25"].includes(image.id)) {
+        continue;
+    }
 
-for (let i of images) {
-    if (i.id === "regs-23" || "regs-24" || "nats-25") continue;
-    i.children[3].addEventListener("mouseenter", (e) => {
+    const trigger = image.children[3];
+    if (!trigger) {
+        continue;
+    }
+
+    trigger.addEventListener("mouseenter", (e) => {
         for (let j of e.target.parentElement.children) {
             if (j.classList.contains("mid")) {
                 j.style.transform = "translateX(1.5%) translateY(-2.5%)";
@@ -85,7 +91,7 @@ for (let i of images) {
             }
         }
     });
-    i.children[3].addEventListener("mouseleave", (e) => {
+    trigger.addEventListener("mouseleave", (e) => {
         for (let j of e.target.parentElement.children) {
             if (j.classList.contains("bottom")) {
                 j.style.transform = "translateX(0) translateY(0)";
@@ -103,70 +109,21 @@ window.addEventListener('load', format);
 window.addEventListener('resize', format);
 
 const expand = (which) => {
-    if (which === "23") {
-        const menu = document.querySelector(".first");
-        const content = menu.querySelector(".content");
-        if (content.className === "content open") {
-            content.className = "content";
-            menu.className = "season first"
-            content.querySelector(".show").querySelector("model-viewer").className = "imgs see";
-            content.querySelector(".show").className = "show see";
-            content.querySelector(".stats-container").className = "stats-container see";
-            content.querySelector(".stats-container").querySelector(".statistics").className = "statistics see";
-            menu.querySelector(".button-container button i").className = "fa-solid fa-chevron-down";
-        }
-        else {
-            menu.className = "season first expanded";
-            content.className = "content open";
-            content.querySelector(".show").querySelector("model-viewer").className = "imgs";
-            content.querySelector(".show").className = "show";
-            content.querySelector(".stats-container").className = "stats-container";
-            content.querySelector(".stats-container").querySelector(".statistics").className = "statistics";
-            menu.querySelector(".button-container button i").className = "fa-solid fa-x";
-        }
+    const selector = { "23": ".first", "24": ".second", "25": ".third" }[which];
+    const menu = selector ? document.querySelector(selector) : null;
+
+    if (!menu) {
+        return;
     }
-    else if (which === "24") {
-        const menu = document.querySelector(".second");
-        const content = menu.querySelector(".content");
-        if (content.className === "content open") {
-            content.className = "content";
-            menu.className = "season second"
-            content.querySelector(".show").querySelector("model-viewer").className = "imgs see";
-            content.querySelector(".show").className = "show see";
-            content.querySelector(".stats-container").className = "stats-container see";
-            content.querySelector(".stats-container").querySelector(".statistics").className = "statistics see";
-            menu.querySelector(".button-container button i").className = "fa-solid fa-chevron-down";
-        }
-        else {
-            menu.className = "season second expanded";
-            content.className = "content open";
-            content.querySelector(".show").querySelector("model-viewer").className = "imgs";
-            content.querySelector(".show").className = "show";
-            content.querySelector(".stats-container").className = "stats-container";
-            content.querySelector(".stats-container").querySelector(".statistics").className = "statistics";
-            menu.querySelector(".button-container button i").className = "fa-solid fa-x";
-        }
-    }
-    else if (which === "25") {
-        const menu = document.querySelector(".third");
-        const content = menu.querySelector(".content");
-        if (content.className === "content open") {
-            content.className = "content";
-            menu.className = "season third"
-            content.querySelector(".show").querySelector("model-viewer").className = "imgs see";
-            content.querySelector(".show").className = "show see";
-            content.querySelector(".stats-container").className = "stats-container see";
-            content.querySelector(".stats-container").querySelector(".statistics").className = "statistics see";
-            menu.querySelector(".button-container button i").className = "fa-solid fa-chevron-down";
-        }
-        else {
-            menu.className = "season third expanded";
-            content.className = "content open";
-            content.querySelector(".show").querySelector("model-viewer").className = "imgs";
-            content.querySelector(".show").className = "show";
-            content.querySelector(".stats-container").className = "stats-container";
-            content.querySelector(".stats-container").querySelector(".statistics").className = "statistics";
-            menu.querySelector(".button-container button i").className = "fa-solid fa-x";
-        }
-    }
+
+    const content = menu.querySelector(".content");
+    const expanded = content.classList.toggle("open");
+
+    menu.classList.toggle("expanded", expanded);
+    content.querySelectorAll(".show, .stats-container, .statistics, model-viewer")
+        .forEach(element => element.classList.toggle("see", !expanded));
+
+    menu.querySelector(".button-container i").className = expanded
+        ? "fa-solid fa-x"
+        : "fa-solid fa-chevron-down";
 }

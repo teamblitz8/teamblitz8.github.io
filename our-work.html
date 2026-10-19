@@ -11,6 +11,7 @@
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script src="./js/global.js" defer></script>
         <script src="./js/work.js" defer></script>
+        <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
         <script>
             (() => {
                 if(window.__bhldScript)return;window.__bhldScript=true;
@@ -38,7 +39,7 @@
             </div>
         </div>
         <div class="banner" id="work"></div>
-        <div class="half-section">
+        <div class="half-section" id="inverted">
             <div class="half right">
                 <div class="imgs">
                     <div class="img bottom sec-1" id="img-1"></div>
@@ -58,29 +59,86 @@
         </div>
         <div id="file-finder">
             <h1 class="container-title">Blitz Competition Materials</h1>
-            <div class="season">
+            <div class="season first">
                 <div class="button-container">
                     <button class="expand" onclick="expand('23')"><i class="fa-solid fa-chevron-down"></i></button>
                 </div>
                 <h1>2023/24 Season</h1>
                 <h2>Entry Class</h2>
                 <h2>Regional Finals</h2>
+                <div class="content">
+                    <div class="show see">
+                        <h2>Car (BL1, codename Dash)</h2>
+                        <model-viewer id="regs23" src="./models/regs23-car.glb" camera-controls disable-zoom class="imgs see"></model-viewer>
+                    </div>
+                    <div class="stats-container see">
+                        <div class="statistics see">
+                            <div class="drag">
+                                <h1>0.246N</h1>
+                                <p>drag</p>
+                            </div>
+                            <div class="track-time">
+                                <h1>1.550s</h1>
+                                <p>Best track time</p>
+                            </div>
+                        </div>
+                        <a href="./models/regs23-car.step" download="Blitz_Example_Car_BL1.step" class="button">Download</a>
+                    </div>
+                </div>
             </div>
-            <div class="season">
+            <div class="season second">
                 <div class="button-container">
                     <button class="expand" onclick="expand('24')"><i class="fa-solid fa-chevron-down"></i></button>
                 </div>
                 <h1>2024/25 Season</h1>
                 <h2>Development Class</h2>
                 <h2>Regional Finals</h2>
+                <div class="content">
+                    <div class="show see">
+                        <h2>Car (BL2, codename Flash)</h2>
+                        <model-viewer id="regs24" src="./models/regs24-car.glb" camera-controls disable-zoom class="imgs see"></model-viewer>
+                    </div>
+                    <div class="stats-container see">
+                        <div class="statistics see">
+                            <div class="drag">
+                                <h1>0.229N</h1>
+                                <p>drag</p>
+                            </div>
+                            <div class="track-time">
+                                <h1>1.339s</h1>
+                                <p>Best track time</p>
+                            </div>
+                        </div>
+                        <a href="./models/regs24-car.step" download="Blitz_Example_Car_BL2.step" class="button">Download</a>
+                    </div>
+                </div>
             </div>
-            <div class="season">
+            <div class="season third">
                 <div class="button-container">
                     <button class="expand" onclick="expand('25')"><i class="fa-solid fa-chevron-down"></i></button>
                 </div>
                 <h1>2024/25 Season</h1>
                 <h2>Development Class</h2>
                 <h2>National Finals</h2>
+                <div class="content">
+                    <div class="show see">
+                        <h2>Car (BL3, codename Spark)</h2>
+                        <model-viewer id="nats25" src="./models/nats25-car.glb" camera-controls disable-zoom class="imgs see"></model-viewer>
+                    </div>
+                    <div class="stats-container see">
+                        <div class="statistics see">
+                            <div class="drag">
+                                <h1>0.208N</h1>
+                                <p>drag</p>
+                            </div>
+                            <div class="track-time">
+                                <h1>1.355s</h1>
+                                <p>Best track time</p>
+                            </div>
+                        </div>
+                        <a href="./models/nats25-car.glb" download="Blitz_Example_Car_BL3.step" class="button">Download</a>
+                    </div>
+                </div>
             </div>
             <br>
         </div>

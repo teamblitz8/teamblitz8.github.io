@@ -25,7 +25,7 @@
 
 .marker {
     position: absolute;
-    left: calc(50% - 25px);
+    left: calc(50% - 1vw);
 }
 
 .event {

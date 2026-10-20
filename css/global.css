@@ -390,4 +390,16 @@ pre {
         line-height: 4vh;
         margin: 0 1vw;
     }
+
+    .full-page div {
+        flex-direction: column;
+        gap: 2.5vh;
+        align-items: center;
+        width: 80%;
+    }
+
+    .full-page div a {
+        font-size: 3em;
+        width: 100%;
+    }
 }

@@ -1,1 +1,3 @@
-const phone=()=>{document.getElementById("nav").classList.toggle("phone")};
+const phone = () => {
+    document.getElementById("nav").classList.toggle("phone");
+}

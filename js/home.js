@@ -1,1 +1,250 @@
-const format=()=>{const e=document.getElementById("inverted"),t=e.children[0],c=e.children[1];if(window.innerWidth>=1e3){t.classList.contains("text")||e.insertBefore(c,t),document.querySelectorAll(".half-section").forEach((e=>{const t=e.querySelector(".text"),c=e.querySelector(".imgs").offsetHeight;"awards"===t.id&&(document.getElementById("awards").style.height=c-document.getElementById("awards").parentElement.children[0].offsetHeight+"px");let i=100,o=window.innerWidth,r=o;for(;i<=o;){const e=Math.floor((i+o)/2);t.style.width=`${e}px`,t.offsetHeight>c?i=e+1:(r=e,o=e-1)}t.style.width=`${r}px`,document.getElementById("awards").style.width=`${document.getElementById("img-4").offsetWidth}px`})),document.querySelectorAll(".excess").forEach((e=>{e.style.display="inline-block"}));const i=document.querySelector(".carousel-container").offsetWidth/3;document.querySelector(".i1").style.width=`calc(${i}px - 1vw)`,document.querySelector(".i2").style.width=`calc(${i}px - 1vw)`,document.querySelector(".i3").style.width=`calc(${i}px - 1vw)`,document.querySelector(".i4").style.width=`calc(${i}px - 1vw)`,document.querySelector(".i5").style.width=`calc(${i}px - 1vw)`,document.querySelector(".i6").style.width=`calc(${i}px - 1vw)`;const o=[document.querySelector(".i1"),document.querySelector(".i2"),document.querySelector(".i3"),document.querySelector(".i4"),document.querySelector(".i5"),document.querySelector(".i6")];let r=0;for(let e of o)e.offsetHeight>r&&(r=e.offsetHeight);document.querySelector(".carousel-container").style.height=`calc(${r}px + 2vw)`,document.querySelector(".carousel").style.height=`calc(${r}px + 2vw)`,document.querySelector(".controls").style.height=`calc(${r}px + 2vw)`}else{t.classList.contains("text")&&e.insertBefore(c,t),document.querySelectorAll(".excess").forEach((e=>{e.style.display="none"}));const i=[document.querySelector(".i1"),document.querySelector(".i2"),document.querySelector(".i3"),document.querySelector(".i4"),document.querySelector(".i5"),document.querySelector(".i6")];let o=0;for(let e of i)e.offsetHeight>o&&(o=e.offsetHeight);document.querySelector(".carousel-container").style.height=`calc(${o}px + 6vh)`,document.querySelector(".carousel").style.height=`calc(${o}px + 6vh)`,document.querySelector(".controls").style.height=`calc(${o}px + 6vh)`}const i=[document.querySelector(".i1"),document.querySelector(".i2"),document.querySelector(".i3"),document.querySelector(".i4"),document.querySelector(".i5"),document.querySelector(".i6")];let o=0;for(let e of i)e.offsetHeight>o&&(o=e.offsetHeight);document.querySelector(".i1").style.height=`${o}px`,document.querySelector(".i2").style.height=`${o}px`,document.querySelector(".i3").style.height=`${o}px`,document.querySelector(".i4").style.height=`${o}px`,document.querySelector(".i5").style.height=`${o}px`,document.querySelector(".i6").style.height=`${o}px`,document.querySelector(".i2").className="img i2 carousel-second",document.querySelector(".i3").className="img i3 carousel-third",document.querySelector(".i4").className="img i4 inactive-right",document.querySelector(".i5").className="img i5 inactive-right",document.querySelector(".i6").className="img i6 inactive-left"},sec=e=>{document.querySelectorAll(`.${e}`).forEach((e=>{e.classList.contains("bottom")?(e.classList.remove("bottom"),e.classList.add("mid"),e.style.transform="translateX(1.5%) translateY(-2.5%)",e.style.transition="transform 0.3s ease-in"):e.classList.contains("mid")?(e.classList.remove("mid"),e.classList.add("top"),e.style.transform="translateX(0) translateY(0)"):e.classList.contains("top")&&(e.classList.remove("top"),e.classList.add("bottom"),e.style.transform="translateX(3%) translateY(-5%)",e.style.transition="transform 0.3s ease-in")}))};window.addEventListener("load",format),window.addEventListener("resize",format);const images=document.querySelectorAll(".imgs");for(let e of images)"car-model"!==e.id&&(e.children[3].addEventListener("mouseenter",(e=>{for(let t of e.target.parentElement.children)t.classList.contains("mid")?(t.style.transform="translateX(1.5%) translateY(-2.5%)",t.style.transition="transform 0.3s ease-in"):t.classList.contains("bottom")&&(t.style.transform="translateX(3%) translateY(-5%)",t.style.transition="transform 0.3s ease-in")})),e.children[3].addEventListener("mouseleave",(e=>{for(let t of e.target.parentElement.children)(t.classList.contains("bottom")||t.classList.contains("mid"))&&(t.style.transform="translateX(0) translateY(0)",t.style.transition="transform 0.3s ease-in")})));const countdown=document.querySelectorAll(".timer-container")[0],countdownDate=new Date("Jan 21, 2027 09:00:00").getTime();setInterval((()=>{const e=(new Date).getTime(),t=countdownDate-e,c=Math.floor(t/864e5),i=Math.floor(t%864e5/36e5),o=Math.floor(t%36e5/6e4),r=Math.floor(t%6e4/1e3);countdown.children[0].children[0].innerText=c,countdown.children[1].children[0].innerText=i,countdown.children[2].children[0].innerText=o,countdown.children[3].children[0].innerText=r}),1e3);const next=()=>{if(window.innerWidth>=1e3){const e=document.querySelector(".i1"),t=document.querySelector(".i2"),c=document.querySelector(".i3"),i=document.querySelector(".i4"),o=document.querySelector(".i5"),r=document.querySelector(".i6");e.className="img inactive-left i6",t.className="img carousel-first i1",c.className="img carousel-second i2",i.className="img carousel-third i3",o.className="img inactive-right i4",r.className="img inactive-right i5"}else{const e=document.querySelector(".i1"),t=document.querySelector(".i2"),c=document.querySelector(".i3"),i=document.querySelector(".i4"),o=document.querySelector(".i5"),r=document.querySelector(".i6");e.className="img inactive-left i6",t.className="img carousel-first i1",c.className="img inactive-right i2",i.className="img inactive-right i3",o.className="img inactive-right i4",r.className="img inactive-right i5"}},prev=()=>{if(window.innerWidth>=1e3){const e=document.querySelector(".i1"),t=document.querySelector(".i2"),c=document.querySelector(".i3"),i=document.querySelector(".i4"),o=document.querySelector(".i5"),r=document.querySelector(".i6");e.className="img carousel-second i2",t.className="img carousel-third i3",c.className="img inactive-right i4",i.className="img inactive-right i5",o.className="img inactive-left i6",r.className="img carousel-first i1"}else{const e=document.querySelector(".i1"),t=document.querySelector(".i2"),c=document.querySelector(".i3"),i=document.querySelector(".i4"),o=document.querySelector(".i5"),r=document.querySelector(".i6");e.className="img inactive-right i2",r.className="img carousel-first i1",c.className="img inactive-right i4",t.className="img inactive-right i3",o.className="img inactive-left i6",i.className="img inactive-right i5"}};
+const format = () => {
+    const section = document.getElementById("inverted");
+    const first = section.children[0];
+    const second = section.children[1];
+
+    if (window.innerWidth >= 1000) {
+        if (!first.classList.contains("text")) {
+            section.insertBefore(second, first);
+        }
+        document.querySelectorAll(".half-section").forEach(section => {
+            const text = section.querySelector(".text");
+            const imgs = section.querySelector(".imgs");
+
+            const target = imgs.offsetHeight;
+
+            if (text.id === "awards") {
+                document.getElementById("awards").style.height = `${target - document.getElementById("awards").parentElement.children[0].offsetHeight}px`;
+            }
+
+            let low = 100;
+            let high = window.innerWidth;
+            let best = high;
+
+            while (low <= high) {
+                const mid = Math.floor((low + high) / 2);
+
+                text.style.width = `${mid}px`;
+
+                if (text.offsetHeight > target) {
+                    low = mid + 1;
+                }
+                else {
+                    best = mid;
+                    high = mid - 1;
+                }
+            }
+
+            text.style.width = `${best}px`;
+            document.getElementById("awards").style.width = `${document.getElementById("img-4").offsetWidth}px`;
+        });
+        document.querySelectorAll(".excess").forEach(article => {
+            article.style.display = "inline-block";
+        })
+
+        const newWidth = document.querySelector(".carousel-container").offsetWidth / 3
+        document.querySelector(".i1").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i2").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i3").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i4").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i5").style.width = `calc(${newWidth}px - 1vw)`;
+        document.querySelector(".i6").style.width = `calc(${newWidth}px - 1vw)`;
+
+        const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+        let maxHeight = 0;
+
+        for (let i of arr) {
+            if (i.offsetHeight > maxHeight) {
+                maxHeight = i.offsetHeight;
+            }
+        }
+
+        document.querySelector(".carousel-container").style.height = `calc(${maxHeight}px + 2vw)`;
+        document.querySelector(".carousel").style.height = `calc(${maxHeight}px + 2vw)`;
+        document.querySelector(".controls").style.height = `calc(${maxHeight}px + 2vw)`;
+    }
+    else {
+        if (first.classList.contains("text")) {
+            section.insertBefore(second, first);
+        }
+        document.querySelectorAll(".excess").forEach(article => {
+            article.style.display = "none";
+        })
+
+        const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+        let maxHeight = 0;
+
+        for (let i of arr) {
+            if (i.offsetHeight > maxHeight) {
+                maxHeight = i.offsetHeight;
+            }
+        }
+
+
+        document.querySelector(".carousel-container").style.height = `calc(${maxHeight}px + 6vh)`;
+        document.querySelector(".carousel").style.height = `calc(${maxHeight}px + 6vh)`;
+        document.querySelector(".controls").style.height = `calc(${maxHeight}px + 6vh)`;
+    }
+
+    const arr = [document.querySelector(".i1"), document.querySelector(".i2"), document.querySelector(".i3"), document.querySelector(".i4"), document.querySelector(".i5"), document.querySelector(".i6")];
+    let maxHeight = 0;
+
+    for (let i of arr) {
+        if (i.offsetHeight > maxHeight) {
+            maxHeight = i.offsetHeight;
+        }
+    }
+
+    document.querySelector(".i1").style.height = `${maxHeight}px`;
+    document.querySelector(".i2").style.height = `${maxHeight}px`;
+    document.querySelector(".i3").style.height = `${maxHeight}px`;
+    document.querySelector(".i4").style.height = `${maxHeight}px`;
+    document.querySelector(".i5").style.height = `${maxHeight}px`;
+    document.querySelector(".i6").style.height = `${maxHeight}px`;
+
+    document.querySelector(".i2").className = "img i2 carousel-second";
+    document.querySelector(".i3").className = "img i3 carousel-third";
+    document.querySelector(".i4").className = "img i4 inactive-right";
+    document.querySelector(".i5").className = "img i5 inactive-right";
+    document.querySelector(".i6").className = "img i6 inactive-left";
+};
+
+const sec = (cl) => {
+    let imgs = document.querySelectorAll(`.${cl}`);
+    imgs.forEach(img => {
+        if (img.classList.contains("bottom")) {
+            img.classList.remove("bottom");
+            img.classList.add("mid");
+            img.style.transform = "translateX(1.5%) translateY(-2.5%)";
+            img.style.transition = "transform 0.3s ease-in";
+        }
+        else if (img.classList.contains("mid")) {
+            img.classList.remove("mid");
+            img.classList.add("top");
+            img.style.transform = "translateX(0) translateY(0)";
+        }
+        else if (img.classList.contains("top")) {
+            img.classList.remove("top");
+            img.classList.add("bottom");
+            img.style.transform = "translateX(3%) translateY(-5%)";
+            img.style.transition = "transform 0.3s ease-in";
+        }
+    });
+}
+
+window.addEventListener('load', format);
+window.addEventListener('resize', format);
+
+const images = document.querySelectorAll(".imgs");
+
+for (let i of images) {
+    if (i.id === "car-model") continue;
+    i.children[3].addEventListener("mouseenter", (e) => {
+        for (let j of e.target.parentElement.children) {
+            if (j.classList.contains("mid")) {
+                j.style.transform = "translateX(1.5%) translateY(-2.5%)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+            else if (j.classList.contains("bottom")) {
+                j.style.transform = "translateX(3%) translateY(-5%)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+        }
+    });
+    i.children[3].addEventListener("mouseleave", (e) => {
+        for (let j of e.target.parentElement.children) {
+            if (j.classList.contains("bottom")) {
+                j.style.transform = "translateX(0) translateY(0)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+            else if (j.classList.contains("mid")) {
+                j.style.transform = "translateX(0) translateY(0)";
+                j.style.transition = "transform 0.3s ease-in";
+            }
+        }
+    });
+}
+
+const countdown = document.querySelectorAll(".timer-container")[0];
+const countdownDate = new Date("Jan 21, 2027 09:00:00").getTime();
+
+setInterval(() => {
+    const now = new Date().getTime();
+    const distance = countdownDate - now;
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdown.children[0].children[0].innerText = days;
+    countdown.children[1].children[0].innerText = hours;
+    countdown.children[2].children[0].innerText = minutes;
+    countdown.children[3].children[0].innerText = seconds;
+}, 1000);
+
+const next = () => {
+    if (window.innerWidth >= 1000) {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
+
+        lefted.className = "img inactive-left i6";
+        moved.className = `img carousel-first i1`;
+        fromRight.className = `img carousel-second i2`;
+        appearer.className = `img carousel-third i3`;
+        hidden.className = "img inactive-right i4";
+        gone.className = "img inactive-right i5";
+    }
+    else {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
+
+        lefted.className = "img inactive-left i6";
+        moved.className = "img carousel-first i1";
+        fromRight.className = `img inactive-right i2`;
+        appearer.className = `img inactive-right i3`;
+        hidden.className = "img inactive-right i4";
+        gone.className = "img inactive-right i5";
+    }
+}
+
+const prev = () => {
+    if (window.innerWidth >= 1000) {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
+
+        lefted.className = "img carousel-second i2";
+        moved.className = `img carousel-third i3`;
+        fromRight.className = `img inactive-right i4`;
+        appearer.className = `img inactive-right i5`;
+        hidden.className = "img inactive-left i6";
+        gone.className = "img carousel-first i1";
+    }
+    else {
+        const lefted = document.querySelector(".i1");
+        const moved = document.querySelector(".i2");
+        const fromRight = document.querySelector(".i3");
+        const appearer = document.querySelector(".i4");
+        const hidden = document.querySelector(".i5");
+        const gone = document.querySelector(".i6");
+
+        lefted.className = "img inactive-right i2";
+        gone.className = "img carousel-first i1";
+        fromRight.className = `img inactive-right i4`;
+        moved.className = `img inactive-right i3`;
+        hidden.className = "img inactive-left i6";
+        appearer.className = "img inactive-right i5";
+    }
+}

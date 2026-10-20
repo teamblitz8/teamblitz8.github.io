@@ -215,6 +215,41 @@ pre {
     color: #f8ac29;
 }
 
+.full-page {
+    height: calc(97vh - 1.76vw);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.full-page img {
+    width: 60vw;
+    height: auto;
+    margin: 10vh;
+}
+
+.full-page h1 {
+    margin-bottom: 5vh;
+}
+
+.full-page div {
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+}
+
+.full-page div a {
+    background-color: #f8ac29;
+    font-size: 1.5em;
+    font-weight: 600;
+    border-radius: 100vh;
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    width: 40%;
+    text-decoration: none;
+}
+
 @media screen and (max-width: 1000px) {
     html {
         font-size: 1vh;

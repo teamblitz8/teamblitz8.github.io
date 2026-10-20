@@ -1,9 +1,1 @@
-const more = (person) => {
-    const bio = document.getElementById(person).querySelector(".bio");
-    const icon = document.getElementById(`${person}-butt`).querySelector("i");
-    const expanded = bio.classList.toggle("expanded");
-
-    icon.className = expanded
-        ? "fa-solid fa-x"
-        : "fa-solid fa-chevron-down";
-}
+const more=e=>{const t=document.getElementById(e).querySelector(".bio"),o=document.getElementById(`${e}-butt`).querySelector("i"),c=t.classList.toggle("expanded");o.className=c?"fa-solid fa-x":"fa-solid fa-chevron-down"};

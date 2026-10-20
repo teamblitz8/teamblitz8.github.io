@@ -19,13 +19,13 @@
     background-color: #f8ac29;
     text-align: center;
     left: 50%;
-    z-index: -1;
     transform: translateX(-50%);
+    z-index: -1;
 }
 
 .marker {
     position: absolute;
-    left: calc(50% - 1vw);
+    left: calc(50% - 25px);
 }
 
 .event {

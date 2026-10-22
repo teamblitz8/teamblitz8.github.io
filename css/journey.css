@@ -116,15 +116,4 @@ h3 {
         height: 32px;
     }
     
-    .larger {
-        cx: 16;
-        cy: 16;
-        r: 16;
-    }
-
-    .smaller {
-        cx: 16;
-        cy: 16;
-        r: 10;
-    }
 }

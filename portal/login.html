@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+    <head>
+        <title>Team Blitz - Login to Portal</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
+        <link rel="stylesheet" href="./css/global.css">
+        <link rel="stylesheet" href="./css/login.css">
+        <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
+        <script src="./js/global.js" defer></script>
+        <script src="./js/login.js" defer></script>
+    </head>
+
+    <body>
+        <div>
+            <div id="login-box">
+                <h1>Login</h1>
+                <form id="login" action="" novalidate>
+                    <span class="error" id="overall"></span>
+                    <div class="question">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Username" required>
+                        <span class="error"></span>
+                    </div>
+                    <div class="question">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                        <span class="error"></span>
+                    </div>
+                    <div class="question" id="forever-container">
+                        <input type="checkbox" name="forever" id="forever">
+                        <label for="forever">Stay logged in (by enabling this option, you agree to the use of cookies)</label>
+                    </div>
+                    <div class="question">
+                        <input type="submit" id="submit" name="submit">
+                        <span class="error"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="text-centred">
+            <a href="https://teamblitz.uk"><i class="fa-solid fa-arrow-left"></i> Go back</a>
+        </div>
+    </body>
+</html>

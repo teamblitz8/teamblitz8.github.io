@@ -21,12 +21,20 @@ h2 {
     color: #f5d53d;
 }
 
-p, input, label, a {
+h3 {
+    color: white;
+}
+
+p, input, label, a, button, li {
     color: white;
     font-size: 1em;
 }
 
-a {
+ul {
+    list-style-position: inside;
+}
+
+a, button {
     border-radius: 100vh;
     background-color: #f8ac29;
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);

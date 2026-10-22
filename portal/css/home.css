@@ -1,0 +1,173 @@
+body {
+    width: 80%;
+    margin: auto;
+}
+
+body h1 {
+    margin-top: 2em;
+}
+
+#upload {
+    margin: 1em 0 2em 0;
+}
+
+.car {
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    border-radius: 2em;
+    padding: 2em;
+    display: flex;
+    justify-content: space-between;
+    margin: 1.5em 0;
+}
+
+.details {
+    width: 50%;
+}
+
+.details div {
+    margin-top: 1em;
+}
+
+.image {
+    width: 50%;
+}
+
+.image img {
+    width: 100%;
+}
+
+.creator {
+    display: flex;
+    gap: 2.5em;
+    margin: 1.5em 0;
+}
+
+.portrait {
+    border-radius: 100vh;
+}
+
+.person {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.person h3 {
+    font-weight: 200;
+}
+
+.download {
+    margin-top: 1.5em;
+}
+
+.drag {
+    color: #f5d53d;
+    font-weight: 600;
+}
+
+.buttons {
+    display: flex;
+    width: 100%;
+    gap: 1em;
+}
+
+.button {
+    margin-top: 1.5em;
+}
+
+.hidden {
+    margin-top: 1.5em;
+}
+
+.hidden div img {
+    width: 100%;
+}
+
+.popup-shroud {
+    position: absolute;
+    background-color: rgba(31,33,33,0.6);
+    height: 100vh;
+    width: 80vw;
+    z-index: 2;
+}
+
+.popup {
+    height: 80%;
+    width: 100%;
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    border-radius: 2em;
+    background-color: #1f2121;
+    opacity: 1;
+    text-align: center;
+    padding: 1.5em;
+}
+
+.upload-file {
+    margin: 1.5em;
+}
+
+form {
+    margin-top: 1.5em;
+}
+
+.section {
+    margin-bottom: 1em;
+}
+
+.section-title {
+    margin-bottom: 0.75em;
+}
+
+.cfd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    width: 100%;
+    margin: auto;
+    margin-bottom: 1em;
+}
+
+.cfd-field h3 {
+    width: 33%;
+    text-align: right;
+}
+
+.cfd-field label {
+    width: 33%;
+    text-align: left;
+}
+
+.cfd-field {
+    width: 75%;
+    display: flex;
+    gap: 1em;
+    margin: auto;
+    justify-content: center;
+}
+
+#car-info input {
+    background-color: #1f2121;
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    border-radius: 100vh;
+    width: 33%;
+    margin-right: 0.5em;
+    padding: 0 1em;
+}
+
+#scrutineer div {
+    width: 5%;
+    margin: auto;
+    text-align: left;
+}
+
+#scrutineer div input {
+    width: auto;
+}
+
+#scrutineer p {
+    margin-top: 1em;
+}

@@ -2,46 +2,205 @@
 
 <html lang="en-GB">
     <head>
-        <title>Team Blitz - Login to Portal</title>
+        <title>Team Blitz - Portal</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
         <link rel="stylesheet" href="./css/global.css">
-        <link rel="stylesheet" href="./css/login.css">
+        <link rel="stylesheet" href="./css/home.css">
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script src="./js/global.js" defer></script>
-        <script src="./js/login.js" defer></script>
+        <script src="./js/home.js" defer></script>
     </head>
 
     <body>
-        <div>
-            <div id="login-box">
-                <h1>Login</h1>
-                <form id="login" action="" novalidate>
-                    <span class="error" id="overall"></span>
-                    <div class="question">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Username" required>
-                        <span class="error"></span>
-                    </div>
-                    <div class="question">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Password" required>
-                        <span class="error"></span>
-                    </div>
-                    <div class="question" id="forever-container">
-                        <input type="checkbox" name="forever" id="forever">
-                        <label for="forever">Stay logged in (by enabling this option, you agree to the use of cookies)</label>
-                    </div>
-                    <div class="question">
-                        <input type="submit" id="submit" name="submit">
-                        <span class="error"></span>
-                    </div>
-                </form>
+        <div class="popup-shroud">
+            <div class="popup">
+                <h3>Upload a new design</h3>
+                <p>Logged in as John</p>
+                <div class="upload-file"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file (.f3d)</a></div>
+                <div class="info">
+                    <h2>Tell us more about your design</h2>
+                    <form id="car-info" action="" novalidate>
+                        <div class="section">
+                            <h3 class="section-title">Quantitative CFD data</h3>
+                            <div class="cfd">
+                                <div class="cfd-field">
+                                    <h3>Frontal Area</h3>
+                                    <input type="number" id="frontal-area" name="frontal-area" placeholder="2000.000" min="1000" max="3000" required>
+                                    <label for="frontal-area">mm2</label>
+                                </div>
+                                <div class="cfd-field">
+                                    <h3>Drag Coefficient</h3>
+                                    <input type="number" id="drag-coefficient" name="drag-coefficient" placeholder="0.67676767" min="0" max="2" required>
+                                    <label for="drag-coefficient">(dimensionless scalar)</label>
+                                </div>
+                            </div>
+                            <p>Based on your values, we have calculated drag to be 0.5N</p>
+                        </div>
+                        <div class="section" id="scrutineer">
+                            <h3>Who scrutineered the car?</h3>
+                            <div>
+                                <input type="radio" id="yash" name="scrutineerer" value="yash" required>
+                                <label for="yash">Yash</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="chen" name="scrutineerer" value="chen" required>
+                                <label for="chen">Chen</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="pranit" name="scrutineerer" value="pranit" required>
+                                <label for="pranit">Pranit</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="josh" name="scrutineerer" value="josh" required>
+                                <label for="pranit">Josh</label>
+                            </div>
+                            <p>Cooked bro, that guy is not trustworthy at all</p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="text-centred">
-            <a href="https://teamblitz.uk"><i class="fa-solid fa-arrow-left"></i> Go back</a>
+        <h1>Hello, John</h1>
+        <div id="upload"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload new design</a></div>
+        <h2>Latest Cars</h2>
+        <div id="development-container">
+            <div class="car">
+                <div class="details">
+                    <h3>Deodorant 64 - Iteration #80</h3>
+                    <div class="creator">
+                        <img src="../imgs/team/yash_lowres.JPG" class="portrait">
+                        <div class="person">
+                            <h3>John</h3>
+                            <p>34th iteration</p>
+                            <p>Scrutineered by Josh</p>
+                        </div>
+                    </div>
+                    <p>Frontal Area: 1600mm2</p>
+                    <p>Drag Coefficient: 0.8</p>
+                    <p class="drag">Drag: 0.38N</p>
+                    <div class="buttons">
+                        <div class="download"><a href=""><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
+                        <div class="button"><button onclick=""><i class="fa-solid fa-caret-down"></i> See more details</button></div>
+                    </div>
+                    <div class="hidden">
+                        <div class="iso-surfaces">
+                            <h3>Iso Surfaces</h3>
+                            <img src="../imgs/placeholder.png">
+                        </div>
+                        <div class="planes">
+                            <h3>Planes</h3>
+                            <img src="../imgs/placeholder.png">
+                        </div>
+                        <div class="changes">
+                            <h3>Changes</h3>
+                            <p>This design was derived from iteration #79, Deodorant 63. Changes include:</p>
+                            <ul>
+                                <li>rounder nosecone</li>
+                                <li>larger front wing</li>
+                            </ul>
+                        </div>
+                        <div class="notes">
+                            <h3>Additional notes</h3>
+                            <p>This car man, its trash</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image">
+                    <img src="../imgs/placeholder.png">
+                </div>
+            </div>
+            <div class="car">
+                <div class="details">
+                    <h3>Deodorant 64 - Iteration #80</h3>
+                    <div class="creator">
+                        <img src="../imgs/team/yash_lowres.JPG" class="portrait">
+                        <div class="person">
+                            <h3>John</h3>
+                            <p>34th iteration</p>
+                            <p>Scrutineered by Josh</p>
+                        </div>
+                    </div>
+                    <p>Frontal Area: 1600mm2</p>
+                    <p>Drag Coefficient: 0.8</p>
+                    <p class="drag">Drag: 0.38N</p>
+                    <div class="buttons">
+                        <div class="download"><a href=""><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
+                        <div class="button"><button onclick=""><i class="fa-solid fa-caret-down"></i> See more details</button></div>
+                    </div>
+                    <div class="hidden">
+                        <div class="iso-surfaces">
+                            <h3>Iso Surfaces</h3>
+                            <img src="../imgs/placeholder.png">
+                        </div>
+                        <div class="planes">
+                            <h3>Planes</h3>
+                            <img src="../imgs/placeholder.png">
+                        </div>
+                        <div class="changes">
+                            <h3>Changes</h3>
+                            <p>This design was derived from iteration #79, Deodorant 63. Changes include:</p>
+                            <ul>
+                                <li>rounder nosecone</li>
+                                <li>larger front wing</li>
+                            </ul>
+                        </div>
+                        <div class="notes">
+                            <h3>Additional notes</h3>
+                            <p>This car man, its trash</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image">
+                    <img src="../imgs/placeholder.png">
+                </div>
+            </div>
+            <div class="car">
+                <div class="details">
+                    <h3>Deodorant 64 - Iteration #80</h3>
+                    <div class="creator">
+                        <img src="../imgs/team/yash_lowres.JPG" class="portrait">
+                        <div class="person">
+                            <h3>John</h3>
+                            <p>34th iteration</p>
+                            <p>Scrutineered by Josh</p>
+                        </div>
+                    </div>
+                    <p>Frontal Area: 1600mm2</p>
+                    <p>Drag Coefficient: 0.8</p>
+                    <p class="drag">Drag: 0.38N</p>
+                    <div class="buttons">
+                        <div class="download"><a href=""><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
+                        <div class="button"><button onclick=""><i class="fa-solid fa-caret-down"></i> See more details</button></div>
+                    </div>
+                    <div class="hidden">
+                        <div class="iso-surfaces">
+                            <h3>Iso Surfaces</h3>
+                            <img src="../imgs/placeholder.png">
+                        </div>
+                        <div class="planes">
+                            <h3>Planes</h3>
+                            <img src="../imgs/placeholder.png">
+                        </div>
+                        <div class="changes">
+                            <h3>Changes</h3>
+                            <p>This design was derived from iteration #79, Deodorant 63. Changes include:</p>
+                            <ul>
+                                <li>rounder nosecone</li>
+                                <li>larger front wing</li>
+                            </ul>
+                        </div>
+                        <div class="notes">
+                            <h3>Additional notes</h3>
+                            <p>This car man, its trash</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image">
+                    <img src="../imgs/placeholder.png">
+                </div>
+            </div>
         </div>
     </body>
 </html>

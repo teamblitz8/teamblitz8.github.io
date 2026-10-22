@@ -1,108 +1,272 @@
 <!DOCTYPE html>
+
 <html lang="en-GB">
     <head>
-        <title>Team Blitz | Home</title>
-
-        <link rel="stylesheet" type="text/css" href="./global/styling.css">
-        <link rel="icon" type="image/x-icon" href="./global/fav.png">
-
+        <title>Team Blitz - Home</title>
         <meta charset="UTF-8">
-        <meta name="author" content="Team Blitz">
-        <meta name="description" content="Homepage of Team Blitz website">
-        <meta name="keywords" content="Team Blitz, St Olave's Grammar School">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="theme-color" content="#f8ac29">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="https://teamblitz.pages.dev/">
-        <meta property="og:title" content="Team Blitz | Home">
-        <meta property="og:description" content="Welcome to Team Blitz, a team of 5 ambitious boys from St. Olave's Grammar School competing in the STEM Racing competition in the Professional Class.">
-        <meta property="og:image" content="../global/Logo.png">
-        <meta property="og:image:height" content="256px">
-        <meta property="og:image:width" content="256px">
-        <meta property="og:sitename" content="Team Blitz">
-
-        <script src="./global/scripts.js" defer></script>
-        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-        <script src="https://w.behold.so/widget.js" type="module"></script>
-        <script src="https://kit.fontawesome.com/5de12ac90d.js" crossorigin="anonymous"></script>
+        <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
+        <link rel="stylesheet" href="./css/global.css">
+        <link rel="stylesheet" href="./css/home.css">
+        <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
+        <script src="./js/global.js" defer></script>
+        <script src="./js/home.js" defer></script>
+        <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
+        <script>
+            (() => {
+                if(window.__bhldScript)return;window.__bhldScript=true;
+                const d=document,s=d.createElement("script");s.type="module";
+                s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
+            })();
+        </script>
     </head>
 
     <body>
-        <nav class="topnav" id="toppy">
-            <a href="./" class="logo"><img src="./global/Logo.png"></a>
-            <div class="links">
-                <a href="./" class="link">Home</a>
-                <a href="./about-us" class="link">About Us</a>
-                <a href="./our-journey/" class="link">Our Journey</a>
-                <a href="./our-work/" class="link">Our Work</a>
-                <a href="./sponsors/" class="link">Sponsors</a>
-                <!-- <a href="./blog/" class="link">Blog</a> -->
-                <a href="./contact-us/" class="link">Contact Us</a>
+        <div id="nav">
+            <div id="nav-hamburger-logo-group">
+                <a class="link" href="./index"><img src="./imgs/blitzLogo_Transparent.svg" id="nav-logo" alt="Team Blitz Logo, a orange and black shaped B with a lightning bolt running down the middle"></a>
+                <h1 class="link">Team Blitz</h1>
+                <a class="hamburger link" onclick="phone()" alt="Press to expand navigation menu"><i class="fa-solid fa-bars"></i></a>
             </div>
-        </nav>
-
-        <section class="banner">
-            <h1>Blitz</h1>
-            <h3>Engineering speed with precision</h3>
-        </section>
-
-        <section class="info">
-            <h1>Who are we?</h1>
-            <p style="padding-bottom: 0;">We are Team Blitz of Saint Olave's Grammar School, a group of 5 dedicated team members with a burning passion for STEM (Science, Technology, Engineering and Maths) and DT. We all came together, collaborating with each other with our own various different skillsets and thinking. We thoroughly enjoy the hands-on experience the STEM Racing club provides us and the teamwork & collaboration skills we have developed on our journey, helping us get to where we are today! We have so far participated in 3 competitions, including the National Finals in 2025. We are now working towards the Professional class and hope to continue our success!</p>
-            <a href="./about-us/">Learn more..</a>
-            
-            <h1>What is STEM Racing?</h1>
-            <p style="padding-bottom: 0;">Freshly rebranded from F1 in Schools, STEM Racing is a fun STEM-based activity with the goal of introducing students to STEM subjects in an engaging way, using the theme of F1 to encourage students to compete. Students create a miniature F1 car with F1-style features to maximise aerodynamics, thinking through aesthetics, manufacturing, sketches and designing on CAD, designing a portfolio to document their journey and even developing a brand to display at the competition and raise funds for getting the best resources possible!</p>
-            <a href="https://www.stemracing.com" target="_blank">Learn more..</a>
-            
-            <h1>Recent News</h1>
-            <!-- <a href="./blog/" style="padding-bottom: 20px; display: inline-block; width: 100%">See our blog..</a> -->
-            <div class="article">
-                <div class="content">
-                    <h2>Success at the National Finals!</h2>
-                    <p>27th March, 2025</p>
-                    <p>Magna Science Adventure Centre, Rotherham</p>
-                    <p>At our first ever National Finals, we had a blast, engaging with other teams and also taking many learning lessons throughout, coming 3rd.</p>
-                    <!-- <a href="./blog/8">Continue reading..</a> -->
+            <div id="nav-text-links">
+                <a class="link text-link" href="./" style="color:#f8ac29">Home</a>
+                <a class="link text-link" href="./about-us">About Us</a>
+                <a class="link text-link" href="./our-journey">Journey</a>
+                <a class="link text-link" href="./our-work">Work</a>
+                <!--<a class="link text-link" href="./sponsors">Sponsors</a>-->
+                <a class="link text-link" href="./contact-us">Contact</a>
+                <!--<a class="link text-link" href="./blog">Blog</a>-->
+            </div>
+        </div>
+        <div class="banner" id="home" alt="Group of 6 students part of Team Blitz lifting a trophy in front of F1 in Schools podium"></div>
+        <div class="half-section">
+            <div class="half right">
+                <div class="imgs">
+                    <div class="img bottom sec-1" id="img-1" alt="Team Blitz lined up ready for their car to race on track"></div>
+                    <div class="img mid sec-1" id="img-2" alt="Team Blitz nervously watching their car perform on track, hands placed together in hope"></div>
+                    <div class="img top sec-1" id="img-3" alt="Team Blitz representative speaking to visitor at Blitz pit display"></div>
+                    <button onclick="sec('sec-1')" alt="Switch between photos"></button>
                 </div>
             </div>
-            <div class="article">
-                <div class="content">
-                    <h2>Success at London South Regionals!</h2>
-                    <p>7th January, 2025</p>
-                    <p>Canterbury Christ Church University, Canterbury</p>
-                    <p>We participated in the London South Regional Finals, coming 2nd in the development class, winning 4 awards and progressing to the National Finals!</p>
-                    <!-- <a href="./blog/9">Continue reading..</a> -->
+            <div class="half left text" id="first-paragraph">
+                <h1>A team, led by precision and excellence.</h1>
+                <p>We are a dedicated STEM Racing (formerly F1 in Schools) team from St Olave's Grammar School, consisting of five students united by a passion for STEM and engineering. After achieving 3rd place nationally in the Development Class, we have demonstrated both technical capability and competitive consistency. We are now preparing to enter Professional Class, aiming to further develop our engineering expertise and compete at the highest level.</p>
+            </div>
+        </div>
+        <div class="half-section" id="inverted">
+            <div class="half right text">
+                <h1>STEM Racing: From textbook, to track.</h1>
+                <p>STEM Racing is a global competition where students design, manufacture, and race miniature F1-style cars. Formerly known as F1 in Schools, it challenges teams to showcase their skills in every aspect, from aerodynamics to marketing. Participants apply real-world engineering principles, use CAD/CAM/CAE software, whilst also gaining experience in business and finance at regional, national, and international levels.</p>
+            </div>
+            <div class="half left">
+                <div class="imgs">
+                    <div class="img bottom sec-2" id="img-4" alt="Rayhaan and other teams watching the start gate of the racetrack before firing the cars away"></div>
+                    <div class="img mid sec-2" id="img-5" alt="Yash, team manager of Blitz, speaking to other teams and a STEM Racing representative"></div>
+                    <div class="img top sec-2" id="img-6" alt="Four cars in four lanes, Blitz in the third, moving away with gas thrusting them forward"></div>
+                    <button onclick="sec('sec-2')" alt="Switch between photos"></button>
                 </div>
             </div>
-
-            <h1>Our Social Media</h1>
-            <h2>Instagram</h2>
-            <a href="https://www.instagram.com/team_blitz8" class="chip"><i class="fa fa-instagram" target="_blank"></i>Follow us on Instagram</a>
-            <figure class="instagram-feed" data-behold-id="9KkC8tX1PVg8O4gmiCEr"></figure>
-        </section>
-
-        <footer>
-            <div id="sponsors">
-                <img src="./sponsors/silk.jpg">
-                <img src="./sponsors/fernweh.png">
+        </div>
+        <div class="half-section">
+            <div class="half right">
+                <div class="imgs">
+                    <div class="img bottom sec-3" id="img-7" alt="Two awards stacked on a table next to one another, with a yellow and black racecar in between: Research & Development Award (All Classes), Verbal Presentation Award (All Classes)"></div>
+                    <div class="img mid sec-3" id="img-8" alt="Four awards stacked on a table next to one another: Research & Development Award (All Classes), 2nd in Development Class, Portfolio Award (All Classes), Fastest Car (Development Class)"></div>
+                    <div class="img top sec-3" id="img-9" alt="Blitz standing on the podium behind the event organisers, trophy in hand"></div>
+                    <button onclick="sec('sec-3')" alt="Switch between photos"></button>
+                </div>
             </div>
-
-            <div class="footnav">
-                <a href="./" class="footlink">Home</a>
-                <a href="./about-us" class="footlink">About Us</a>
-                <a href="./our-journey/" class="footlink">Our Journey</a>
-                <a href="./our-work/" class="footlink">Our Work</a>
-                <a href="./sponsors/" class="footlink">Sponsors</a>
-                <!-- <a href="./blog/" class="footlink">Blog</a> -->
-                <a href="./contact-us/" class="footlink">Contact Us</a>
+            <div class="half left">
+                <h1>You're in good hands.</h1>
+                <div id="awards" class="text">
+                    <div class="award-container">
+                        <div class="back award">London North Regional Finals, 2023/24, Entry Class</div>
+                        <div class="forward award">1x Verbal Presentation Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">
+                            <pre>London North Regional Finals, 2023/24, Entry Class
+London South Regional Finals, 2024/25, Development Class</pre>
+                        </div>
+                        <div class="forward award">2x Research & Development Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">London South Regional Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x Portfolio Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">London South Regional Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x Fastest Car Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">London South Regional Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x 2nd Place Award</div>
+                    </div>
+                    <div class="award-container">
+                        <div class="back award">UK National Finals, 2024/25, Development Class</div>
+                        <div class="forward award">1x 3rd Place Award</div>
+                    </div>
+                </div>
             </div>
-
-            <p id="copyright">© Team Blitz 2022-2025. All rights reserved.</p>
-
-            <div class="social-links">
-                <a href="https://www.instagram.com/team_blitz8" target="_blank" id="insta"><img src="./global/insta.png"></a>
+        </div>
+        <div class="half-section">
+            <div class="half right text">
+                <h1>BL3, our flagship national challenger.</h1>
+                <p>STEM Racing is a global competition where students design, manufacture, and race miniature F1-style cars. Formerly known as F1 in Schools, it challenges teams to showcase their skills in every aspect, from aerodynamics to marketing. Participants apply real-world engineering principles, use CAD/CAM/CAE software, whilst also gaining experience in business and finance at regional, national, and international levels.</p>
             </div>
-        </footer>
+            <div class="half left">
+                <model-viewer id="car-model" src="./models/nats25-car.glb" camera-controls disable-zoom class="imgs" alt="A model of the car raced by Blitz at the UK National Finals"></model-viewer>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1 class="non-text">Building upward, brick by brick.</h1>
+            <div class="carousel">
+                <div class="controls">
+                    <button class="prev" alt="Press to see the previous part of our journey" onclick="prev()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="next" alt="Press to see the next part of our journey" onclick="next()"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="carousel-container">
+                    <div class="img carousel-first i1">
+                        <h2>Team Formation</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar date"></i> Nov 2022</p>
+                            <p class="location"><i class="fa-solid fa-location-dot location"></i> St Olave's Grammar School, Orpington</p>
+                        </div>
+                        <p>The beginning of our journey, as Team Omega, founded by Yash, Chen, Ifti and Pamoda. From our very first brainstorming sessions came innovative concepts which evolved into key features of our 2023 Regional Finals car, marking the beginning of our engineering journey.</p>
+                    </div>
+                    <div class="img carousel-second i2">
+                        <h2>Rebrand</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar date"></i> Mar 2023</p>
+                            <p class="location"><i class="fa-solid fa-location-dot location"></i> St Olave's Grammar School, Orpington</p>
+                        </div>
+                        <p>Following the departure of two founding members (Ifti and Pamoda), our team welcomed the new talent of Pranit and Rayhaan, bringing fresh ideas and expertise to build on the foundations already established. It marked the beginning of a new chapter, with our rebrand to Blitz reflecting our renewed vision and commitment.</p>
+                    </div>
+                    <div class="img carousel-third i3">
+                        <h2>London North Regional Finals</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar date"></i> Dec 2023</p>
+                            <p class="location"><i class="fa-solid fa-location-dot location"></i> Harlow College, Harlow</p>
+                        </div>
+                        <p>We competed in our first ever F1 in Schools (STEM Racing) competition at the London North Regional Finals, where months of dedication, innovation, and teamwork came to fruition and recognised with a 2nd place finish in the Entry Class, alongside winning two prestigious awards across all classes.</p>
+                    </div>
+                    <div class="img inactive-right i4">
+                        <h2>New Members</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar date"></i> Jan 2024</p>
+                            <p class="location"><i class="fa-solid fa-location-dot location"></i> St Olave's Grammar School, Orpington</p>
+                        </div>
+                        <p>Following our first competition we introduce two new members to the team: Josh and Anu as we sought to strengthen our Enterprise team and begin preparations for the novel challenge of Development Class and the additional work needed for it.</p>
+                    </div>
+                    <div class="img inactive-right i5">
+                        <h2>London South Regional Finals</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar date"></i> Jan 2025</p>
+                            <p class="location"><i class="fa-solid fa-location-dot location"></i> Canterbury Christ Church University, Canterbury</p>
+                        </div>
+                        <p>We attended our first Development Class Regional Finals competition with great success, securing qualification to the National Finals with a 2nd place finish along with multiple awards. It also provided us with critical experience in newer areas such as the Enterprise Portfolio, allowing us to bring our best to the National Finals.</p>
+                    </div>
+                    <div class="img inactive-left i6">
+                        <h2>UK National Finals</h2>
+                        <div class="additional-details">
+                            <p class="date"><i class="fa-regular fa-calendar date"></i> Mar 2025</p>
+                            <p class="location"><i class="fa-solid fa-location-dot location"></i> Magna Science Adventure Centre, Rotherham</p>
+                        </div>
+                        <p>Our engineering vision and passion culminates in our first ever trip to the National Finals. A competitive car, pit display and consistent results across the board earn us a podium nationally for the Development Class.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1 class="non-text">More is coming.</h1>
+            <div class="img countdown">
+                <div class="timer-container">
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>days</p>
+                    </div>
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>hours</p>
+                    </div>
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>minutes</p>
+                    </div>
+                    <div class="timer">
+                        <h1>67</h1>
+                        <p>seconds</p>
+                    </div>
+                </div>
+                <p class="countdown-description">to the Regional Finals</p>
+            </div>
+        </div>
+        <!--
+        <div class="full-section">
+            <h1 class="non-text">Trusted by many.</h1>
+            <div class="marquee">
+                <div class="marquee-container">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/blitzLogo_Black.svg">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/blitzLogo_Black.svg">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                    <img src="./imgs/placeholder.png">
+                </div>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1 class="non-text">Blog</h1>
+            <div class="articles">
+                <div class="article">
+                    <img class="article-img" src="./imgs/placeholder.png">
+                    <h1>Yash has no life</h1>
+                    <p class="article-date"><i class="fa-regular fa-calendar"></i> 1 January 2067</p>
+                    <p>Yash is still out here living like a full-time ghost, somehow making time for absolutely nothing.</p>
+                    <a href="./blog/3">Read more</a>
+                </div>
+                <div class="article excess">
+                    <img class="article-img" src="./imgs/placeholder.png">
+                    <h1>Yash has no life</h1>
+                    <p class="article-date"><i class="fa-regular fa-calendar"></i> Yo josh</p>
+                    <p>Yash keeps proving that his life is mostly just sleep, screens, and zero plans.</p>
+                    <a href="./blog/2">Read more</a>
+                </div>
+                <div class="article excess">
+                    <img class="article-img" src="./imgs/placeholder.png">
+                    <h1>Yash has no life</h1>
+                    <p class="article-date"><i class="fa-regular fa-calendar"></i> Hop off roblox</p>
+                    <p>Yash’s daily routine is so bleak it feels like he’s been living in permanent low-energy mode.</p>
+                    <a href="./blog/1">Read more</a>
+                </div>
+            </div>
+        </div> -->
+        <div class="full-section">
+            <h1 class="non-text">Stay tuned.</h1>
+            <behold-widget feed-id="9KkC8tX1PVg8O4gmiCEr" alt="The most recent Team Blitz Instagram posts"></behold-widget>
+        </div>
+        <div class="footer">
+            <p>If you like what you see, <a href="https://youtu.be/dQw4w9WgXcQ?t=0" style="color:#f8ac29">buy us a coffee.</a></p>
+            <div class="socials">
+                <a href="https://www.instagram.com/team_blitz8/" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+                <a href="https://www.linkedin.com/company/teamblitz/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="mailto:business@teamblitz.uk" target="_blank"><i class="fa-solid fa-at"></i></a>
+            </div>
+        </div>
+        <!--Include place (subdomain?) to put in car development details e.g. changelog, development tree, name, secured by login portal, which can also be where blog posts are added-->
     </body>
 </html>
+
+<!--SR Images: ./imgs/nats/1-094A5324.jpg, ./imgs/nats/1-072A3966.jpg, ./imgs/nats/1-1MDH2998.jpg-->
+<!--Team Images: ./imgs/nats/1-1MDH2485.jpg, ./imgs/nats/1-1MDH3005.jpg, ./imgs/nats/1-2MDH1013.jpg-->

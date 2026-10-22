@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+    <head>
+        <title>Team Blitz - About Us</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
+        <link rel="stylesheet" href="./css/global.css">
+        <link rel="stylesheet" href="./css/about.css">
+        <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
+        <script src="./js/global.js" defer></script>
+        <script src="./js/about.js" defer></script>
+    </head>
+
+    <body>
+        <div id="nav">
+            <div id="nav-hamburger-logo-group">
+                <a class="link" href="./index.html"><img src="./imgs/blitzLogo_Transparent.svg" id="nav-logo" alt="Team Blitz Logo, a orange and black shaped B with a lightning bolt running down the middle"></a>
+                <h1 class="link">Team Blitz</h1>
+                <a class="hamburger link" onclick="phone()" alt="Press to expand navigation menu"><i class="fa-solid fa-bars"></i></a>
+            </div>
+            <div id="nav-text-links">
+                <a class="link text-link" href="./">Home</a>
+                <a class="link text-link" href="./about-us" style="color:#f8ac29">About Us</a>
+                <a class="link text-link" href="./our-journey">Journey</a>
+                <a class="link text-link" href="./our-work">Work</a>
+                <!--<a class="link text-link" href="./sponsors.html">Sponsors</a>-->
+                <a class="link text-link" href="./contact-us">Contact</a>
+                <!--<a class="link text-link" href="./blog">Blog</a>-->
+            </div>
+        </div>
+        <div class="banner" id="about" alt="Team Blitz standing in front of historic St Olave's School gate"></div>
+        <div class="full-section">
+            <h1>One team, one mission: an overview of who we are.</h1>
+            <p>We are a competitive STEM Racing Professional Class team of 5 students from St Olave's Grammar School. At Blitz we have over 3 years of experience spanning both regional and national competitions, to which we achieved great success, culminating in our 3rd place finish at the 2024/25 UK National Finals in the Development Class. We are actively seeking financial support to help unlock our final potential for the 2026/27 season.</p>
+        </div>
+        <div class="full-section">
+            <h1>Meet our members.</h1>
+            <div class="row">
+                <div class="member-container">
+                    <div class="member img" id="yash">
+                        <h2>Yash Parekh</h2>
+                        <h3>Team Principal</h3>
+                        <img src="./imgs/team/yash_lowres.JPG" alt="Portrait of Yash">
+                        <p class="bio">Yash is currently aspiring to become a mechanical engineer, with a strong interest in aerodynamics and practical problem solving. As not our Team Principal, Yash oversees all team operations and has the final say on everything produced by the team, ensuring it meets the highest of standards, a trait which matches his ambition to lead a project in the future. Outside of his leadership role, Yash also contributes to the car by designing the body and aims to minimise any losses in car performance in order to create the fastest car possible and deliver the best races for the team, specifically cherishing practical experience from STEM Racing.</p>
+                    </div>
+                    <div class="button-container">
+                        <button class="more" alt="Press to see info about Yash" onclick="more('yash')" id="yash-butt"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </div>
+                <div class="member-container">
+                    <div class="member img" id="chen">
+                        <h2>Chen Hui Wang</h2>
+                        <h3>Head of Engineering</h3>
+                        <img src="./imgs/team/chen_lowres.JPG" alt="Portrait of Chen">
+                        <p class="bio">Chen is keen on developing skills in a wide range of disciplines and thus aspires to study Mechanical Engineering. Within the team his primary role is within car design, specialising specifically within CAA using advanced analysis software such as CFD and FEA, and plays a large role in verifying and maximising the raw performance and potential of our car. Chen also manages the team's social media and aims to maximise the team's outreach. He also designed the website and has a keen interest in programming and coding, skills which he hopes will ensure the team's success on track and the production of a truly creative pit display.</p>
+                    </div>
+                    <div class="button-container">
+                        <button alt="Press to see info about Chen" class="more" onclick="more('chen')" id="chen-butt"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </div>
+                <div class="member-container">
+                    <div class="member img" id="rayhaan">
+                        <h2>Rayhaan Smith</h2>
+                        <h3>Head of Enterprise</h3>
+                        <img src="./imgs/team/rayhaan_lowres.JPG" alt="Portrait of Rayhaan">
+                        <p class="bio">Rayhaan has a strong interest in aerodynamic vehicles and their operation, and his ambition is to one day become a Commercial Airline Pilot. Being Head of Enterprise, his main functions are to oversee project management and team communication, ensuring work is completed as efficiently as possible whilst holding all work to a high standard, developing our chain of reviews in order to achieve this. As good communication is a critical part of managing an aircraft safely, Rayhaan hopes to develop this skill whilst managing the Enterprise department in the team's shared goal to challenge for podiums with a strong portfolio and Verbal Presentation.</p>
+                    </div>
+                    <div class="button-container">
+                        <button alt="Press to see info about Rayhaan" class="more" onclick="more('rayhaan')" id="rayhaan-butt"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="member-container">
+                    <div class="member img" id="pranit">
+                        <h2>Pranit Malhotra</h2>
+                        <h3>Design Engineer</h3>
+                        <img src="./imgs/team/pranit_lowres.JPG" alt="Portrait of Pranit">
+                        <p class="bio">Pranit has a keen interest in fluid and thermodynamics and thus is currently aspiring to study Aerospace Engineering. As design engineer, his role specifically is designing the car body. Pranit is also an Arkwright Scholar, having been identified by the Smallpeice Trust as a highly promising young person within engineering and is currently supported by the Dyer's Company. As such Pranit aims to gain valuable practical experience with real-world software, such as Autodesk Fusion and Simscale, and hopes to deliver a car capable of challenging for the top.</p>
+                    </div>
+                    <div class="button-container">
+                        <button alt="Press to see info about Pranit" class="more" onclick="more('pranit')" id="pranit-butt"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </div>
+                <div class="member-container">
+                    <div class="member img" id="josh">
+                        <h2>Josh Abraham</h2>
+                        <h3>Manufacturing & Finance Manager</h3>
+                        <img src="./imgs/team/josh_lowres.JPG" alt="Portrait of Josh">
+                        <p class="bio">Josh aspires to be an electrical engineer, being particularly interested in developing his skills within electronics whilst developing a wide range of skills. Within the team he possesses two roles, being responsible for the manufacturing of our car including the design of our wheel system and ensuring all designs are viable via FEA. Josh also manages our finances and oversees our policy of financial responsibility. Josh hopes to gain practical experience through the manufacturing of the car and pit display and maximising our team's success within a limited budget.</p>
+                    </div>
+                    <div class="button-container">
+                        <button alt="Press to see info about Josh" class="more" onclick="more('josh')" id="josh-butt"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1>Our value & impact.</h1>
+            <div id="cool-boxes">
+                <div class="cool-box">
+                    <i class="fa-solid fa-flag-checkered"></i>
+                    <div class="cool-box-text">
+                        <h2>3rd at the UK National Finals</h2>
+                        <p>2024/25 season, Development Class</p>
+                        <p>UK National Finals</p>
+                    </div>
+                </div>
+                <div class="cool-box">
+                    <i class="fa-brands fa-square-instagram"></i>
+                    <div class="cool-box-text">
+                        <h2>150+ Instagram followers</h2>
+                        <p>As of October 2026</p>
+                        <p>@team_blitz8</p>
+                    </div>
+                </div>
+                <div class="cool-box">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <div class="cool-box-text">
+                        <h2>Fastest Car</h2>
+                        <p>2024/25 season, Development Class</p>
+                        <p>London South Regional Finals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>If you like what you see, <a href="https://youtu.be/dQw4w9WgXcQ?t=0" style="color:#f8ac29">buy us a coffee.</a></p>
+            <div class="socials">
+                <a href="https://www.instagram.com/team_blitz8/" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+                <a href="https://www.linkedin.com/company/teamblitz/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="mailto:business@teamblitz.uk" target="_blank"><i class="fa-solid fa-at"></i></a>
+            </div>
+        </div>
+    </body>
+</html>

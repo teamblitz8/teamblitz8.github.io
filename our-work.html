@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+    <head>
+        <title>Team Blitz - Our Work</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
+        <link rel="stylesheet" href="./css/global.css">
+        <link rel="stylesheet" href="./css/work.css">
+        <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
+        <script src="./js/global.js" defer></script>
+        <script src="./js/work.js" defer></script>
+        <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
+        <script>
+            (() => {
+                if(window.__bhldScript)return;window.__bhldScript=true;
+                const d=document,s=d.createElement("script");s.type="module";
+                s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
+            })();
+        </script>
+    </head>
+
+    <body>
+        <div id="nav">
+            <div id="nav-hamburger-logo-group">
+                <a class="link" href="./index.html"><img src="./imgs/blitzLogo_Transparent.svg" id="nav-logo" alt="Team Blitz Logo, a orange and black shaped B with a lightning bolt running down the middle"></a>
+                <h1 class="link">Team Blitz</h1>
+                <a alt="Press to expand navigation menu" class="hamburger link" onclick="phone()"><i class="fa-solid fa-bars"></i></a>
+            </div>
+            <div id="nav-text-links">
+                <a class="link text-link" href="./">Home</a>
+                <a class="link text-link" href="./about-us">About Us</a>
+                <a class="link text-link" href="./our-journey">Journey</a>
+                <a class="link text-link" href="./our-work" style="color:#f8ac29">Work</a>
+                <!--<a class="link text-link" href="./sponsors">Sponsors</a>-->
+                <a class="link text-link" href="./contact-us">Contact</a>
+                <!--<a class="link text-link" href="./blog">Blog</a>-->
+            </div>
+        </div>
+        <div class="banner" id="work" alt="A render of Blitz's car raced at the UK National Finals on a coffee table"></div>
+        <div class="half-section" id="inverted">
+            <div class="half right">
+                <div class="imgs">
+                    <div class="img bottom sec-1" id="img-1" alt="A Blitz car on the race track"></div>
+                    <div class="img mid sec-1" id="img-2" alt="Two identical Blitz cars sat on a sheet of paper used to check if they meet regulations"></div>
+                    <div class="img top sec-1" id="img-3" alt="Yash speaking to a STEM Racing representative and other teams"></div>
+                    <button onclick="sec('sec-1')"></button>
+                </div>
+            </div>
+            <div class="half left text">
+                <h1>Our way of giving back.</h1>
+                <p>Starting your STEM Racing journey without any prior experience or mentorship can be tough alone. As a team, we have decided to open source all competition materials we have previously submitted, to support new teams who are looking for a place to start in the competition. Explore our competition-ready cars, their drag values and the real track times that they produced at the competition.</p>
+            </div>
+        </div>
+        <div class="full-section">
+            <h1>Originality</h1>
+            <p>The work showcased on this website is intended to inspire and guide new STEM Racing teams. While you're welcome to learn from our approaches and use them to develop your own ideas, please do not copy our designs, content, or work directly. Every team should aim to develop its own original solutions, creativity, and engineering identity.</p>
+        </div>
+        <div id="file-finder">
+            <h1 class="container-title">Blitz Competition Materials</h1>
+            <div class="season first">
+                <div class="button-container">
+                    <button alt="Press to see materials submitted for the 2023/24 season" class="expand" onclick="expand('23')"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+                <h1>2023/24 Season</h1>
+                <h2>Entry Class</h2>
+                <h2>Regional Finals</h2>
+                <div class="content">
+                    <div class="show see">
+                        <h2>Car (BL1, codename Dash)</h2>
+                        <model-viewer id="regs23" src="./models/regs23-car.glb" camera-controls disable-zoom class="imgs see" alt="A model of the car that competed during the 2023/24 season"></model-viewer>
+                    </div>
+                    <div class="stats-container see">
+                        <div class="statistics see">
+                            <div class="drag">
+                                <h1>0.246N</h1>
+                                <p>drag</p>
+                            </div>
+                            <div class="track-time">
+                                <h1>1.550s</h1>
+                                <p>Best track time</p>
+                            </div>
+                        </div>
+                        <a href="./models/regs23-car.step" download="Blitz_Example_Car_BL1.step" class="button" alt="Press to download a 3D model of the car">Download</a>
+                    </div>
+                </div>
+            </div>
+            <div class="season second">
+                <div class="button-container">
+                    <button alt="Press to see materials submitted for the 2024/25 season at the Regional Finals" class="expand" onclick="expand('24')"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+                <h1>2024/25 Season</h1>
+                <h2>Development Class</h2>
+                <h2>Regional Finals</h2>
+                <div class="content">
+                    <div class="show see">
+                        <h2>Car (BL2, codename Flash)</h2>
+                        <model-viewer id="regs24" src="./models/regs24-car.glb" camera-controls disable-zoom class="imgs see" alt="A model of the car that competed at the London South Regional Finals in the 2024/25 season"></model-viewer>
+                    </div>
+                    <div class="stats-container see">
+                        <div class="statistics see">
+                            <div class="drag">
+                                <h1>0.229N</h1>
+                                <p>drag</p>
+                            </div>
+                            <div class="track-time">
+                                <h1>1.339s</h1>
+                                <p>Best track time</p>
+                            </div>
+                        </div>
+                        <a href="./models/regs24-car.step" download="Blitz_Example_Car_BL2.step" class="button" alt="Press to download a 3D model of the car">Download</a>
+                    </div>
+                </div>
+            </div>
+            <div class="season third">
+                <div class="button-container">
+                    <button alt="Press to see materials submitted for the 2024/25 season at the National Finals" class="expand" onclick="expand('25')"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+                <h1>2024/25 Season</h1>
+                <h2>Development Class</h2>
+                <h2>National Finals</h2>
+                <div class="content">
+                    <div class="show see">
+                        <h2>Car (BL3, codename Spark)</h2>
+                        <model-viewer id="nats25" src="./models/nats25-car.glb" camera-controls disable-zoom class="imgs see" alt="A model of the car that competed at the UK National Finals in the 2024/25 season"></model-viewer>
+                    </div>
+                    <div class="stats-container see">
+                        <div class="statistics see">
+                            <div class="drag">
+                                <h1>0.208N</h1>
+                                <p>drag</p>
+                            </div>
+                            <div class="track-time">
+                                <h1>1.355s</h1>
+                                <p>Best track time</p>
+                            </div>
+                        </div>
+                        <a href="./models/nats25-car.glb" download="Blitz_Example_Car_BL3.step" class="button" alt="Press to download a 3D model of the car">Download</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+        <br>
+        <div class="footer">
+            <p>If you like what you see, <a href="https://youtu.be/dQw4w9WgXcQ?t=0" style="color:#f8ac29">buy us a coffee.</a></p>
+            <div class="socials">
+                <a href="https://www.instagram.com/team_blitz8/" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+                <a href="https://www.linkedin.com/company/teamblitz/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="mailto:business@teamblitz.uk" target="_blank"><i class="fa-solid fa-at"></i></a>
+            </div>
+        </div>
+    </body>
+</html>

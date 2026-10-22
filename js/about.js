@@ -1,0 +1,1 @@
+const more=e=>{const t=document.getElementById(e).querySelector(".bio"),o=document.getElementById(`${e}-butt`).querySelector("i"),c=t.classList.toggle("expanded");o.className=c?"fa-solid fa-x":"fa-solid fa-chevron-down"};

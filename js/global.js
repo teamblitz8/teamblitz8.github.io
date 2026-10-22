@@ -1,0 +1,1 @@
+const phone=()=>{document.getElementById("nav").classList.toggle("phone")};

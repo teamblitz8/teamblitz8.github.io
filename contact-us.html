@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+    <head>
+        <title>Team Blitz - Contact Us</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
+        <link rel="stylesheet" href="./css/global.css">
+        <link rel="stylesheet" href="./css/contact.css">
+        <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
+        <script src="./js/global.js" defer></script>
+        <script src="./js/contact.js" defer></script>
+        <script>
+            (() => {
+                if(window.__bhldScript)return;window.__bhldScript=true;
+                const d=document,s=d.createElement("script");s.type="module";
+                s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
+            })();
+        </script>
+    </head>
+
+    <body>
+        <div id="nav">
+            <div id="nav-hamburger-logo-group">
+                <a class="link" href="./index.html"><img src="./imgs/blitzLogo_Transparent.svg" id="nav-logo" alt="Team Blitz Logo, a orange and black shaped B with a lightning bolt running down the middle"></a>
+                <h1 class="link">Team Blitz</h1>
+                <a class="hamburger link" onclick="phone()"><i class="fa-solid fa-bars" alt="Press to expand navigation menu"></i></a>
+            </div>
+            <div id="nav-text-links">
+                <a class="link text-link" href="./">Home</a>
+                <a class="link text-link" href="./about-us">About Us</a>
+                <a class="link text-link" href="./our-journey">Journey</a>
+                <a class="link text-link" href="./our-work">Work</a>
+                <!--<a class="link text-link" href="./sponsors">Sponsors</a>-->
+                <a class="link text-link" href="./contact-us" style="color:#f8ac29">Contact</a>
+                <!--<a class="link text-link" href="./blog">Blog</a>-->
+            </div>
+        </div>
+        <div class="banner" id="contact" alt="An image of the Blitz car amongst others at the UK National Finals"></div>
+        <div class="full-section">
+            <h1>Getting in touch</h1>
+            <p>If your company is interested in supporting a team of young and innovative engineers, please get in touch with us using the email located in the last page of our sponsorship prospectus (for the sake of security, we cannot list our emails here in plain text). We are willing to answer any questions you may have.</p>
+        </div>
+        <div class="full-section">
+            <h1>Sponsorship Prospectus</h1>
+            <embed src="./pdf/prospectus.pdf#view=FitH" type="application/pdf" title="Sponsorship Prospectus" alt="A viewer showing the PDF file of the Blitz sponsorship prospectus">
+        </div>
+        <!--<div class="full-section">
+            <h1>Contact us</h1>
+            <form id="contact-form" action="" novalidate>
+                <span class="error" id="overall"></span>
+                <div id="flexed">
+                    <div>
+                        <label for="first-name">First name</label><br>
+                        <input type="text" id="first-name" name="first-name" placeholder="Yash" required minlength="3" maxlength="35">
+                        <span class="error"></span>
+                    </div>
+                    <div>
+                        <label for="last-name">Last name</label><br>
+                        <input type="text" id="last-name" name="last-name" placeholder="Parekh" required minlength="3" maxlength="35">
+                        <span class="error"></span>
+                    </div>
+                </div>
+                <div>
+                    <label for="email">Email address</label><br>
+                    <input type="email" id="email" name="email" placeholder="hello@teamblitz.uk" required size="100%" minlength="3" maxlength="254">
+                    <span class="error"></span>
+                </div>
+                <div>
+                    <label for="company">Company</label><br>
+                    <input type="text" id="company" name="company" placeholder="Blitz Ltd" required size="100%" minlength="3" maxlength="160">
+                    <span class="error"></span>
+                </div>
+                <div>
+                    <label for="message">Message</label><br>
+                    <textarea id="message" name="message" placeholder="Hi!" required minlength="10" maxlength="3000"></textarea>
+                    <span class="error"></span>
+                </div>
+                <input type="submit" id="submit">
+            </form>
+        </div>-->
+        <div class="footer">
+            <p>If you like what you see, <a href="https://youtu.be/dQw4w9WgXcQ?t=0" style="color:#f8ac29">buy us a coffee.</a></p>
+            <div class="socials">
+                <a href="https://www.instagram.com/team_blitz8/" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+                <a href="https://www.linkedin.com/company/teamblitz/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="mailto:business@teamblitz.uk" target="_blank"><i class="fa-solid fa-at"></i></a>
+            </div>
+        </div>
+    </body>
+</html>

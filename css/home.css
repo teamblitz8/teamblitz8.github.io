@@ -1,0 +1,475 @@
+.banner#home {
+    background-image: url("../imgs/nats-og/1-072A9764.webp");
+}
+
+#img-3 {
+    background-image: url("../imgs/nats-compressed/1-1MDH2485.jpg");
+}
+
+#img-2 {
+    background-image: url("../imgs/nats-compressed/1-1MDH3005.jpg");
+}
+
+#img-1 {
+    background-image: url("../imgs/nats-compressed/1-2MDH1013.jpg");
+}
+
+#img-6 {
+    background-image: url("../imgs/nats-compressed/1-094A5324.jpg");
+}
+
+#img-5 {
+    background-image: url("../imgs/nats-compressed/1-072A3966.jpg");
+}
+
+#img-4 {
+    background-image: url("../imgs/nats-compressed/1-1MDH2998.jpg");
+}
+
+#img-9 {
+    background-image: url("../imgs/nats-compressed/1-094A7308.jpg");
+}
+
+#img-8 {
+    background-image: url("../imgs/regs24-25/dev-awards-lowres.jpeg");
+}
+
+#img-7 {
+    background-image: url("../imgs/regs23-24/entry-awards.jpeg");
+}
+
+#awards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.award {
+    position: absolute;
+    display: block;
+    background: linear-gradient(
+        150deg,
+        #f5d53d 0%,
+        #f8ac29 25%,
+        #f8ac29 75%,
+        #f5d53d 100%
+    );
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,0.2),
+        0 6px 16px rgba(0,0,0,0.35);
+    border-radius: 2vh;
+    border: 1px solid black;
+    width: 100%;
+    height: 4vh;
+    margin: 0;
+    padding: 0;
+    font-size: 1.111em;
+    font-weight: 300;
+    line-height: 4vh;
+    transition: opacity 0.6s ease-in-out;
+}
+
+.carousel {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.carousel .carousel-container {
+    margin: auto;
+    width: 100%;
+    border-radius: 5vh;
+    position: relative;
+    overflow: hidden;
+    padding: 1vw;
+    box-sizing: border-box;
+}
+
+.carousel-container .img {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.carousel .img {
+    position: absolute;
+    border: 0;
+    border-radius: 0;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    box-sizing:border-box;
+}
+
+.carousel-first {
+    border-radius: 5vh 0 0 5vh !important;
+    opacity: 1;
+    transform: translateX(0%);
+}
+
+.carousel-second {
+    opacity: 1;
+    transform: translateX(100%);
+}
+
+.carousel-third {
+    border-radius: 0 5vh 5vh 0 !important;
+    opacity: 1;
+    transform: translateX(200%);
+}
+
+.inactive-left {
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+.inactive-right {
+    opacity: 0;
+    transform: translateX(300%);
+}
+
+.controls {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.controls button {
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f8ac29 25%,
+        #f5d53d 50%,
+        #f8ac29 75%,
+        #1f2121 100%
+    );
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,0.2),
+        0 6px 16px rgba(0,0,0,0.35);
+    border-radius: 5vh;
+    height: 2.777vw;
+    width: 2.777vw;
+    z-index: 100;
+    cursor: pointer;
+}
+
+.controls button i {
+    color: #1f2121;
+    font-size: 1.3885em;
+}
+
+.prev {
+    transform: translateX(calc(-50% + 1vw));
+}
+
+.next {
+    transform: translateX(calc(50% - 2vw));
+}
+
+.carousel .img h2 {
+    font-size: 1.4em;
+}
+
+.carousel .img p {
+    font-size: 1em;
+    width: 85%;
+    margin: 0 auto;
+}
+
+.carousel .img .additional-details {
+    margin-bottom: 2vh;
+}
+
+.date {
+    color: #f8ac29;
+}
+
+.date i {
+    color: #f8ac29;
+}
+
+i {
+    padding-right: 0.25vw;
+}
+
+.countdown {
+    position: relative;
+    margin: auto;
+    padding: 0;
+    width: 50%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.timer-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8vh;
+    margin-bottom: 0;
+}
+
+.timer-container h1 {
+    margin-bottom: 1vh;
+    font-size: 4em;
+    line-height: 4vw;
+    color: #f5d53d;
+}
+
+.countdown-description {
+    margin: 4vh 0;
+    font-weight: 300;
+}
+
+.marquee {
+    width: 100%;
+    overflow: hidden;
+}
+
+.marquee-container {
+    display: flex;
+    width: max-content;
+    animation: marquee 15s linear infinite;
+}
+
+.marquee-container img {
+    height: 36vh;
+    width: 36vh;
+    flex-shrink: 0;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    border-radius: 5vh;
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f5d53d 40%,
+        #f8ac29 50%,
+        #f8ac29 60%,
+        #f5d53d 100%
+    );
+    width: 25vw;
+}
+
+.articles {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+}
+
+.article h1 {
+    font-size: 1.6em;
+    line-height: 1.6vw;
+    padding: 1vh 0;
+    margin: 0;
+}
+
+.article p {
+    font-size: 1.111em;
+    line-height: 1.111vw;
+}
+
+.article a {
+    font-size: 1.111em;
+    line-height: 1.111vw;
+    padding: 0.5vh 0;
+}
+
+.article-date {
+    margin-bottom: 2.5vh;
+}
+
+.article-img {
+    display: block;
+    width: 25vw;
+    height: 25vw;
+}
+
+.forward:hover {
+    opacity: 0;
+    cursor: pointer;
+}
+
+.award-container {
+    position: relative;
+    height: 4vh;
+    width: 100%;
+    padding: 0;
+}
+
+.forward {
+    z-index: 2;
+}
+
+.back {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 2vh;
+}
+
+@media screen and (max-width: 1000px) {
+    .forward:active {
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .award-container {
+        margin: 1vh;
+    }
+
+    .carousel {
+        display: block;
+        position: relative;
+        width: 100%;
+        margin: auto;
+    }
+
+    .carousel .carousel-container {
+        display: block;
+        position: absolute;
+        padding: 3vh;
+    }
+
+    .carousel .carousel-container .img {
+        position: absolute;
+        width: calc(100% - 6vh);
+        padding: 0;
+    }
+
+    .controls {
+        width: 100%;
+        z-index: 4;
+    }
+
+    .controls button {
+        height: 5vh;
+        width: 5vh;
+    }
+
+    .controls button i {
+        font-size: 1.25em;
+    }
+
+    .carousel-first {
+        z-index: 3;
+        background-color: #1f2121;
+    }
+
+    .carousel-second {
+        z-index: 2;
+        background-color: #1f2121;
+        opacity: 0;
+    }
+
+    .carousel-third {
+        z-index: 1;
+        background-color: #1f2121;
+        opacity: 0;
+    }
+
+    .carousel .img h2 {
+        font-size: 2.5em;
+    }
+
+    .carousel .img .additional-details p {
+        font-size: 2em;
+    }
+
+    .carousel .img p {
+        font-size: 1.8em;
+    }
+
+    .carousel .carousel-container .img {
+        display: flex;
+        justify-content: center;
+        border-radius: 5vh !important;
+    }
+
+    .countdown {
+        height: auto;
+        width: 100%;
+    }
+
+    .countdown .timer-container {
+        margin: 5vh;
+    }
+
+    .countdown .timer-container .timer h1 {
+        font-size: 5em;
+        line-height: 5vh;
+    }
+
+    .countdown .timer-container .timer p {
+        font-size: 2em;
+        line-height: 2vh;
+    }
+
+    .countdown-description {
+        margin: 0;
+        padding-bottom: 5vh;
+    }
+
+    .marquee-container img {
+        height: 30vh;
+        width: auto;
+    }
+
+    .articles {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .article {
+        width: 100%;
+    }
+
+    .article img {
+        width: 100%;
+        height: auto;
+    }
+
+    .article h1 {
+        font-size: 4em;
+        line-height: 4vh;
+        margin-top: 1vh;
+    }
+
+    .article p {
+        font-size: 2em;
+        line-height: 2vh;
+    }
+
+    .article a {
+        font-size: 2em;
+        line-height: 2vh;
+        margin: 0.5vh 0;
+    }
+
+    .award {
+        font-size: 2em;
+        padding: 0.5vh;
+    }
+}

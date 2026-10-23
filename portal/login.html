@@ -17,17 +17,15 @@
         <div>
             <div id="login-box">
                 <h1>Login</h1>
-                <form id="login" action="" novalidate>
-                    <span class="error" id="overall"></span>
+                <form id="login">
+                    <div id="error-box"><span class="error">You have been blocked from making further attempts. Please contact the administrator.</span></div>
                     <div class="question">
                         <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Username" required>
-                        <span class="error"></span>
+                        <input type="text" id="username" name="username" placeholder="Username">
                     </div>
                     <div class="question">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Password" required>
-                        <span class="error"></span>
+                        <input type="password" id="password" name="password" placeholder="Password">
                     </div>
                     <div class="question" id="forever-container">
                         <input type="checkbox" name="forever" id="forever">
@@ -35,7 +33,6 @@
                     </div>
                     <div class="question">
                         <input type="submit" id="submit" name="submit">
-                        <span class="error"></span>
                     </div>
                 </form>
             </div>

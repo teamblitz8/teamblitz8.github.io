@@ -1,5 +1,5 @@
 const crypto = require('node:crypto');
-const iterations = 676767;
+const iterations = 100000;
 const digest = 'sha512';
 
 const convert = (buffer) => {

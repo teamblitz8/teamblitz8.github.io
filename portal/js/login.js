@@ -49,17 +49,17 @@ form.addEventListener('submit', async (e) => {
         }
         catch (e) {
             console.error(e);
-            if (e === 401) {
+            if (e.message === '401') {
                 errorText.textContent = 'Invalid username or password.';
                 attempts++;
                 errorText.className = 'error visible'
             }
-            else if (e === 403) {
+            else if (e.message === '403') {
                 errorText.textContent = 'Your account has been disabled. Please contact the administrator.';
                 attempts++;
                 errorText.className = 'error visible'
             }
-            else if (e === 500) {
+            else if (e.message === '500') {
                 errorText.textContent = '500 Internal Server Error: Please contact the administrator.';
                 attempts++;
                 errorText.className = 'error visible'

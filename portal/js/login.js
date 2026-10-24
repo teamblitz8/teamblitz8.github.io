@@ -19,7 +19,7 @@ form.addEventListener('submit', async (e) => {
         errorPresent = true;
     }
 
-    if (username.value.length > 24 || password.value.length > 24) {
+    if (username.value.length > 24 || password.value.length > 50) {
         errorText.textContent = 'Invalid username or password.';
         attempts++;
         errorPresent = true;

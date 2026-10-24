@@ -17,7 +17,17 @@
 			"database_name": "blitz",
 			"database_id": "4c401887-0a5e-4aca-a181-2adae5e800ba"
 		}
-	]
+	],
+	"ratelimits": [
+		{
+			"name": "ratelimiter",
+			"namespace_id": "6767",
+			"simple": {
+				"limit": 5,
+				"period": 60
+			}
+		}
+	] 
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

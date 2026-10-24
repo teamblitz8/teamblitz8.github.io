@@ -28,7 +28,7 @@ const setup = async () => {
         let username = await input('username');
         let hash;
         let salt;
-        let lastLogin = "2026-01-01 00:00:00.000";
+        let lastLogin = (new Date()).toISOString();
         let active = 1;
         let designIterations = 0;
 

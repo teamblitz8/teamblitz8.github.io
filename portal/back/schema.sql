@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS cars (
     creatorid TEXT,
     scrutineerid TEXT,
     carid TEXT PRIMARY KEY,
+    iteration INTEGER,
     date_created TEXT NOT NULL,
     frontal_area REAL NOT NULL,
     drag_coefficient REAL NOT NULL,
@@ -22,4 +23,8 @@ CREATE TABLE IF NOT EXISTS cars (
     additional_notes TEXT,
     FOREIGN KEY(creatorid) REFERENCES users(userid),
     FOREIGN KEY(scrutineerid) REFERENCES users(userid)
+);
+CREATE TABLE IF NOT EXISTS ipbans (
+    ip TEXT PRIMARY KEY,
+    date_banned TEXT
 );

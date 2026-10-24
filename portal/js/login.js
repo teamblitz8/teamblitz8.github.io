@@ -32,7 +32,7 @@ form.addEventListener('submit', async (e) => {
     else {
         errorText.className = 'error';
         try {
-            const response = await fetch('http://127.0.0.1:8787/api/auth/', {
+            const response = await fetch('https://back.teamblitz.workers.dev/api/auth/', {
                 method: 'POST',
                 body: JSON.stringify({ username: username.value, password: password.value }),
                 headers: {
@@ -46,16 +46,21 @@ form.addEventListener('submit', async (e) => {
             
             errorText.textContent = 'Logging in..';
             errorText.className = 'error visible success'
-
-            // const data = await response.json();
-            // console.log(data);
-
-            // document.getElementById("results").textContent = data[0].username;
         }
         catch (e) {
             console.error(e);
             if (e === 401) {
                 errorText.textContent = 'Invalid username or password.';
+                attempts++;
+                errorText.className = 'error visible'
+            }
+            else if (e === 403) {
+                errorText.textContent = 'Your account has been disabled. Please contact the administrator.';
+                attempts++;
+                errorText.className = 'error visible'
+            }
+            else if (e === 500) {
+                errorText.textContent = '500 Internal Server Error: Please contact the administrator.';
                 attempts++;
                 errorText.className = 'error visible'
             }

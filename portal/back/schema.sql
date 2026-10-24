@@ -4,11 +4,12 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     password_salt TEXT NOT NULL,
     last_login TEXT,
-    active INTEGER NOT NULL
+    active INTEGER NOT NULL,
+    iterations INTEGER
 );
 CREATE TABLE IF NOT EXISTS cars (
-    creatorid INTEGER FOREIGN KEY,
-    scrutineerid INTEGER FOREIGN KEY,
+    creatorid INTEGER,
+    scrutineerid INTEGER,
     carid INTEGER PRIMARY KEY,
     date_created TEXT NOT NULL,
     frontal_area REAL NOT NULL,
@@ -18,5 +19,7 @@ CREATE TABLE IF NOT EXISTS cars (
     iso_surfaces_file_path TEXT NOT NULL,
     planes_file_path TEXT NOT NULL,
     changelog TEXT NOT NULL,
-    additional_notes TEXT
-)
+    additional_notes TEXT,
+    FOREIGN KEY(creatorid) REFERENCES users(userid),
+    FOREIGN KEY(scrutineerid) REFERENCES users(userid)
+);

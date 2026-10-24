@@ -4,15 +4,14 @@ const corsHeaders = {
 	'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-const crypto = require('crypto');
-
 export default {
 	async fetch(request, env, ctx) {
+		const hasher = require('../hasher.js');
+		const { pathname } = new URL(request.url);
+
 		if (request.method === 'OPTIONS') {
 			return new Response(null, { headers: corsHeaders });
 		}
-
-		const { pathname } = new URL(request.url);
 		const reqJson = await request.json();
 
 		if (pathname === '/api/auth/') {
@@ -24,16 +23,16 @@ export default {
 				return Response.json({ status: 401, headers: corsHeaders });
 			}
 
-			const actualUsername = result.results[0].username;
 			const passwordHash = result.results[0]['password_hash'];
 			const passwordSalt = result.results[0]['password_salt'];
 			
-			// hash the password
-			const encodedPassword = new TextEncoder().encode(enteredPassword);
-			const pd = new crypto.pbkdf2()
-			const hashedAttempt = await crypto.subtle.deriveKey('PBKDF2');
-
-			return Response.json({ status: 200, headers: corsHeaders });
+			const hashedAttempt = hasher.hash(enteredPassword, passwordSalt).hash;
+			if (hashedAttempt === passwordHash) {
+				return Response.json({ status: 200, headers: corsHeaders });
+			}
+			else {
+				return Response.json({ status: 401, headers: corsHeaders });
+			}
 		}
 		else {
 			return new Response("Not Found", {

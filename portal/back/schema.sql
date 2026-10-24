@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-    userid INTEGER PRIMARY KEY,
+    userid TEXT PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     password_salt TEXT NOT NULL,
@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
     iterations INTEGER
 );
 CREATE TABLE IF NOT EXISTS cars (
-    creatorid INTEGER,
-    scrutineerid INTEGER,
-    carid INTEGER PRIMARY KEY,
+    creatorid TEXT,
+    scrutineerid TEXT,
+    carid TEXT PRIMARY KEY,
     date_created TEXT NOT NULL,
     frontal_area REAL NOT NULL,
     drag_coefficient REAL NOT NULL,

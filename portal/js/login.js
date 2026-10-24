@@ -50,6 +50,7 @@ form.addEventListener('submit', async (e) => {
             // document.getElementById("results").textContent = data[0].username;
         }
         catch (e) {
+            console.log(e);
             if (e.status === 401) {
                 errorText.textContent = 'Invalid username or password.';
                 attempts++;

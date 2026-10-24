@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
     userid INTEGER PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    last_login TEXT NOT NULL,
+    password_salt TEXT NOT NULL,
+    last_login TEXT,
     active INTEGER NOT NULL
 );
 CREATE TABLE IF NOT EXISTS cars (

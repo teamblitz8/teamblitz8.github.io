@@ -4,6 +4,8 @@ const corsHeaders = {
 	'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+const crypto = require('crypto');
+
 export default {
 	async fetch(request, env, ctx) {
 		if (request.method === 'OPTIONS') {
@@ -16,7 +18,7 @@ export default {
 		if (pathname === '/api/auth/') {
 			const enteredUsername = reqJson.username;
 			const enteredPassword = reqJson.password;
-			const query = env.blitz.prepare('SELECT username, password_hash FROM users WHERE username = ?').bind(enteredUsername);
+			const query = env.blitz.prepare('SELECT username, password_hash, password_salt FROM users WHERE username = ?').bind(enteredUsername);
 			const result = await query.run();
 			if (!result.results) {
 				return Response.json({ status: 401, headers: corsHeaders });
@@ -24,8 +26,13 @@ export default {
 
 			const actualUsername = result.results[0].username;
 			const passwordHash = result.results[0]['password_hash'];
+			const passwordSalt = result.results[0]['password_salt'];
 			
 			// hash the password
+			const encodedPassword = new TextEncoder().encode(enteredPassword);
+			const pd = new crypto.pbkdf2()
+			const hashedAttempt = await crypto.subtle.deriveKey('PBKDF2');
+
 			return Response.json({ status: 200, headers: corsHeaders });
 		}
 		else {

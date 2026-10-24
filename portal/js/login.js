@@ -43,6 +43,9 @@ form.addEventListener('submit', async (e) => {
             if (!response.ok) {
                 throw new Error(response.status);
             }
+            
+            errorText.textContent = 'Logging in..';
+            errorText.className = 'error visible success'
 
             // const data = await response.json();
             // console.log(data);
@@ -50,15 +53,16 @@ form.addEventListener('submit', async (e) => {
             // document.getElementById("results").textContent = data[0].username;
         }
         catch (e) {
-            console.log(e);
-            if (e.status === 401) {
+            console.error(e);
+            if (e === 401) {
                 errorText.textContent = 'Invalid username or password.';
                 attempts++;
+                errorText.className = 'error visible'
             }
             else {
-                errorText.textContent = "There is a network issue. Please try again.";
+                errorText.textContent = 'There is a network issue. Please try again.';
                 attempts++;
-                errorText.className = "error visible";
+                errorText.className = 'error visible';
             }
         }
     }

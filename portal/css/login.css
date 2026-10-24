@@ -79,6 +79,11 @@ body div {
     display: inline;
 }
 
+.success {
+    background-color: rgb(100, 255, 100);
+    border: 1px solid green;
+}
+
 #error-box {
     margin-bottom: 1em;
 }

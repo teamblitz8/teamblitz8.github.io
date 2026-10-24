@@ -4,8 +4,9 @@ const corsHeaders = {
 	'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+const encoder = new TextEncoder();
+
 const compare = (a, b) => {
-	const encoder = new TextEncoder();
 	const bufferA = encoder.encode(a);
 	const bufferB = encoder.encode(b);
 	
@@ -34,22 +35,22 @@ export default {
 			const query = env.blitz.prepare('SELECT username, password_hash, password_salt FROM users WHERE username = ?').bind(enteredUsername);
 			const result = await query.run();
 			if (!result.results || result.results.length === 0) {
-				const fakeHash = hasher.hash("676767676767");
+				const fakeHash = hasher.hash("676767676767").hash;
 				compare(fakeHash, fakeHash);
-				return Response.json({ status: 401, headers: corsHeaders });
+				return new Response("", { status: 401, headers: corsHeaders });
 			}
 
 			const passwordHash = result.results[0]['password_hash'];
-			const passwordSalt = result.results[0]['password_salt'];
+			const passwordSalt = Buffer.from(result.results[0]['password_salt'], 'hex');
 			
 			const hashedAttempt = hasher.hash(enteredPassword, passwordSalt).hash;
 			const isCorrect = compare(hashedAttempt, passwordHash);
 
 			if (isCorrect) {
-				return Response.json({ status: 200, headers: corsHeaders });
+				return new Response("", { status: 200, headers: corsHeaders });
 			}
 			else {
-				return Response.json({ status: 401, headers: corsHeaders });
+				return new Response("", { status: 401, headers: corsHeaders });
 			}
 		}
 		else {

@@ -14,7 +14,8 @@ const compare = (a, b) => {
 
 const checkIPBanned = async (ip, env) => {
 	const query = env.blitz.prepare('SELECT ip FROM ipbans');
-	const banList = await query.run().results;
+	const queryResult = await query.run()
+	const banList = queryResult.results;
 	
 	if (banList.length !== 0) {
 		for (let i of banList) {
@@ -35,6 +36,8 @@ const banIP = async (ip, env) => {
 	let checkResults = await check.run()
 	checkResults = checkResults.results[0];
 
+	if (!checkResults) return false;
+
 	if (checkResults.ip === ip) {
 		console.log(`New IP banned: ${ip}`);
 		return true;
@@ -48,7 +51,8 @@ const banIP = async (ip, env) => {
 const checkUsername = async (username, env) => {
 	const hasher = require('../hasher.js')
 	const query = env.blitz.prepare('SELECT username FROM users WHERE username = ?').bind(username);
-	const result = await query.run().results;
+	let result = await query.run();
+	result = result.results;
 
 	if (!result || result.length === 0) {
 		// do some fake hashing to delay time
@@ -60,10 +64,12 @@ const checkUsername = async (username, env) => {
 		return true;
 	}
 }
+
 const authenticate = async (username, enteredPassword, env) => {
 	const hasher = require('../hasher.js');
 	const query = env.blitz.prepare('SELECT password_hash, password_salt FROM users WHERE username = ?').bind(username);
-	const result = await query.run().results;
+	let result = await query.run()
+	result = result.results;
 	
 	const trueHash = result[0]['password_hash'];
 	const trueSalt = Buffer.from(result[0]['password_salt'], 'hex');

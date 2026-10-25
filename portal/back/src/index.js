@@ -1,12 +1,5 @@
-const corsHeaders = {
-	'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-	'Access-Control-Allow-Methods': 'POST, OPTIONS',
-	'Access-Control-Allow-Headers': 'Content-Type',
-};
-
-const encoder = new TextEncoder();
-
 const compare = (a, b) => {
+	const encoder = new TextEncoder();
 	const bufferA = encoder.encode(a);
 	const bufferB = encoder.encode(b);
 	
@@ -19,89 +12,421 @@ const compare = (a, b) => {
 	}
 }
 
+const checkIPBanned = async (ip, env) => {
+	const query = env.blitz.prepare('SELECT ip FROM ipbans');
+	const banList = await query.run().results;
+	
+	if (banList.length !== 0) {
+		for (let i of banList) {
+			if (i.ip === ip) {
+				return true;
+			}	
+		}
+		return false;
+	}
+}
+
+const banIP = async (ip, env) => {
+	const currentDate = (new Date()).toISOString();
+	const insertion = env.blitz.prepare(`INSERT INTO ipbans (ip, date_banned) VALUES (?, ?);`).bind(ip, currentDate);
+	await insertion.run();
+
+	const check = env.blitz.prepare('SELECT ip from ipbans WHERE date_banned = ?;').bind(currentDate);
+	let checkResults = await check.run()
+	checkResults = checkResults.results[0];
+
+	if (checkResults.ip === ip) {
+		console.log(`New IP banned: ${ip}`);
+		return true;
+	}
+	else {
+		console.log('IP couldn\'t be banned. Check database.');
+		return false;
+	}
+}
+
+const checkUsername = async (username, env) => {
+	const hasher = require('../hasher.js')
+	const query = env.blitz.prepare('SELECT username FROM users WHERE username = ?').bind(username);
+	const result = await query.run().results;
+
+	if (!result || result.length === 0) {
+		// do some fake hashing to delay time
+		const fakeHash = hasher.hash('676767676767').hash;
+		compare(fakeHash, fakeHash);
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+const authenticate = async (username, enteredPassword, env) => {
+	const hasher = require('../hasher.js');
+	const query = env.blitz.prepare('SELECT password_hash, password_salt FROM users WHERE username = ?').bind(username);
+	const result = await query.run().results;
+	
+	const trueHash = result[0]['password_hash'];
+	const trueSalt = Buffer.from(result[0]['password_salt'], 'hex');
+
+	const hashAttempt = hasher.hash(enteredPassword, trueSalt).hash;
+	const hashesMatch = compare(trueHash, hashAttempt);
+
+	if (hashesMatch) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+const checkIfActive = async (username, env) => {
+	const query = env.blitz.prepare('SELECT active FROM users WHERE username = ?').bind(username);
+	let result = await query.run()
+	result = result.results[0].active;
+
+	if (result === 1) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+const lockAccount = async (username, env) => {
+	const query = env.blitz.prepare('UPDATE users SET active = 0 WHERE username = ?').bind(username);
+	await query.run();
+
+	const check = env.blitz.prepare('SELECT active FROM users WHERE username = ?').bind(username)
+	let result = await check.run()
+	result = result.results[0].active;
+
+	if (result === 0) {
+		console.log(`Account ${username} has been disabled`);
+		return true;
+	}
+	else {
+		console.log(`Account ${username} couldn't be disabled. Check logs.`);
+		return false;
+	}
+}
+
 export default {
 	async fetch(request, env, ctx) {
-		const ipQuery = env.blitz.prepare('SELECT ip FROM ipbans');
-		const ipQueryResults = await ipQuery.run();
-		const banList = ipQueryResults.results;
-		const ip = request.headers.get('cf-connecting-ip');
 		const { pathname } = new URL(request.url);
 
-		if (banList.length !== 0) {
-			for (let i of banList) {
-				if (i.ip === ip) {
-					return new Response(429, { status: 429, headers: corsHeaders });
-				}
-			}
-		}
-
-		const { success } = await env.ratelimiter.limit({ key: pathname });
-
-		if (!success) {
-			const currentDate = (new Date()).toISOString();
-			const push = env.blitz.prepare(`INSERT INTO ipbans (ip, date_banned) VALUES (?, ?);`).bind(ip, currentDate);
-			await push.run();
-			const check = env.blitz.prepare('SELECT ip from ipbans WHERE date_banned = ?;').bind(currentDate);
-			const checkResults = await check.run();
-
-			if (checkResults.results[0].ip === ip) {
-				console.log(`New IP banned: ${ip}`);
-				return new Response(429, { status: 429, headers: corsHeaders });
-			}
-			else {
-				console.log('IP couldn\'t be banned. Check database.');
-				return new Response(500, { status: 500, headers: corsHeaders })
-			}
-		}
-
 		if (request.method === 'OPTIONS') {
-			return new Response(null, { headers: corsHeaders });
+			return new Response(null, { 
+				status: 204,
+				headers: {
+					'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+					'Access-Control-Allow-Methods': 'POST, OPTIONS',
+					'Access-Control-Allow-Headers': 'Content-Type',
+					'Access-Control-Allow-Credentials': 'true',
+					'Access-Control-Max-Age': 600,
+					'Vary': 'Origin'
+				}
+			});
 		}
 
 		try {
-			const hasher = require('../hasher.js');
-			const reqJson = await request.json();
-
 			if (pathname === '/api/auth/') {
-				const enteredUsername = reqJson.username;
-				const enteredPassword = reqJson.password;
-				const query = env.blitz.prepare('SELECT username, password_hash, password_salt, active FROM users WHERE username = ?').bind(enteredUsername);
-				const result = await query.run();
-				if (!result.results || result.results.length === 0) {
-					const fakeHash = hasher.hash('676767676767').hash;
-					compare(fakeHash, fakeHash);
-					return new Response(401, { status: 401, headers: corsHeaders });
+				if (request.method !== 'POST') {
+					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
+						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Allow': 'POST, OPTIONS'
+						}
+					});
 				}
 
-				const passwordHash = result.results[0]['password_hash'];
-				const passwordSalt = Buffer.from(result.results[0]['password_salt'], 'hex');
-				const active = result.results[0]['active'];
-				
-				const hashedAttempt = hasher.hash(enteredPassword, passwordSalt).hash;
-				const isCorrect = compare(hashedAttempt, passwordHash);
+				const contentType = request.headers.get('Content-Type');
+				if (!contentType || typeof contentType !== 'string') {
+					return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+						status: 415,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
 
-				if (isCorrect) {
-					if (active) {
-						return new Response(200, { status: 200, headers: corsHeaders });
+				if (contentType.split(';')[0].toLowerCase() !== 'application/json') {
+					return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+						status: 415,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				let reqJson;
+
+				try {
+					reqJson = await request.json();
+					if (!reqJson) {
+						throw new Error();
+					}
+					if (typeof reqJson !== 'object'){
+						throw new Error();
+					}
+					if (Array.isArray(reqJson)){
+						throw new Error();
+					}
+					if (!Object.hasOwn(reqJson, 'username') || !Object.hasOwn(reqJson, 'password')) {
+						throw new Error();
+					}
+				}
+				catch {
+					return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+						status: 400,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const enteredUsername = reqJson.username;
+				const enteredPassword = reqJson.password;
+
+				if (typeof enteredUsername !== 'string' || typeof enteredPassword !== 'string') {
+					await checkUsername("67", env);
+					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				if (!enteredUsername || !enteredPassword) {
+					await checkUsername("67", env);
+					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				if (enteredUsername.length === 0 || enteredUsername.length > 25) {
+					await checkUsername("67", env);
+					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				if (enteredPassword.length === 0 || enteredPassword.length > 128) {
+					await checkUsername("67", env);
+					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const ip = request.headers.get('cf-connecting-ip');
+				if (!ip) {
+					return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+						status: 500,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const ipBanned = await checkIPBanned(ip, env)
+
+				if (ipBanned) {
+					return new Response(JSON.stringify({ message: 'You have been blocked from making further attempts. Please contact the administrator.' }), { 
+						status: 429,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const { success } = await env.ratelimiter.limit({ key: ip });
+
+				if (!success) {
+					const attempt = await banIP(ip, env);
+					const lockAttempt = await lockAccount(reqJson.username, env);
+
+					if (attempt && lockAttempt) {
+						return new Response(JSON.stringify({ message: 'You have been blocked from making further attempts. Please contact the administrator.' }), { 
+							status: 429,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
 					}
 					else {
-						return new Response(403, { status: 403, headers: corsHeaders });
+						return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+							status: 500,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+				}
+				
+				const usernameExists = await checkUsername(enteredUsername, env);
+
+				if (!usernameExists) {
+					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const passwordCorrect = await authenticate(enteredUsername, enteredPassword, env);
+
+				if (passwordCorrect) {
+					const active = await checkIfActive(enteredUsername, env);
+					if (active) {
+						const sessionToken = crypto.randomUUID();
+
+						return new Response(JSON.stringify({ message: 'Login successful' }), { 
+							status: 200,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true',
+								'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=604800; Secure; `
+							}
+						});
+					}
+					else {
+						return new Response(JSON.stringify({ message: 'Your account has been disabled. Please contact the administrator.' }), {
+							status: 403,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true',
+							}
+						});
 					}
 				}
 				else {
-					return new Response(401, { status: 401, headers: corsHeaders });
+					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
 				}
 			}
 			else if (pathname === '/api/cars/') {
 				// do something
 			}
 			else {
-				return new Response(404, { status: 404, headers: corsHeaders });
+				return new Response(JSON.stringify({ message: 'Not Found' }), {
+					status: 404,
+					headers: {
+						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+						'Content-Type': 'application/json; charset=UTF-8',
+						'Cache-Control': 'no-store',
+						'X-Content-Type-Options': 'nosniff',
+						'Vary': 'Origin',
+						'Access-Control-Allow-Credentials': 'true'
+					}
+				});
 			}
 		}
 		catch (e) {
 			console.error(e);
-			return new Response(500, { status: 500, headers: corsHeaders });
+			return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+				status: 500,
+				headers: {
+					'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+					'Content-Type': 'application/json; charset=UTF-8',
+					'Cache-Control': 'no-store',
+					'X-Content-Type-Options': 'nosniff',
+					'Vary': 'Origin',
+					'Access-Control-Allow-Credentials': 'true'
+				}
+			});
 		}
 	},
 };

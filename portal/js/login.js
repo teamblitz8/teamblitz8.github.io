@@ -3,6 +3,7 @@ const errorText = document.querySelector('.error');
 const username = document.querySelector('#username');
 const password = document.querySelector('#password');
 const rememberMe = document.querySelector('#forever');
+const submit = document.querySelector('#submit');
 let attempts = 0;
 
 form.addEventListener('submit', async (e) => {
@@ -19,7 +20,7 @@ form.addEventListener('submit', async (e) => {
         errorPresent = true;
     }
 
-    if (username.value.length > 24 || password.value.length > 50) {
+    if (username.value.length > 25 || password.value.length > 128) {
         errorText.textContent = 'Invalid username or password.';
         attempts++;
         errorPresent = true;
@@ -32,43 +33,55 @@ form.addEventListener('submit', async (e) => {
     else {
         errorText.className = 'error';
         try {
+            submit.disabled = true;
             const response = await fetch('https://back.teamblitz.workers.dev/api/auth/', {
                 method: 'POST',
                 body: JSON.stringify({ username: username.value, password: password.value }),
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                credentials: 'include'
             });
 
-            if (!response.ok) {
-                throw new Error(response.status);
+            let data;
+            try {
+                data = await response.json();
             }
-            
-            errorText.textContent = 'Logging in..';
-            errorText.className = 'error visible success'
+            catch {
+                data = {
+                    message: 'An unexpected error occurred. Please contact the administrator.'
+                };
+            }
+
+            errorText.className = 'error visible'
+            if (response.ok) {
+                attempts++;
+                errorText.textContent = 'Logging in..';
+                errorText.className = 'error visible success';
+            }
+            else {
+                attempts++;
+                if (!data) {
+                    errorText.textContent = data.message || 'An unexpected error occurred. Please contact the administrator.';
+                    submit.disabled = false;
+                }
+                else if (typeof data === 'object' && Object.hasOwn(data, 'message')) {
+                    errorText.textContent = data.message || 'An unexpected error occurred. Please contact the administrator.';
+                    submit.disabled = false;
+                }
+                else {
+                    errorText.textContent = 'An unexpected error occurred. Please contact the administrator.';
+                    submit.disabled = false;
+                }
+            }
+
         }
         catch (e) {
             console.error(e);
-            if (e.message === '401') {
-                errorText.textContent = 'Invalid username or password.';
-                attempts++;
-                errorText.className = 'error visible'
-            }
-            else if (e.message === '403') {
-                errorText.textContent = 'Your account has been disabled. Please contact the administrator.';
-                attempts++;
-                errorText.className = 'error visible'
-            }
-            else if (e.message === '500') {
-                errorText.textContent = '500 Internal Server Error: Please contact the administrator.';
-                attempts++;
-                errorText.className = 'error visible'
-            }
-            else {
-                errorText.textContent = 'There is a network issue. Please try again.';
-                attempts++;
-                errorText.className = 'error visible';
-            }
+            errorText.textContent = 'There is a network issue. Please try again.';
+            attempts++;
+            errorText.className = 'error visible';
+            submit.disabled = false;
         }
     }
 })

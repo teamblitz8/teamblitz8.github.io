@@ -58,6 +58,9 @@ form.addEventListener('submit', async (e) => {
                 attempts++;
                 errorText.textContent = 'Logging in..';
                 errorText.className = 'error visible success';
+                setTimeout(() => {
+                    window.location.replace("http://www.w3schools.com");
+                }, 3000);
             }
             else {
                 attempts++;

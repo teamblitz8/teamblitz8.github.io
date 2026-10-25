@@ -116,6 +116,29 @@ const lockAccount = async (username, env) => {
 	}
 }
 
+const addNewSessionToken = async (sessionToken, env, enteredUsername) => {
+	const idQuery = env.blitz.prepare('SELECT userid FROM users WHERE username = ?').bind(enteredUsername);
+	const idResult = await idQuery.run();
+	const userID = idResult.results[0].userid;
+
+	const date = new Date();
+	date.setDate(date.getDate() + 1);
+	const expiry = date.toISOString();
+
+	const query = env.blitz.prepare('INSERT INTO sessiontokens (session_token, userid, expiration_date) VALUES (? ? ?);').bind(sessionToken, userID, expiry);
+	await query.run();
+
+	const check = env.blitz.prepare('SELECT session_token FROM sessiontokens WHERE expiration_date = ?').bind(expiry);
+	const checkResult = await check.run();
+
+	if (checkResult.results[0]['session_token'] === sessionToken) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		const { pathname } = new URL(request.url);
@@ -361,19 +384,36 @@ export default {
 					const active = await checkIfActive(enteredUsername, env);
 					if (active) {
 						const sessionToken = crypto.randomUUID();
+						const attempt = addNewSessionToken(sessionToken, env, enteredUsername);
 
-						return new Response(JSON.stringify({ message: 'Login successful' }), { 
-							status: 200,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true',
-								'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=604800; Secure; `
-							}
-						});
+						if (attempt) {
+							return new Response(JSON.stringify({ message: 'Login successful' }), { 
+								status: 200,
+								headers: {
+									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+									'Content-Type': 'application/json; charset=UTF-8',
+									'Cache-Control': 'no-store',
+									'X-Content-Type-Options': 'nosniff',
+									'Vary': 'Origin',
+									'Access-Control-Allow-Credentials': 'true',
+									'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=86400; Path=/; SameSite=None; Secure; `
+								}
+							});
+						}
+						else {
+							console.log('Was unable to register a new session token; please check database!');
+							return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+								status: 500,
+								headers: {
+									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+									'Content-Type': 'application/json; charset=UTF-8',
+									'Cache-Control': 'no-store',
+									'X-Content-Type-Options': 'nosniff',
+									'Vary': 'Origin',
+									'Access-Control-Allow-Credentials': 'true'
+								}
+							});
+						}
 					}
 					else {
 						return new Response(JSON.stringify({ message: 'Your account has been disabled. Please contact the administrator.' }), {
@@ -435,4 +475,13 @@ export default {
 			});
 		}
 	},
+
+	async scheduled(event, env, ctx) {
+		const now = (new Date()).toISOString();
+
+		const query = env.blitz.prepare('DELETE FROM sessiontokens WHERE expiration_date < ?').bind(now);
+		await query.run();
+
+		console.log('Performed automatic session token cleanup.');
+	}
 };

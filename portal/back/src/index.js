@@ -117,6 +117,8 @@ const lockAccount = async (username, env) => {
 }
 
 const addNewSessionToken = async (sessionToken, env, enteredUsername) => {
+	const hasher = require('../hasher.js');
+
 	const idQuery = env.blitz.prepare('SELECT userid FROM users WHERE username = ?').bind(enteredUsername);
 	const idResult = await idQuery.run();
 	const userID = idResult.results[0].userid;
@@ -125,7 +127,11 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername) => {
 	date.setDate(date.getDate() + 1);
 	const expiry = date.toISOString();
 
-	const query = env.blitz.prepare('INSERT INTO sessiontokens (session_token, userid, expiration_date) VALUES (? ? ?);').bind(sessionToken, userID, expiry);
+	const hashedToken = hasher.hash(sessionToken);
+	const tokenHash = hashedToken.hash;
+	const tokenSalt = hashedToken.salt;
+
+	const query = env.blitz.prepare('INSERT INTO sessiontokens (session_token_hash, session_token_salt, userid, expiration_date) VALUES (? ? ?);').bind(tokenHash, tokenSalt, userID, expiry);
 	await query.run();
 
 	const check = env.blitz.prepare('SELECT session_token FROM sessiontokens WHERE expiration_date = ?').bind(expiry);
@@ -139,6 +145,25 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername) => {
 	}
 }
 
+const checkSessionToken = async (sessionToken, env) => {
+	const hasher = require('../hasher.js');
+	const query = env.blitz.prepare('SELECT session_token_hash, session_token_salt, userid FROM sessiontokens WHERE session_token_hash').bind()
+}
+
+const parseCookies = (cookieHeader) => {
+	const list = {};
+	if (!cookieHeader) return list;
+
+	cookieHeader.split(';').forEach((x) => {
+		let [name, ...rest] = x.split('=');
+		name = name?.trim();
+		if (!name) return;
+		const value = rest.join('=').trim();
+		if (!value) return;
+		list[name] = decodeURIComponent(value);
+	})
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		const { pathname } = new URL(request.url);
@@ -148,7 +173,7 @@ export default {
 				status: 204,
 				headers: {
 					'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-					'Access-Control-Allow-Methods': 'POST, OPTIONS',
+					'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 					'Access-Control-Allow-Headers': 'Content-Type',
 					'Access-Control-Allow-Credentials': 'true',
 					'Access-Control-Max-Age': 600,
@@ -444,7 +469,57 @@ export default {
 				}
 			}
 			else if (pathname === '/api/cars/') {
-				// do something
+				// this doesn't work yet, therefore return 404 by default in case someone stumbles on it or I accidentally use it. plz dont deduct my hours for this, the commented out code took like 10 minutes tops
+				return new Response(JSON.stringify({ message: 'Not Found' }), {
+					status: 404,
+					headers: {
+						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+						'Content-Type': 'application/json; charset=UTF-8',
+						'Cache-Control': 'no-store',
+						'X-Content-Type-Options': 'nosniff',
+						'Vary': 'Origin',
+						'Access-Control-Allow-Credentials': 'true'
+					}
+				})
+
+				// check if the user has the correct session token first
+				const cookieHeader = request.headers.get('Cookie') || '';
+				const cookies = parseCookies(cookieHeader);
+				const sessionToken = cookies['session_token'];
+
+				if (!sessionToken) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					})
+				}
+				
+				if (request.method === 'GET') {
+
+				}
+				else if (request.method === 'POST') {
+
+				}
+				else {
+					return new Response(JSON.stringify({ message: 'Incorrect method.' }), {
+						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					})
+				}
 			}
 			else {
 				return new Response(JSON.stringify({ message: 'Not Found' }), {

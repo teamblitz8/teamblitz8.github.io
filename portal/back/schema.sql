@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS ipbans (
     date_banned TEXT
 );
 CREATE TABLE IF NOT EXISTS sessiontokens (
-    session_token TEXT PRIMARY KEY,
+    session_token_hash TEXT PRIMARY KEY,
+    session_token_salt TEXT,
     userid TEXT NOT NULL,
     expiration_date TEXT NOT NULL,
     FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE

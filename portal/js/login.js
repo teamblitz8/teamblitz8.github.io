@@ -87,4 +87,9 @@ form.addEventListener('submit', async (e) => {
             submit.disabled = false;
         }
     }
-})
+});
+
+const goAway = () => {
+    const box = document.querySelector('#cookie-notice-box');
+    box.className = 'slidAway';
+}

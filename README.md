@@ -19,3 +19,5 @@ Please contact us if you have any sponsorship enquiries via the email on our pro
 - The authentication system verifies passwords by hashing - the key derivation algorithm used is PBKDF2 on a SHA-512 hash function. (maybe I'll upgrade it to Argon2, but it depends if it is too CPU-expensive)
 - If you want to try the login system, see the ship's description for sample login details. It doesn't do much, it only acknowledges that there has been a successful login made.
 - I have started a little bit on the session token cookie system - this will be stored on Cloudflare D1 too.
+- The plan is to either encrypt or hash this, I am working to verify session tokens by comparing a cookie to the one in the database etc.
+- The frontend hasn't been updated at all for session tokens, but it's kinda useless right now anyway so it's fineee

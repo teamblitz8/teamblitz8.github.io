@@ -171,3 +171,14 @@ form {
 #scrutineer p {
     margin-top: 1em;
 }
+
+nav {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    gap: 1.5em;
+    padding: 1em;
+}

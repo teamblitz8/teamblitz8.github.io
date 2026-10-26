@@ -2,7 +2,7 @@
 
 <html lang="en-GB">
     <head>
-        <title>Team Blitz - Portal</title>
+        <title>Team Blitz - Dashboard</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
@@ -10,11 +10,14 @@
         <link rel="stylesheet" href="./css/home.css">
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script src="./js/global.js" defer></script>
-        <script src="./js/home.js" defer></script>
+        <script src="./js/dashboard.js" defer></script>
     </head>
 
     <body>
-        <div class="popup-shroud">
+        <nav>
+            <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+        </nav>
+        <div class="popup-shroud" style="display:none;">
             <div class="popup">
                 <h3>Upload a new design</h3>
                 <p>Logged in as John</p>
@@ -62,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <h1>Hello, John</h1>
+        <h1 id="greeting">Hello, John</h1>
         <div id="upload"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload new design</a></div>
         <h2>Latest Cars</h2>
         <div id="development-container">

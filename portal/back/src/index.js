@@ -127,17 +127,19 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername) => {
 	date.setDate(date.getDate() + 1);
 	const expiry = date.toISOString();
 
-	const hashedToken = hasher.hash(sessionToken);
+	const tokenSalt = Buffer.from(env.sessionTokenSalt, 'hex');
+	const hashedToken = hasher.hash(sessionToken, tokenSalt);
 	const tokenHash = hashedToken.hash;
-	const tokenSalt = hashedToken.salt;
 
-	const query = env.blitz.prepare('INSERT INTO sessiontokens (session_token_hash, session_token_salt, userid, expiration_date) VALUES (? ? ?);').bind(tokenHash, tokenSalt, userID, expiry);
+	const query = env.blitz.prepare('INSERT INTO sessiontokens (session_token_hash, userid, expiration_date) VALUES (?, ?, ?);').bind(tokenHash, userID, expiry);
 	await query.run();
 
-	const check = env.blitz.prepare('SELECT session_token FROM sessiontokens WHERE expiration_date = ?').bind(expiry);
+	const check = env.blitz.prepare('SELECT session_token_hash FROM sessiontokens WHERE expiration_date = ?').bind(expiry);
 	const checkResult = await check.run();
 
-	if (checkResult.results[0]['session_token'] === sessionToken) {
+	const comparison = compare(checkResult.results[0]['session_token_hash'], tokenHash);
+
+	if (comparison) {
 		return true;
 	}
 	else {
@@ -147,7 +149,24 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername) => {
 
 const checkSessionToken = async (sessionToken, env) => {
 	const hasher = require('../hasher.js');
-	const query = env.blitz.prepare('SELECT session_token_hash, session_token_salt, userid FROM sessiontokens WHERE session_token_hash').bind()
+	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
+	const attemptedHash = hasher.hash(sessionToken, theSalt).hash;
+	const currentDate = (new Date()).toISOString();
+
+	const query = env.blitz.prepare('SELECT session_token_hash, userid FROM sessiontokens WHERE session_token_hash = ? AND expiration_date > ?').bind(attemptedHash, currentDate);
+	const results = await query.run();
+
+	if (results.results.length === 0) {
+		return false;
+	}
+	else {
+		if (compare(attemptedHash, results.results[0]['session_token_hash'])) {
+			return results.results[0].userid;
+		}
+		else {
+			return false;
+		}
+	}
 }
 
 const parseCookies = (cookieHeader) => {
@@ -161,7 +180,9 @@ const parseCookies = (cookieHeader) => {
 		const value = rest.join('=').trim();
 		if (!value) return;
 		list[name] = decodeURIComponent(value);
-	})
+	});
+
+	return list;
 }
 
 export default {
@@ -409,7 +430,7 @@ export default {
 					const active = await checkIfActive(enteredUsername, env);
 					if (active) {
 						const sessionToken = crypto.randomUUID();
-						const attempt = addNewSessionToken(sessionToken, env, enteredUsername);
+						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername);
 
 						if (attempt) {
 							return new Response(JSON.stringify({ message: 'Login successful' }), { 
@@ -468,20 +489,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/cars/') {
-				// this doesn't work yet, therefore return 404 by default in case someone stumbles on it or I accidentally use it. plz dont deduct my hours for this, the commented out code took like 10 minutes tops
-				return new Response(JSON.stringify({ message: 'Not Found' }), {
-					status: 404,
-					headers: {
-						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-						'Content-Type': 'application/json; charset=UTF-8',
-						'Cache-Control': 'no-store',
-						'X-Content-Type-Options': 'nosniff',
-						'Vary': 'Origin',
-						'Access-Control-Allow-Credentials': 'true'
-					}
-				})
-
+			else if (pathname === '/api/dashboard/') {
 				// check if the user has the correct session token first
 				const cookieHeader = request.headers.get('Cookie') || '';
 				const cookies = parseCookies(cookieHeader);
@@ -498,14 +506,57 @@ export default {
 							'Vary': 'Origin',
 							'Access-Control-Allow-Credentials': 'true'
 						}
-					})
+					});
+				}
+
+				const verification = await checkSessionToken(sessionToken, env);
+
+				if (!verification) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
 				}
 				
 				if (request.method === 'GET') {
-
+					const usernameQuery = env.blitz.prepare('SELECT username FROM users WHERE userid = ?').bind(verification);
+					const findUsername = await usernameQuery.run();
+					const username = findUsername.results[0].username;
+					let responseObject = {
+						username: username
+					};
+					return new Response(JSON.stringify(responseObject), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
 				}
 				else if (request.method === 'POST') {
-
+					let responseObject = {};
+					return new Response(JSON.stringify(responseObject), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
 				}
 				else {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), {
@@ -518,8 +569,11 @@ export default {
 							'Vary': 'Origin',
 							'Access-Control-Allow-Credentials': 'true'
 						}
-					})
+					});
 				}
+			}
+			else if (pathname === '/api/logout/') {
+				// log them out by deleting session token
 			}
 			else {
 				return new Response(JSON.stringify({ message: 'Not Found' }), {

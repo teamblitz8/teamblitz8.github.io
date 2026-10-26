@@ -169,6 +169,57 @@ const checkSessionToken = async (sessionToken, env) => {
 	}
 }
 
+const deleteSessionToken = async (sessionToken, env) => {
+	const hasher = require('../hasher.js');
+	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
+	const attemptedHash = hasher.hash(sessionToken, theSalt).hash;
+
+	const query = env.blitz.prepare('DELETE FROM sessiontokens WHERE session_token_hash = ?').bind(attemptedHash);
+	await query.run();
+
+	const check = env.blitz.prepare('SELECT session_token_hash FROM sessiontokens WHERE session_token_hash = ?').bind(attemptedHash);
+	const result = await check.run();
+	
+	if (result.results.length !== 0) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+const deleteAllSessionTokens = async (userid, env) => {
+	const query = env.blitz.prepare('DELETE FROM sessiontokens WHERE userid = ?').bind(userid);
+	await query.run();
+
+	const check = env.blitz.prepare('SELECT session_token_hash FROM sessiontokens WHERE userid = ?').bind(userid);
+	const result = await check.run();
+
+	if (result.results.length !== 0) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+const updatePassword = async (userid, env, newPassword) => {
+	const hasher = require('../hasher.js');
+	const hashAndSalt = hasher.hash(newPassword);
+	const query = env.blitz.prepare('UPDATE users SET password_hash = ?, password_salt = ? WHERE userid = ?').bind(hashAndSalt.hash, hashAndSalt.salt, userid);
+	await query.run();
+
+	const check = env.blitz.prepare('SELECT password_hash, password_salt FROM sessiontokens WHERE userid = ?').bind(userid);
+	const result = await check.run();
+
+	if ((result.results[0]['password_hash'] !== hashAndSalt.hash) || (result.results[0]['password_salt'] !== hashAndSalt.salt)) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 const parseCookies = (cookieHeader) => {
 	const list = {};
 	if (!cookieHeader) return list;
@@ -442,7 +493,7 @@ export default {
 									'X-Content-Type-Options': 'nosniff',
 									'Vary': 'Origin',
 									'Access-Control-Allow-Credentials': 'true',
-									'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=86400; Path=/; SameSite=None; Secure; `
+									'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=86400; Path=/; SameSite=None; Secure;`
 								}
 							});
 						}
@@ -490,7 +541,20 @@ export default {
 				}
 			}
 			else if (pathname === '/api/dashboard/') {
-				// check if the user has the correct session token first
+				if (request.method !== 'GET') {
+					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
+						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Allow': 'GET, POST, OPTIONS'
+						}
+					});
+				}
 				const cookieHeader = request.headers.get('Cookie') || '';
 				const cookies = parseCookies(cookieHeader);
 				const sessionToken = cookies['session_token'];
@@ -509,9 +573,9 @@ export default {
 					});
 				}
 
-				const verification = await checkSessionToken(sessionToken, env);
+				const userid = await checkSessionToken(sessionToken, env);
 
-				if (!verification) {
+				if (!userid) {
 					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
 						status: 401,
 						headers: {
@@ -526,7 +590,7 @@ export default {
 				}
 				
 				if (request.method === 'GET') {
-					const usernameQuery = env.blitz.prepare('SELECT username FROM users WHERE userid = ?').bind(verification);
+					const usernameQuery = env.blitz.prepare('SELECT username FROM users WHERE userid = ?').bind(userid);
 					const findUsername = await usernameQuery.run();
 					const username = findUsername.results[0].username;
 					let responseObject = {
@@ -573,7 +637,68 @@ export default {
 				}
 			}
 			else if (pathname === '/api/logout/') {
-				// log them out by deleting session token
+				if (request.method !== 'POST') {
+					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
+						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Allow': 'POST, OPTIONS'
+						}
+					});
+				}
+
+				const cookieHeader = request.headers.get('Cookie') || '';
+				const cookies = parseCookies(cookieHeader);
+				const sessionToken = cookies['session_token'];
+
+				if (!sessionToken) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const deletion = await deleteSessionToken(sessionToken, env);
+
+				if (deletion) {
+					return new Response(JSON.stringify({ message: 'Logout successful' }), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`
+						}
+					});
+				}
+				else {
+					return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+						status: 500,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
 			}
 			else {
 				return new Response(JSON.stringify({ message: 'Not Found' }), {

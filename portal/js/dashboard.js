@@ -2,9 +2,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/dashboard/', {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             credentials: 'include'
         });
         let data;
@@ -42,7 +39,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 const logout = async () => {
     try {
-        const response = await fetch('https://back.teamblitz.workers.dev/api/logout/');
+        const response = await fetch('https://back.teamblitz.workers.dev/api/logout/', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            window.location.replace('https://teamblitz.uk');
+        }
+        else {
+            throw new Error();
+        }
     }
     catch (error) {
         console.error(error);

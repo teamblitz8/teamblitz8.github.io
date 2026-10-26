@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS ipbans;
 CREATE TABLE IF NOT EXISTS users (
     userid TEXT PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    profile_file_path TEXT NOT NULL,
     password_hash TEXT NOT NULL,
     password_salt TEXT NOT NULL,
     last_login TEXT,

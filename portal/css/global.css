@@ -41,6 +41,7 @@ a, button {
     padding: 0.2em 1em;
     text-decoration: none;
     font-weight: 600;
+    cursor: pointer;
 }
 
 .text-centred {

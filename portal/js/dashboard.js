@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
+/* document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/dashboard/', {
             method: 'GET',
@@ -35,6 +35,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     catch (error) {
         console.error(error);
     }
+}); */
+
+window.addEventListener('load', () => {
+    const menu = document.querySelector('#profile-menu');
+    const profile = document.querySelector('#profile');
+    menu.style.width = `${profile.offsetWidth}px`;
 });
 
 const logout = async () => {
@@ -53,5 +59,18 @@ const logout = async () => {
     }
     catch (error) {
         console.error(error);
+    }
+}
+
+const unroll = async () => {
+    document.getElementById("nav").classList.toggle("opened");
+
+    const button = document.querySelector('.fah');
+
+    if (button.className === 'fa-solid fah fa-chevron-down') {
+        button.className = 'fa-solid fah fa-chevron-up'
+    }
+    else {
+        button.className = 'fa-solid fah fa-chevron-down'
     }
 }

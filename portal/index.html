@@ -14,9 +14,19 @@
     </head>
 
     <body>
-        <nav>
-            <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
-        </nav>
+        <div id="nav">
+            <div id="profile">
+                <img src="./imgs/yash_lowres_square.JPG">
+                <p>johnsmith</p>
+                <button onclick="unroll()"><i class="fa-solid fah fa-chevron-down"></i></button>
+            </div>
+            <div id="profile-menu">
+                <a id="placeholder-button"></a>
+                <a href="./account.html" id="first-button"><i class="fa-solid fa-user"></i> My account</a>
+                <a href="./designs.html"><i class="fa-solid fa-pencil"></i> My designs</a>
+                <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+            </div>
+        </div>
         <div class="popup-shroud" style="display:none;">
             <div class="popup">
                 <h3>Upload a new design</h3>
@@ -65,6 +75,7 @@
                 </div>
             </div>
         </div>
+        <div class="error" style="display:none;"></div>
         <h1 id="greeting">Hello, John</h1>
         <div id="upload"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload new design</a></div>
         <h2>Latest Cars</h2>

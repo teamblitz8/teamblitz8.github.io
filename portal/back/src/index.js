@@ -594,12 +594,175 @@ export default {
 				}
 				
 				if (request.method === 'GET') {
-					const usernameQuery = env.blitz.prepare('SELECT username FROM users WHERE userid = ?').bind(userid);
-					const findUsername = await usernameQuery.run();
-					const username = findUsername.results[0].username;
+					const nameQuery = env.blitz.prepare('SELECT name, username FROM users WHERE userid = ?').bind(userid);
+					const findName = await nameQuery.run();
+					const name = findName.results[0].name;
+					const username = findName.results[0].username;
 					let responseObject = {
-						username: username
+						name: name,
+						username: username,
+						cars: [],
+						iterationNumbers: []
 					};
+
+					// pull car info from sql, check the javascript headers and stuff first
+					const contentType = request.headers.get('Content-Type');
+					if (!contentType || typeof contentType !== 'string') {
+						return new Response(JSON.stringify({ message: 'Error 415: Unsupported Media Type. Please contact the administrator.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (contentType.split(';')[0].toLowerCase() !== 'application/json') {
+						return new Response(JSON.stringify({ message: 'Error 415: Unsupported Media Type. Please contact the administrator.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					let reqJson;
+
+					try {
+						reqJson = await request.json();
+						if (!reqJson) {
+							throw new Error();
+						}
+						if ((typeof reqJson !== 'object')){
+							throw new Error();
+						}
+						if (Array.isArray(reqJson)){
+							throw new Error();
+						}
+						if (!Object.hasOwn(reqJson, 'iterationNumbers')) {
+							throw new Error();
+						}
+					}
+					catch {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const iterationNumbers = reqJson.iterationNumbers;
+
+					if ((typeof iterationNumbers !== 'string') || !Array.isArray(iterationNumbers)) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (!iterationNumbers) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (typeof iterationNumbers === 'string') {
+						if (iterationNumbers === 'latest') {
+							// pull car data
+						}
+						else {
+							return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+								status: 400,
+								headers: {
+									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+									'Content-Type': 'application/json; charset=UTF-8',
+									'Cache-Control': 'no-store',
+									'X-Content-Type-Options': 'nosniff',
+									'Vary': 'Origin',
+									'Access-Control-Allow-Credentials': 'true'
+								}
+							});
+						}
+					}
+					else if (Array.isArray(iterationNumbers)) {
+						if ((iterationNumbers.length > 5) || (iterationNumbers.length === 0)) {
+							return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+								status: 400,
+								headers: {
+									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+									'Content-Type': 'application/json; charset=UTF-8',
+									'Cache-Control': 'no-store',
+									'X-Content-Type-Options': 'nosniff',
+									'Vary': 'Origin',
+									'Access-Control-Allow-Credentials': 'true'
+								}
+							});
+						}
+						const totalIterationsQuery = await env.blitz.prepare('SELECT COUNT(*) as total FROM cars').run();
+						const totalIterations = totalIterationsQuery.results[0].total;
+
+						for (let i of iterationNumbers) {
+							if ((i < 0) || (i > totalIterations)){
+								return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+									status: 400,
+									headers: {
+										'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+										'Content-Type': 'application/json; charset=UTF-8',
+										'Cache-Control': 'no-store',
+										'X-Content-Type-Options': 'nosniff',
+										'Vary': 'Origin',
+										'Access-Control-Allow-Credentials': 'true'
+									}
+								});
+							}
+						}
+
+						// pull from sql
+					}
+					else {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
 					return new Response(JSON.stringify(responseObject), {
 						status: 200,
 						headers: {

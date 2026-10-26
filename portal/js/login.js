@@ -53,14 +53,14 @@ form.addEventListener('submit', async (e) => {
                 };
             }
 
-            errorText.className = 'error visible'
+            errorText.className = 'error visible';
             if (response.ok) {
                 attempts++;
                 errorText.textContent = 'Logging in..';
                 errorText.className = 'error visible success';
                 setTimeout(() => {
                     window.location.replace('https://teamblitz.pages.dev/portal/');
-                }, 3000);
+                }, 1000);
             }
             else {
                 attempts++;

@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/dashboard/', {
             method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            },
+            body: {
+                iterationNumbers: 'latest'
+            },
             credentials: 'include'
         });
         let data;
@@ -9,30 +15,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             data = await response.json();
         }
         catch {
-            throw new Error();
+            throw new Error('There was an error parsing the JSON. Please contact the administrator.');
         }
 
         if (response.ok) {
             const greeting = document.querySelector('#greeting');
-            greeting.textContent = `Hello, ${data.username}`;
+            greeting.textContent = `Hello, ${data.name}`;
+
+            const menu = document.querySelector('#profile p');
+            menu.textContent = data.username;
         }
         else {
             if (!data) {
-                throw new Error();
+                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
             else if (typeof data !== 'object') {
-                throw new Error();
+                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
-            else if (!Object.hasOwn(data, 'message')) {
-                throw new Error();
+            else if (!Object.hasOwn(data, 'name') || !Object.hasOwn(data, 'username')) {
+                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
             
             if (data.message === 'Unauthorised') {
                 window.location.replace('https://teamblitz.pages.dev/portal/login');
             }
+            else {
+                throw new Error(data.message);
+            }
         }
     }
     catch (error) {
+        document.querySelector('#error').textContent = error.message;
+        document.querySelector('#error').style.display = 'inline-block';
         console.error(error);
     }
 });

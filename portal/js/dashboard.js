@@ -1,4 +1,4 @@
-/* document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/dashboard/', {
             method: 'GET',
@@ -35,7 +35,7 @@
     catch (error) {
         console.error(error);
     }
-}); */
+});
 
 window.addEventListener('load', () => {
     const menu = document.querySelector('#profile-menu');

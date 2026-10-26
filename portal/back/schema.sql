@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS cars;
 DROP TABLE IF EXISTS sessiontokens;
+DROP TABLE IF EXISTS cars;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS ipbans;
 
@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS ipbans (
 );
 CREATE TABLE IF NOT EXISTS sessiontokens (
     session_token_hash TEXT PRIMARY KEY,
-    session_token_salt TEXT,
     userid TEXT NOT NULL,
     expiration_date TEXT NOT NULL,
     FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE

@@ -484,6 +484,10 @@ export default {
 						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername);
 
 						if (attempt) {
+							const currentDate = (new Date()).toISOString();
+							const query = env.blitz.prepare('UPDATE users SET last_login = ? WHERE username = ?').bind(currentDate, enteredUsername);
+							await query.run();
+
 							return new Response(JSON.stringify({ message: 'Login successful' }), { 
 								status: 200,
 								headers: {
@@ -625,6 +629,86 @@ export default {
 				else {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), {
 						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+			}
+			else if (pathname === '/api/clear-all-sessions') {
+				if (request.method !== 'POST') {
+					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
+						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Allow': 'POST, OPTIONS'
+						}
+					});
+				}
+
+				const cookieHeader = request.headers.get('Cookie') || '';
+				const cookies = parseCookies(cookieHeader);
+				const sessionToken = cookies['session_token'];
+
+				if (!sessionToken) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const userid = await checkSessionToken(sessionToken, env);
+
+				if (!userid) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const deletion = await deleteAllSessionTokens(userid, env);
+
+				if (deletion) {
+					return new Response(JSON.stringify({ message: 'Logged out of all devices successfully.' }), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`
+						}
+					});
+				}
+				else {
+					return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+						status: 500,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
 							'Content-Type': 'application/json; charset=UTF-8',

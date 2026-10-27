@@ -57,6 +57,140 @@ input {
     text-align: center;
 }
 
+#nav {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    align-items: end;
+    flex-direction: column;
+    padding: 1em;
+}
+
+#profile img {
+    height: calc(3em - 2px);
+    border-radius: 1.5em;
+    box-sizing: border-box;
+}
+
+#profile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 3em;
+    border: 1px solid #f5d53d;
+    border-radius: 1.5em;
+    box-sizing: border-box;
+    z-index: 1;
+    background: linear-gradient(
+        150deg,
+        #f5d53d 0%,
+        #f8ac29 25%,
+        #f8ac29 75%,
+        #f5d53d 100%
+    );
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,0.2),
+        0 6px 16px rgba(0,0,0,0.35);
+}
+
+#profile p {
+    margin: 0 1em;
+    font-weight: 600;
+}
+
+#profile button {
+    height: calc(3em - 2px);
+    width: calc(3em - 2px);
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+#profile-menu button {
+    background: none;
+    border: 1px solid #f5d53d;
+    font-size: 1em;
+    margin: auto;
+    box-sizing: border-box;
+    display: block;
+    border-radius: 0em 0em 1.5em 1.5em;
+    height: 3em;
+    line-height: 3em;
+    width: 100%;
+    box-shadow: none;
+    font-weight: 200;
+    transition: 0.3s color ease;
+}
+
+#profile-menu a {
+    font-weight: 200;
+    background: none;
+    border: 1px solid #f5d53d;
+    font-size: 1em;
+    text-align: center;
+    box-sizing: border-box;
+    display: block;
+    border-radius: 0;
+    height: 3em;
+    line-height: 3em;
+    box-shadow: none;
+    transition: 0.3s color ease;
+}
+
+#profile-menu {
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.5s ease;
+    transform: translateY(-1.5em);
+}
+
+.opened #profile-menu {
+    max-height: 20vh;
+}
+
+.opened {
+    height: fit-content;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#first-button {
+    border-top: 0px !important;
+}
+
+#placeholder-button {
+    height: 1.5em !important;
+    border-top: 0px !important;
+    border-bottom: 0px !important;
+}
+
+#profile-menu i {
+    padding-right: 0.25em;
+}
+
+#profile-menu button:hover {
+    color: #f8ac29;
+    cursor: pointer;
+}
+
+#profile-menu a:hover {
+    color: #f8ac29;
+    cursor: pointer;
+}
+
+#error {
+    background-color: rgb(255, 100, 100);
+    color: white;
+    padding: 0.5em 1em;
+    border-radius: 100vh;
+    margin-top: 10vh;
+}
+
 @media screen and (max-width: 1000px) {
     html {
         font-size: 1vh;

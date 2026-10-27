@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+    <head>
+        <title>Team Blitz - My Designs</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
+        <link rel="stylesheet" href="./css/global.css">
+        <link rel="stylesheet" href="./css/designs.css">
+        <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
+        <script src="./js/global.js" defer></script>
+        <script src="./js/designs.js" defer></script>
+    </head>
+
+    <body>
+        <div id="nav">
+            <div id="profile">
+                <img src="./imgs/yash_lowres_square.JPG">
+                <p>johnsmith</p>
+                <button onclick="unroll()"><i class="fa-solid fah fa-chevron-down"></i></button>
+            </div>
+            <div id="profile-menu">
+                <a id="placeholder-button"></a>
+                <a href="./account.html" id="first-button"><i class="fa-solid fa-user"></i> My account</a>
+                <a href="./designs.html"><i class="fa-solid fa-pencil"></i> My designs</a>
+                <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+            </div>
+        </div>
+        <div id="error" style="display:none;"></div>
+    </body>
+</html>

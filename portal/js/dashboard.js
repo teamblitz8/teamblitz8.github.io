@@ -21,6 +21,64 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const menu = document.querySelector('#profile p');
             menu.textContent = data.username;
+
+            const devContainer = document.querySelector('#development-container');
+
+            for (const car of data.cars) {
+                let changelog = '';
+
+                for (let i of car.changelog) {
+                    changelog += `<li>${i}</li>`;
+                }
+
+                // add support for glb files soon
+                // switch from innerhtml asap
+
+                devContainer.innerHTML += `<div class="car ${car.iteration}">
+                <div class="details">
+                    <h3>${car['car_name']} - Iteration #${car.iteration}</h3>
+                    <div class="creator">
+                        <img src="${car.creatorProfile}" class="portrait">
+                        <div class="person">
+                            <h3>${car.creatorName}</h3>
+                            <p>Created ${car['date_created']}</p>
+                            <p>Scrutineered by ${car.scrutineerName}</p>
+                        </div>
+                    </div>
+                    <p>Frontal Area: ${car['frontal_area']}mm2</p>
+                    <p>Drag Coefficient: ${car['drag_coefficient']}</p>
+                    <p class="drag">Drag: ${car['drag_force']}N</p>
+                    <div class="buttons">
+                        <div class="download"><a href="${car['car_model_file_path']}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
+                        <div class="button"><button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div>
+                    </div>
+                    <div class="hidden">
+                        <div class="iso-surfaces">
+                            <h3>Iso Surfaces</h3>
+                            <img src="${car['iso_surfaces_file_path']}">
+                        </div>
+                        <div class="planes">
+                            <h3>Planes</h3>
+                            <img src="${car['planes_file_path']}">
+                        </div>
+                        <div class="changes">
+                            <h3>Changes</h3>
+                            <p>This design was derived from iteration #${car.derivedCarIteration}, ${car.derivedCarName}. Changes include:</p>
+                            <ul>
+                                ${changelog}
+                            </ul>
+                        </div>
+                        <div class="notes">
+                            <h3>Additional notes</h3>
+                            <p>${car['additional_notes']}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image">
+                    <img src="${car['car_preview_file_path']}">
+                </div>
+            </div>`;
+            }
         }
         else {
             if (!data) {
@@ -58,6 +116,11 @@ window.addEventListener('load', () => {
     const profile = document.querySelector('#profile');
     menu.style.width = `${profile.offsetWidth}px`;
 });
+
+const unfurl = async (iteration) => {
+    const div = document.querySelector(`${iteration}`);
+    
+}
 
 const logout = async () => {
     try {

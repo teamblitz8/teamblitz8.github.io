@@ -15,19 +15,24 @@ CREATE TABLE IF NOT EXISTS users (
     iterations INTEGER
 );
 CREATE TABLE IF NOT EXISTS cars (
-    creatorid TEXT,
-    scrutineerid TEXT,
+    creatorid TEXT NOT NULL,
+    scrutineerid TEXT NOT NULL,
     carid TEXT PRIMARY KEY,
-    iteration INTEGER,
+    derived_carid TEXT NOT NULL,
+    car_name TEXT NOT NULL,
+    iteration INTEGER NOT NULL,
     date_created TEXT NOT NULL,
     frontal_area REAL NOT NULL,
     drag_coefficient REAL NOT NULL,
     drag_force REAL NOT NULL,
     car_model_file_path TEXT NOT NULL,
+    car_preview_type TEXT NOT NULL,
+    car_preview_file_path TEXT NOT NULL,
     iso_surfaces_file_path TEXT NOT NULL,
     planes_file_path TEXT NOT NULL,
     changelog TEXT NOT NULL,
     additional_notes TEXT,
+    FOREIGN KEY(derived_carid) REFERENCES cars(carid),
     FOREIGN KEY(creatorid) REFERENCES users(userid),
     FOREIGN KEY(scrutineerid) REFERENCES users(userid)
 );

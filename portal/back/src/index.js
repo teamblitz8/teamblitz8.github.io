@@ -246,7 +246,45 @@ const pullCars = async (iterationNumbers, env) => {
 			if (queryDone.results.length === 0) {
 				throw new Error(`Iteration number ${i} is missing from db!!`);
 			}
-			result.push(queryDone.results[0]);
+			if (!queryDone.results[0].creatorid) {
+				throw new Error(`Iteration number ${i} is missing a creator id`);
+			}
+
+			let finalObject = queryDone.results[0];
+
+			const userQuery = env.blitz.prepare('SELECT name, profile_file_path FROM users WHERE userid = ?').bind(queryDone.results[0].creatorid);
+			const userDone = await userQuery.run();
+			if (userDone.results.length === 0) {
+				throw new Error(`Creator id for iteration number ${i} does not map to an actual user.`);
+			}
+			finalObject.creatorName = userDone.results[0].name;
+			finalObject.creatorProfile = userDone.results[0]['profile_file_path'];
+
+			if (!queryDone.results[0].scrutineerid) {
+				throw new Error(`Iteration number ${i} is missing a creator id`);
+			}
+
+			const scrutineerQuery = env.blitz.prepare('SELECT name FROM users WHERE userid = ?').bind(queryDone.results[0].scrutineerid);
+			const scrutineerDone = await scrutineerQuery.run();
+			if (scrutineerDone.results.length === 0) {
+				throw new Error(`Scrutineer id for iteration number ${i} does not map to an actual user.`);
+			}
+			finalObject.scrutineerName = scrutineerDone.results[0].name;
+
+			if (!queryDone.results[0]['derived_carid']) {
+				throw new Error(`Iteration number ${i} is missing a creator id`);
+			}
+			const derivedQuery = env.blitz.prepare('SELECT iteration, car_name FROM cars WHERE carid = ?').bind(queryDone.results[0]['derived_carid']);
+			const derivedDone = await derivedQuery.run();
+			if (derivedDone.results.length === 0) {
+				throw new Error(`Derived car id for iteraiton number ${i} does not map to an actual car.`);
+			}
+			finalObject.derivedCarName = derivedDone.results[0]['car_name'];
+			finalObject.derivedCarIteration = derivedDone.results[0].iteration;
+
+			finalObject.changelog = queryDone.results[0].changelog.split(',');
+
+			result.push(finalObject);
 		}
 		catch (error) {
 			console.error(error)
@@ -623,7 +661,8 @@ export default {
 						name: name,
 						username: username,
 						cars: [],
-						iterationNumbers: []
+						iterationNumbers: [],
+						message: 'Cars fetched successfully.'
 					};
 
 					const url = new URL(request.url);
@@ -662,7 +701,7 @@ export default {
 									}
 								});
 							}
-							iterationNumbers = [maxIteration - 2, maxIteration - 1, maxIteration];
+							iterationNumbers = [maxIteration, maxIteration - 1, maxIteration - 2];
 
 							const carData = await pullCars(iterationNumbers, env);
 

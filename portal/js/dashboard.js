@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 1000);
             }
             if (!Object.hasOwn(data, 'name') || !Object.hasOwn(data, 'username')) {
-                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
+                throw new Error('There was an error parsing the JSON. Please contact the administrator.\n' + data.message);
             }
 
             throw new Error(data.message);
@@ -119,7 +119,7 @@ window.addEventListener('load', () => {
 
 const unfurl = async (iteration) => {
     const div = document.querySelector(`${iteration}`);
-    
+
 }
 
 const logout = async () => {

@@ -298,7 +298,7 @@ form {
     cursor: pointer;
 }
 
-.error {
+#error {
     background-color: rgb(255, 100, 100);
     color: white;
     padding: 0.5em 1em;

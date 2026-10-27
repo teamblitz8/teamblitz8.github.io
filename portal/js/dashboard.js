@@ -1,13 +1,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('https://back.teamblitz.workers.dev/api/dashboard/', {
+        const dashboardURL = new URL('https://back.teamblitz.workers.dev/api/dashboard');
+        dashboardURL.search = new URLSearchParams({ iterationNumbers: 'latest' }).toString();
+
+        const response = await fetch(dashboardURL, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
-            },
-            body: {
-                iterationNumbers: 'latest'
-            },
             credentials: 'include'
         });
         let data;
@@ -29,19 +26,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!data) {
                 throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
-            else if (typeof data !== 'object') {
+            if (typeof data !== 'object') {
                 throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
-            else if (!Object.hasOwn(data, 'name') || !Object.hasOwn(data, 'username')) {
+            if (!Object.hasOwn(data, 'message')) {
                 throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
-            
             if (data.message === 'Unauthorised') {
-                window.location.replace('https://teamblitz.pages.dev/portal/login');
+                document.querySelector('#error').textContent = 'You must be logged in to see this page';
+                document.querySelector('#error').style.display = 'inline-block';
+                return setTimeout(() => {
+                    window.location.replace('https://teamblitz.pages.dev/portal/login');
+                }, 1000);
             }
-            else {
-                throw new Error(data.message);
+            if (!Object.hasOwn(data, 'name') || !Object.hasOwn(data, 'username')) {
+                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
+
+            throw new Error(data.message);
         }
     }
     catch (error) {
@@ -59,7 +61,7 @@ window.addEventListener('load', () => {
 
 const logout = async () => {
     try {
-        const response = await fetch('https://back.teamblitz.workers.dev/api/logout/', {
+        const response = await fetch('https://back.teamblitz.workers.dev/api/logout', {
             method: 'POST',
             credentials: 'include'
         });

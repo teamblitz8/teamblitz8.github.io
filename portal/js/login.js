@@ -34,7 +34,7 @@ form.addEventListener('submit', async (e) => {
         errorText.className = 'error';
         try {
             submit.disabled = true;
-            const response = await fetch('https://back.teamblitz.workers.dev/api/auth/', {
+            const response = await fetch('https://back.teamblitz.workers.dev/api/auth', {
                 method: 'POST',
                 body: JSON.stringify({ username: username.value, password: password.value }),
                 headers: {

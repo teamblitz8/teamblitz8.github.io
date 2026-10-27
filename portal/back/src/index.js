@@ -603,6 +603,92 @@ export default {
 					});
 				}
 			}
+			else if (pathname === '/api/account') {
+				if (request.method !== 'GET' && request.method !== 'POST') {
+					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
+						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Allow': 'GET, POST, OPTIONS'
+						}
+					});
+				}
+				const cookieHeader = request.headers.get('Cookie') || '';
+				const cookies = parseCookies(cookieHeader);
+				const sessionToken = cookies['session_token'];
+
+				if (!sessionToken) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const userid = await checkSessionToken(sessionToken, env);
+
+				if (!userid) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				if (request.method === 'GET') {
+					const nameQuery = env.blitz.prepare('SELECT name, username FROM users WHERE userid = ?').bind(userid);
+					const findName = await nameQuery.run();
+					const results = findName.results[0]
+					let responseObject = {
+						name: results.name,
+						username: results.username,
+						lastLogin: results['last_login'],
+						message: 'Account fetched successfully.'
+					};
+
+					return new Response(JSON.stringify(responseObject), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+				else {
+					return new Response(JSON.stringify({ message: 'K bro' }), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+			}
 			else if (pathname.split('?')[0] === '/api/dashboard') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 

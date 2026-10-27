@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const greeting = document.querySelector('#greeting');
             greeting.textContent = `Hello, ${data.name}`;
 
-            const menu = document.querySelector('#profile p');
-            menu.textContent = data.username;
-
             const devContainer = document.querySelector('#development-container');
 
             for (const car of data.cars) {
@@ -97,9 +94,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     window.location.replace('https://teamblitz.pages.dev/portal/login');
                 }, 1000);
             }
-            if (!Object.hasOwn(data, 'name') || !Object.hasOwn(data, 'username')) {
-                throw new Error('There was an error parsing the JSON. Please contact the administrator.\n' + data.message);
-            }
 
             throw new Error(data.message);
         }
@@ -111,45 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-window.addEventListener('load', () => {
-    const menu = document.querySelector('#profile-menu');
-    const profile = document.querySelector('#profile');
-    menu.style.width = `${profile.offsetWidth}px`;
-});
-
 const unfurl = async (iteration) => {
     const div = document.querySelector(`${iteration}`);
 
-}
-
-const logout = async () => {
-    try {
-        const response = await fetch('https://back.teamblitz.workers.dev/api/logout', {
-            method: 'POST',
-            credentials: 'include'
-        });
-
-        if (response.ok) {
-            window.location.replace('https://teamblitz.uk');
-        }
-        else {
-            throw new Error();
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
-}
-
-const unroll = async () => {
-    document.getElementById("nav").classList.toggle("opened");
-
-    const button = document.querySelector('.fah');
-
-    if (button.className === 'fa-solid fah fa-chevron-down') {
-        button.className = 'fa-solid fah fa-chevron-up'
-    }
-    else {
-        button.className = 'fa-solid fah fa-chevron-down'
-    }
 }

@@ -603,7 +603,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/dashboard') {
+			else if (pathname.split('?')[0] === '/api/dashboard') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,

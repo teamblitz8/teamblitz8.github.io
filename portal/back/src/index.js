@@ -237,6 +237,7 @@ const parseCookies = (cookieHeader) => {
 }
 
 const pullCar = async (iterationNumber, env) => {
+	let finalObject;
 	try {
 		const query = env.blitz.prepare('SELECT creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes FROM cars WHERE iteration = ?').bind(iterationNumber);
 		const queryDone = await query.run();
@@ -247,7 +248,7 @@ const pullCar = async (iterationNumber, env) => {
 			throw new Error(`Iteration number ${iterationNumber} is missing a creator id`);
 		}
 
-		let finalObject = queryDone.results[0];
+		finalObject = queryDone.results[0];
 
 		const userQuery = env.blitz.prepare('SELECT name, profile_file_path FROM users WHERE userid = ?').bind(queryDone.results[0].creatorid);
 		const userDone = await userQuery.run();
@@ -1658,7 +1659,7 @@ export default {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/octet-stream',
+							'Content-Type': 'image/png',
 							'Cache-Control': 'no-store',
 							'X-Content-Type-Options': 'nosniff',
 							'Vary': 'Origin',
@@ -1877,7 +1878,7 @@ export default {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/octet-stream',
+							'Content-Type': 'image/png',
 							'Cache-Control': 'no-store',
 							'X-Content-Type-Options': 'nosniff',
 							'Vary': 'Origin',

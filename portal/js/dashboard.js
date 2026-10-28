@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const dashboardURL = new URL('https://back.teamblitz.workers.dev/api/dashboard');
+        const dashboardURL = new URL('https://back.teamblitz.workers.dev/api/dashboard/text');
         dashboardURL.search = new URLSearchParams({ iterationNumbers: 'latest' }).toString();
 
         const response = await fetch(dashboardURL, {

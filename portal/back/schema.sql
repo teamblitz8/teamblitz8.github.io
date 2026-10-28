@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS cars (
     carid TEXT PRIMARY KEY,
     derived_carid TEXT NOT NULL,
     car_name TEXT NOT NULL,
-    iteration INTEGER NOT NULL,
+    iteration INTEGER UNIQUE NOT NULL,
     date_created TEXT NOT NULL,
     frontal_area REAL NOT NULL,
     drag_coefficient REAL NOT NULL,

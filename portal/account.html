@@ -22,16 +22,46 @@
             </div>
             <div id="profile-menu">
                 <a id="placeholder-button"></a>
-                <a href="./account.html" id="first-button"><i class="fa-solid fa-user"></i> My account</a>
+                <a href="./" id="first-button"><i class="fa-solid fa-igloo"></i> Dashboard</a>
                 <a href="./designs.html"><i class="fa-solid fa-pencil"></i> My designs</a>
                 <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
             </div>
         </div>
 
-        <div>
+        <div id="account-box">
             <div id="error" style="display:none;"></div>
             <h1>My Account</h1>
-            <h2>Security</h2>
+            <div id="main-menu">
+                <h2>Security</h2>
+                <h3>Change my password</h3>
+                <form novalidate id="formz">
+                    <div id="error-box" style="display:none;"><span class="error">There has been an error in changing your password. Please contact the administrator.</span></div>
+                    <div class="question">
+                        <label for="current-password">Current password</label><br>
+                        <input type="text" placeholder="password123" name="current-password" id="current-password">
+                    </div>
+                    <div class="question">
+                        <label for="new-password">New password</label><br>
+                        <input type="text" placeholder="mysupersupersecureUNGuesSablePASSWORD123!??$?$?$?!?£*&$£" name="new-password" id="new-password">
+                        <p>New passwords must:</p>
+                        <ul>
+                            <li>be at least 10 characters long</li>
+                            <li>have at least one uppercase letter</li>
+                            <li>have at least one lowercase letter</li>
+                            <li>contain at least 1 number</li>
+                            <li>contain at least 1 special character - any from !"£$%^&*()-+[]{}:;@'~#?/>.<,\|¬`</li>
+                            <li>must not contain easily guessable words or phrases e.g. password or yashhasnolife</li>
+                        </ul>
+                    </div>
+                    <div class="question">
+                        <label for="confirm-password">Confirm new password</label><br>
+                        <input type="text" placeholder="Type your new password here again" name="confirm-password" id="confirm-password">
+                    </div>
+                    <div class="question">
+                        <input type="submit" id="submit" name="submit">
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
 </html>

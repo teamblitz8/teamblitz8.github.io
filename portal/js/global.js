@@ -1,6 +1,6 @@
 const fetchpfpurl = async (username) => {
     try {
-        const endpoint = new URL('https://back.teamblitz.workers.dev/profile');
+        const endpoint = new URL('https://back.teamblitz.workers.dev/api/profile');
         endpoint.search = new URLSearchParams({ username: username }).toString();
 
         const response = await fetch(endpoint, {

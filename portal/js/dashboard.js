@@ -12,24 +12,14 @@ const getData = async (type, iterationNumber) => {
                 const iso = await getData('iso', iterationNumber);
                 const planes = await getData('planes', iterationNumber);
 
-                if ((new Set([meta.success, model.success, preview.success, iso.success, planes.success]).length === 1) && (meta.success)) {
+                if ((new Set([meta.success, model.success, preview.success, iso.success, planes.success]).size === 1) && (meta.success)) {
                     return {
                         success: true,
                         data: { ...meta.data, model: model, preview: preview, iso: iso, planes: planes }
                     }
                 }
                 else {
-                    const errors = [
-                        meta,
-                        model,
-                        preview,
-                        iso,
-                        planes
-                    ]
-                        .filter(result => !result.success)
-                        .map(result => result.data)
-                        .filter(Boolean);
-
+                    const errors = [meta, model, preview, iso, planes].filter(result => !result.success).map(result => result.data).filter(Boolean);
                     throw new Error(
                         errors.length > 0
                             ? errors.join('; ')

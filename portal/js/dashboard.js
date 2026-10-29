@@ -148,6 +148,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('error').style.display = 'none';
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
+        document.querySelector('model-viewer').style.height = '100%';
+        document.querySelector('model-viewer').style.height = `${document.querySelector('model-viewer').offsetHeight}px`
     }
     catch (error) {
         document.querySelector('#error').textContent = error.message;

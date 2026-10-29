@@ -19,27 +19,22 @@ const getData = async (type, iterationNumber) => {
                     }
                 }
                 else {
-                    const errors = [];
-                    switch ('string') {
-                        case typeof meta.data:
-                            errors.push(meta.data);
-                            break;
-                        case typeof model.data:
-                            errors.push(model.data);
-                            break;
-                        case typeof preview.data:
-                            errors.push(preview.data);
-                            break;
-                        case typeof iso.data:
-                            errors.push(iso.data);
-                            break;
-                        case typeof planes.data:
-                            errors.push(planes.data);
-                            break;
-                        default:
-                            errors.push('An unexpected error occurred.');
-                    }
-                    throw new Error(errors);
+                    const errors = [
+                        meta,
+                        model,
+                        preview,
+                        iso,
+                        planes
+                    ]
+                        .filter(result => !result.success)
+                        .map(result => result.data)
+                        .filter(Boolean);
+
+                    throw new Error(
+                        errors.length > 0
+                            ? errors.join('; ')
+                            : 'An unexpected error occurred.'
+                    );
                 }
             }
             catch (error) {

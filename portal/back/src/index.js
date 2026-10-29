@@ -881,7 +881,18 @@ export default {
 				const nameQuery = env.blitz.prepare('SELECT userid FROM users WHERE username = ?').bind(username);
 				const findName = await nameQuery.run();
 				const results = findName.results[0].userid;
-				const pfp = env.blitzr2.get({ key: `assets/profiles/${results}.jpg` });
+				const pfp = await env.blitzr2.get(`assets/profiles/${results}.jpg`);
+
+				if (pfp === null) {
+					return new Response(JSON.stringify({ message: 'Not Found.'}), {
+						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+						'Content-Type': 'application/json; charset=UTF-8',
+						'Cache-Control': 'no-store',
+						'X-Content-Type-Options': 'nosniff',
+						'Vary': 'Origin',
+						'Access-Control-Allow-Credentials': 'true'
+					});
+				}
 				const blobbed = await pfp.blob();
 
 				return new Response(blobbed, {

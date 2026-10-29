@@ -97,7 +97,10 @@ const getData = async (type, iterationNumber) => {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('error').textContent = 'Fetching car data..';
+
     try {
+
         const dat = await getData('fullworks', 'latest');
 
         if (!dat.success) {
@@ -131,7 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             derivation = `<p>This design was derived from iteration #${data.derivedCarIteration}, ${data.derivedCarName}. Changes include:</p>`;
         }
         else {
-            derivation = 'Key features include:';
+            derivation = '';
         }
 
         devContainer.innerHTML += `
@@ -139,18 +142,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="details">
                 <h3>${data['car_name']} - Iteration #${data.iteration}</h3>
                 <div class="creator">
-                    <img src="../imgs/yash_lowres_square.JPG" class="portrait">
+                    <img src="${fetchpfpurl(data.creatorUsername)}" class="portrait">
                     <div class="person">
                         <h3>${data.creatorName}</h3>
-                        <p>Created ${data['date_created']}</p>
+                        <p>Created ${(new Date(data['date_created'])).toDateString()}</p>
                         <p>Scrutineered by ${data.scrutineerName}</p>
                     </div>
                 </div>
-                <p>Frontal Area: ${data['frontal_area']}mm2</p>
+                <p>Frontal Area: ${data['frontal_area']}mm²</p>
                 <p>Drag Coefficient: ${data['drag_coefficient']}</p>
                 <p class="drag">Drag: ${data['drag_force']}N</p>
                 <div class="buttons">
-                    <div class="download"><a href="${data.model.url}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
+                    <div class="download"><a href="${data.model.url}" download="${data['car_name'].f3z}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
                     <div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div>
                 </div>
                 <div class="hidden">

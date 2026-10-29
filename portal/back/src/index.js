@@ -250,7 +250,7 @@ const pullCar = async (iterationNumber, env) => {
 
 		finalObject = queryDone.results[0];
 
-		const userQuery = env.blitz.prepare('SELECT name FROM users WHERE userid = ?').bind(queryDone.results[0].creatorid);
+		const userQuery = env.blitz.prepare('SELECT username, name FROM users WHERE userid = ?').bind(queryDone.results[0].creatorid);
 		const userDone = await userQuery.run();
 		if (userDone.results.length === 0) {
 			throw new Error(`Creator id for iteration number ${iterationNumber} does not map to an actual user.`);
@@ -277,6 +277,7 @@ const pullCar = async (iterationNumber, env) => {
 		}
 
 		finalObject.creatorName = userDone.results[0].name;
+		finalObject.creatorUsername = userDone.results[0].username;
 		finalObject.scrutineerName = scrutineerDone.results[0].name;
 
 		if (!queryDone.results[0].changelog) throw new Error(`Iteration number ${iterationNumber} is missing a changelog`);
@@ -710,6 +711,92 @@ export default {
 				}
 			}
 			else if (pathname === '/api/account') {
+				if (request.method !== 'GET' && request.method !== 'POST') {
+					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
+						status: 405,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true',
+							'Allow': 'GET, POST, OPTIONS'
+						}
+					});
+				}
+				const cookieHeader = request.headers.get('Cookie') || '';
+				const cookies = parseCookies(cookieHeader);
+				const sessionToken = cookies['session_token'];
+
+				if (!sessionToken) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const userid = await checkSessionToken(sessionToken, env);
+
+				if (!userid) {
+					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
+						status: 401,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				if (request.method === 'GET') {
+					const nameQuery = env.blitz.prepare('SELECT name, username, last_login FROM users WHERE userid = ?').bind(userid);
+					const findName = await nameQuery.run();
+					const results = findName.results[0]
+					let responseObject = {
+						name: results.name,
+						username: results.username,
+						lastLogin: results['last_login'],
+						message: 'Account fetched successfully.'
+					};
+
+					return new Response(JSON.stringify(responseObject), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+				else {
+					return new Response(JSON.stringify({ message: 'K bro' }), {
+						status: 200,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+			}
+			else if (pathname === '/api/profile') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,

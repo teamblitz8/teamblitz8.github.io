@@ -1,3 +1,44 @@
+const fetchpfpurl = async (username) => {
+    try {
+        const endpoint = new URL('https://back.teamblitz.workers.dev/profile');
+        endpoint.search = new URLSearchParams({ username: username }).toString();
+
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            if (!data) {
+                throw new Error('502 Bad Gateway');
+            }
+            if (typeof data !== 'object') {
+                throw new Error('Server responded with invalid data');
+            }
+            if (!Object.hasOwn(data, 'message')) {
+                throw new Error('Server responded with invalid data');
+            }
+
+            throw new Error(data.message);
+        }
+
+        let data;
+        try {
+            data = await response.blob();
+        }
+        catch {
+            throw new Error('failed to blob');
+        }
+
+        return URL.createObjectURL(data);
+    }
+    catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/account', {
@@ -13,8 +54,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (response.ok) {
+            const pfpurl = await fetchpfpurl(data.username);
             const menu = document.querySelector('#profile p');
             menu.textContent = data.username;
+
+            document.querySelector('#profile img').src = pfpurl;
         }
         else {
             if (!data) {

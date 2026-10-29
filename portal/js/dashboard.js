@@ -1,5 +1,5 @@
 const unfurl = async (iteration) => {
-    document.querySelector(`${iteration}`).toggle('hidden');
+    document.querySelector(`${iteration}`).classList.toggle('hidden');
 }
 
 const getData = async (type, iterationNumber) => {
@@ -94,6 +94,10 @@ const getData = async (type, iterationNumber) => {
             data: error.message
         };
     }
+}
+
+const showPopup = () => {
+    document.querySelector('.popup-shroud').style.display = 'inline-block';
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -93,17 +93,6 @@ window.addEventListener('load', () => {
     const profile = document.querySelector('#profile');
     const username = document.querySelector('#profile p');
     const nav = document.querySelector('#nav');
-
-    let navDone = false;
-    while (!navDone) {
-        setTimeout(() => {
-            if (username.textContent !== '') {
-                navDone = true;
-                nav.style.display = 'flex';
-                menu.style.width = `${profile.offsetWidth}px`;
-            }
-        }, 100);
-    }
 });
 
 const logout = async () => {

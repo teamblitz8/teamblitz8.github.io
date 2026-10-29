@@ -97,11 +97,11 @@ const getData = async (type, iterationNumber) => {
 }
 
 const showPopup = () => {
-    document.querySelector('.popup-shroud').style.display = 'inline-block';
+    document.querySelector('.popup-shroud').classList.toggle('popup-open');
 }
 
 const loadMore = async () => {
-
+    // do nothing rn
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('error').style.display = 'none';
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
+        document.getElementById('loadMore').style.display = 'flex';
         document.querySelector('model-viewer').style.height = '100%';
         document.querySelector('model-viewer').style.height = `${document.querySelector('model-viewer').offsetHeight}px`
     }

@@ -204,6 +204,22 @@ model-viewer {
 
 #loadMore {
     width: 100%;
-    margin: auto;
-    margin-top: 1.5em;
+    margin: 1.5em 0;
+    display: flex;
+    justify-content: center;
+}
+
+.popup-open {
+    display: inline-block;
+}
+
+#X {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+body:has(.popup-open) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
 }

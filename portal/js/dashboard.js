@@ -141,12 +141,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         // switch from innerhtml asap
 
+        let derivation;
+        if (data.derivedCarIteration && data.derivedCarName) {
+            derivation = `<p>This design was derived from iteration #${data.derivedCarIteration}, ${data.derivedCarName}. Changes include:</p>`;
+        }
+        else {
+            derivation = 'Key features include:';
+        }
+
         devContainer.innerHTML += `
         <div class="car ${data.iteration}">
             <div class="details">
                 <h3>${data['car_name']} - Iteration #${data.iteration}</h3>
                 <div class="creator">
-                    <img src="${data.creatorProfile}" class="portrait">
+                    <img src="../imgs/yash_lowres_square.JPG" class="portrait">
                     <div class="person">
                         <h3>${data.creatorName}</h3>
                         <p>Created ${data['date_created']}</p>
@@ -171,7 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="changes">
                         <h3>Changes</h3>
-                        <p>This design was derived from iteration #${data.derivedCarIteration}, ${data.derivedCarName}. Changes include:</p>
+                        ${derivation}
                         <ul>
                             ${changelog}
                         </ul>

@@ -250,7 +250,7 @@ const pullCar = async (iterationNumber, env) => {
 
 		finalObject = queryDone.results[0];
 
-		const userQuery = env.blitz.prepare('SELECT name, profile_file_path FROM users WHERE userid = ?').bind(queryDone.results[0].creatorid);
+		const userQuery = env.blitz.prepare('SELECT name FROM users WHERE userid = ?').bind(queryDone.results[0].creatorid);
 		const userDone = await userQuery.run();
 		if (userDone.results.length === 0) {
 			throw new Error(`Creator id for iteration number ${iterationNumber} does not map to an actual user.`);
@@ -266,20 +266,18 @@ const pullCar = async (iterationNumber, env) => {
 			throw new Error(`Scrutineer id for iteration number ${iterationNumber} does not map to an actual user.`);
 		}
 
-		if (!queryDone.results[0]['derived_carid']) {
-			throw new Error(`Iteration number ${iterationNumber} is missing a creator id`);
-		}
-		const derivedQuery = env.blitz.prepare('SELECT iteration, car_name FROM cars WHERE carid = ?').bind(queryDone.results[0]['derived_carid']);
-		const derivedDone = await derivedQuery.run();
-		if (derivedDone.results.length === 0) {
-			throw new Error(`Derived car id for iteraiton number ${iterationNumber} does not map to an actual car.`);
+		if (queryDone.results[0]['derived_carid'] !== null) {
+			const derivedQuery = env.blitz.prepare('SELECT iteration, car_name FROM cars WHERE carid = ?').bind(queryDone.results[0]['derived_carid']);
+			const derivedDone = await derivedQuery.run();
+			if (derivedDone.results.length === 0) {
+				throw new Error(`Derived car id for iteraiton number ${iterationNumber} does not map to an actual car.`);
+			}
+			finalObject.derivedCarName = derivedDone.results[0]['car_name'];
+			finalObject.derivedCarIteration = derivedDone.results[0].iteration;
 		}
 
 		finalObject.creatorName = userDone.results[0].name;
-		finalObject.creatorProfile = userDone.results[0]['profile_file_path'];
 		finalObject.scrutineerName = scrutineerDone.results[0].name;
-		finalObject.derivedCarName = derivedDone.results[0]['car_name'];
-		finalObject.derivedCarIteration = derivedDone.results[0].iteration;
 
 		if (!queryDone.results[0].changelog) throw new Error(`Iteration number ${iterationNumber} is missing a changelog`);
 		finalObject.changelog = queryDone.results[0].changelog.split('[BRK;]');
@@ -293,16 +291,18 @@ const pullCar = async (iterationNumber, env) => {
 
 const pullCarModel = async (iterationNumber, env) => {
 	try {
-		const query = env.blitz.prepare('SELECT iteration, car_model_file_path FROM cars WHERE iteration = ?').bind(iterationNumber);
+		const query = env.blitz.prepare('SELECT carid FROM cars WHERE iteration = ?').bind(iterationNumber);
 		const queryDone = await query.run();
 		if (queryDone.results.length === 0) {
 			throw new Error(`Iteration number ${iterationNumber} is missing from db!!`);
 		}
 
-		const carModel = await env.blitzr2.get(queryDone.results[0]['car_model_file_path']);
-		if (carModel === null) {
+		const carModelList = await env.blitzr2.list({ prefix: `assets/f3d/${queryDone.results[0].carid}` });
+		if (carModelList.objects.length === 0) {
 			throw new Error(`Car model is not present in R2 for iteration number ${iterationNumber}`);
 		}
+
+		const carModel = await env.blitzr2.get(carModelList.objects[0].key);
 			
 		return await carModel.blob();
 	}
@@ -314,29 +314,32 @@ const pullCarModel = async (iterationNumber, env) => {
 
 const pullCarPreview = async (iterationNumber, env) => {
 	try {
-		const query = env.blitz.prepare('SELECT iteration, car_preview_file_path, car_preview_type FROM cars WHERE iteration = ?').bind(iterationNumber);
+		const query = env.blitz.prepare('SELECT carid FROM cars WHERE iteration = ?').bind(iterationNumber);
 		const queryDone = await query.run();
 		if (queryDone.results.length === 0) {
 			throw new Error(`Iteration number ${iterationNumber} is missing from db!!`);
 		}
 
-		const carPreview = await env.blitzr2.get(queryDone.results[0]['car_preview_file_path']);
-		if (carPreview === null) {
-			throw new Error(`Car preview file is missing in R" for iteraiton number ${iterationNumber}`);
+		const carPreviewList = await env.blitzr2.list({ prefix: `assets/previews/${queryDone.results[0].carid}` });
+		if (carPreviewList.objects.length === 0) {
+			throw new Error(`Car preview is not present in R2 for iteration number ${iterationNumber}`);
 		}
-		if (queryDone.results[0]['car_preview_type'] === 'img') {
+
+		const carPreview = await env.blitzr2.get(carPreviewList.objects[0].key);
+
+		if (carPreviewList.objects[0].key.split('.')[1] === 'png') {
 			return {
 				file: await carPreview.blob(),
 				type: 'img'
 			}
 		}
-		else if (queryDone.results[0]['car_preview_type'] === 'step') {
+		else if (carPreviewList.objects[0].key.split('.')[1] === 'step') {
 			return {
 				file: await carPreview.blob(),
 				type: 'step'
 			}
 		}
-		else if (queryDone.results[0]['car_preview_type'] === 'glb') {
+		else if (carPreviewList.objects[0].key.split('.')[1] === 'glb') {
 			return {
 				file: await carPreview.blob(),
 				type: 'glb'
@@ -354,18 +357,20 @@ const pullCarPreview = async (iterationNumber, env) => {
 
 const pullCarIsoSurfaces = async (iterationNumber, env) => {
 	try {
-		const query = env.blitz.prepare('SELECT iteration, iso_surfaces_file_path FROM cars WHERE iteration = ?').bind(iterationNumber);
+		const query = env.blitz.prepare('SELECT carid FROM cars WHERE iteration = ?').bind(iterationNumber);
 		const queryDone = await query.run();
 		if (queryDone.results.length === 0) {
 			throw new Error(`Iteration number ${iterationNumber} is missing from db!!`);
 		}
 
-		const isoSurfaces = await env.blitzr2.get(queryDone.results[0]['iso_surfaces_file_path']);
-		if (isoSurfaces === null) {
+		const isoList = await env.blitzr2.list({ prefix: `assets/iso/${queryDone.results[0].carid}` });
+		if (isoList.objects.length === 0) {
 			throw new Error(`Iso surfaces is not present in R2 for iteration number ${iterationNumber}`);
 		}
+
+		const iso = await env.blitzr2.get(isoList.objects[0].key);
 			
-		return await isoSurfaces.blob();
+		return await iso.blob();
 	}
 	catch (error) {
 		console.error(error)
@@ -375,18 +380,20 @@ const pullCarIsoSurfaces = async (iterationNumber, env) => {
 
 const pullCarPlanes = async (iterationNumber, env) => {
 	try {
-		const query = env.blitz.prepare('SELECT iteration, planes_file_path FROM cars WHERE iteration = ?').bind(iterationNumber);
+		const query = env.blitz.prepare('SELECT carid FROM cars WHERE iteration = ?').bind(iterationNumber);
 		const queryDone = await query.run();
 		if (queryDone.results.length === 0) {
 			throw new Error(`Iteration number ${iterationNumber} is missing from db!!`);
 		}
 
-		const planes = await env.blitzr2.get(queryDone.results[0]['planes_file_path']);
-		if (planes === null) {
+		const carModelList = await env.blitzr2.list({ prefix: `assets/planes/${queryDone.results[0].carid}` });
+		if (carModelList.objects.length === 0) {
 			throw new Error(`Planes is not present in R2 for iteration number ${iterationNumber}`);
 		}
+
+		const carModel = await env.blitzr2.get(carModelList.objects[0].key);
 			
-		return await planes.blob();
+		return await carModel.blob();
 	}
 	catch (error) {
 		console.error(error)

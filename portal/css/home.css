@@ -99,7 +99,7 @@ body h1 {
     position: absolute;
     background-color: rgba(31,33,33,0.6);
     height: 100%;
-    width: 100%;
+    width: 80%;
     z-index: 2;
     display: none;
 }
@@ -221,9 +221,14 @@ model-viewer {
     background: none;
     color: #f8ac29;
     margin: 1em;
+    box-shadow:none;
 }
 
 body:has(.popup-open) {
     overflow: hidden;
     scrollbar-gutter: stable;
+}
+
+i {
+    margin-right: 0.25em;
 }

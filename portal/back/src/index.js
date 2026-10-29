@@ -1,3 +1,6 @@
+// add ratelimiting to all endpoints
+// clean up spaghetti code
+
 const compare = (a, b) => {
 	const encoder = new TextEncoder();
 	const bufferA = encoder.encode(a);
@@ -711,7 +714,7 @@ export default {
 				}
 			}
 			else if (pathname === '/api/account') {
-				if (request.method !== 'GET' && request.method !== 'POST') {
+				if (request.method !== 'GET') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
 						headers: {
@@ -759,45 +762,30 @@ export default {
 					});
 				}
 
-				if (request.method === 'GET') {
-					const nameQuery = env.blitz.prepare('SELECT name, username, last_login FROM users WHERE userid = ?').bind(userid);
-					const findName = await nameQuery.run();
-					const results = findName.results[0]
-					let responseObject = {
-						name: results.name,
-						username: results.username,
-						lastLogin: results['last_login'],
-						message: 'Account fetched successfully.'
-					};
+				const nameQuery = env.blitz.prepare('SELECT name, username, last_login FROM users WHERE userid = ?').bind(userid);
+				const findName = await nameQuery.run();
+				const results = findName.results[0]
+				let responseObject = {
+					name: results.name,
+					username: results.username,
+					lastLogin: results['last_login'],
+					message: 'Account fetched successfully.'
+				};
 
-					return new Response(JSON.stringify(responseObject), {
-						status: 200,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-				else {
-					return new Response(JSON.stringify({ message: 'K bro' }), {
-						status: 200,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				return new Response(JSON.stringify(responseObject), {
+					status: 200,
+					headers: {
+						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+						'Content-Type': 'application/json; charset=UTF-8',
+						'Cache-Control': 'no-store',
+						'X-Content-Type-Options': 'nosniff',
+						'Vary': 'Origin',
+						'Access-Control-Allow-Credentials': 'true'
+					}
+				});
 			}
 			else if (pathname === '/api/profile') {
-				if (request.method !== 'GET' && request.method !== 'POST') {
+				if (request.method !== 'GET') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
 						headers: {
@@ -845,19 +833,12 @@ export default {
 					});
 				}
 
-				if (request.method === 'GET') {
-					const nameQuery = env.blitz.prepare('SELECT name, username, last_login FROM users WHERE userid = ?').bind(userid);
-					const findName = await nameQuery.run();
-					const results = findName.results[0]
-					let responseObject = {
-						name: results.name,
-						username: results.username,
-						lastLogin: results['last_login'],
-						message: 'Account fetched successfully.'
-					};
+				const url = new URL(request.url);
+				const username = url.searchParams.get('username');
 
-					return new Response(JSON.stringify(responseObject), {
-						status: 200,
+				if (!username) {
+					return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+						status: 400,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
 							'Content-Type': 'application/json; charset=UTF-8',
@@ -868,9 +849,10 @@ export default {
 						}
 					});
 				}
-				else {
-					return new Response(JSON.stringify({ message: 'K bro' }), {
-						status: 200,
+
+				if (username.trim() === '') {
+					return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+						status: 400,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
 							'Content-Type': 'application/json; charset=UTF-8',
@@ -881,6 +863,38 @@ export default {
 						}
 					});
 				}
+
+				if (username.length === 0 || username.length > 25) {
+					return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+						status: 400,
+						headers: {
+							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+							'Content-Type': 'application/json; charset=UTF-8',
+							'Cache-Control': 'no-store',
+							'X-Content-Type-Options': 'nosniff',
+							'Vary': 'Origin',
+							'Access-Control-Allow-Credentials': 'true'
+						}
+					});
+				}
+
+				const nameQuery = env.blitz.prepare('SELECT userid FROM users WHERE username = ?').bind(username);
+				const findName = await nameQuery.run();
+				const results = findName.results[0];
+				const pfp = env.blitzr2.get({ key: `assets/profiles/${results}.jpg` });
+				const blobbed = await pfp.blob();
+
+				return new Response(blobbed, {
+					status: 200,
+					headers: {
+						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+						'Content-Type': 'application/json; charset=UTF-8',
+						'Cache-Control': 'no-store',
+						'X-Content-Type-Options': 'nosniff',
+						'Vary': 'Origin',
+						'Access-Control-Allow-Credentials': 'true'
+					}
+				});
 			}
 			else if (pathname === '/api/dashboard/text') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
@@ -947,15 +961,15 @@ export default {
 
 					if (!iterationNumber) {
 						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
 						});
 					}
 

@@ -98,9 +98,10 @@ body h1 {
 .popup-shroud {
     position: absolute;
     background-color: rgba(31,33,33,0.6);
-    height: 100vh;
-    width: 80vw;
+    height: 100%;
+    width: 100%;
     z-index: 2;
+    display: none;
 }
 
 .popup {
@@ -217,6 +218,9 @@ model-viewer {
     position: absolute;
     top: 0;
     right: 0;
+    background: none;
+    color: #f8ac29;
+    margin: 1em;
 }
 
 body:has(.popup-open) {

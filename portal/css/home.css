@@ -9,6 +9,7 @@ body h1 {
 
 #upload {
     margin: 1em 0 2em 0;
+    display: none;
 }
 
 .car {
@@ -70,17 +71,27 @@ body h1 {
     display: flex;
     width: 100%;
     gap: 1em;
+    align-items: center;
 }
 
 .button {
     margin-top: 1.5em;
 }
 
-.hidden {
+.more-details {
     margin-top: 1.5em;
+    max-height: 100vh;
+    opacity: 1;
 }
 
-.hidden div img {
+.hidden {
+    opacity: 0;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    overflow: hidden;
+    max-height: 0;
+}
+
+.more-details div img {
     width: 100%;
 }
 
@@ -170,4 +181,8 @@ form {
 
 #scrutineer p {
     margin-top: 1em;
+}
+
+.frontal-area {
+    color: #f5d53d;
 }

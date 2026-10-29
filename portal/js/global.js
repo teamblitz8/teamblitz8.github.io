@@ -91,7 +91,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 window.addEventListener('load', () => {
     const menu = document.querySelector('#profile-menu');
     const profile = document.querySelector('#profile');
-    menu.style.width = `${profile.offsetWidth}px`;
+    const username = document.querySelector('#profile p');
+    const nav = document.querySelector('#nav');
+
+    let navDone = false;
+    while (!navDone) {
+        setTimeout(() => {
+            if (username.textContent !== '') {
+                navDone = true;
+                nav.style.display = 'flex';
+                menu.style.width = `${profile.offsetWidth}px`;
+            }
+        }, 100);
+    }
 });
 
 const logout = async () => {

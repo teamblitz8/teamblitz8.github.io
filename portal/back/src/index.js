@@ -880,7 +880,7 @@ export default {
 
 				const nameQuery = env.blitz.prepare('SELECT userid FROM users WHERE username = ?').bind(username);
 				const findName = await nameQuery.run();
-				const results = findName.results[0];
+				const results = findName.results[0].userid;
 				const pfp = env.blitzr2.get({ key: `assets/profiles/${results}.jpg` });
 				const blobbed = await pfp.blob();
 

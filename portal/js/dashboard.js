@@ -1,5 +1,5 @@
 const unfurl = async (iteration) => {
-    document.querySelector(`.${iteration}`).classList.toggle('hidden');
+    document.querySelector(`.i${iteration}`).classList.toggle('hidden');
 }
 
 const getData = async (type, iterationNumber) => {
@@ -140,9 +140,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             derivation = '';
         }
 
-        devContainer.innerHTML += `<div class="car ${data.iteration}"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div><div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div><div class="image">${preview}</div></div>`;
+        devContainer.innerHTML += `<div class="car i${data.iteration}"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div><div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div><div class="image">${preview}</div></div>`;
         document.getElementById('error').style.display = 'none';
         document.getElementById('upload').style.display = 'inline-block';
+        document.getElementById('title').innerText = 'Latest Cars';
     }
     catch (error) {
         document.querySelector('#error').textContent = error.message;

@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <p><i class="fa-solid fa-square-root-variable"></i> Drag Coefficient: ${data['drag_coefficient']}</p>
                 <p class="drag"><i class="fa-solid fa-calculator"></i> Drag: ${data['drag_force']}N</p>
                 <div class="buttons">
-                    <div class="download"><a href="${data.model.url}" download="${data['car_name'].f3z}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
+                    <div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div>
                     <div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div>
                 </div>
                 <div class="hidden">

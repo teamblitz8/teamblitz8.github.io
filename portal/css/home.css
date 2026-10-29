@@ -183,6 +183,22 @@ form {
     margin-top: 1em;
 }
 
-.frontal-area {
+.date {
     color: #f5d53d;
+}
+
+model-viewer {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f8ac29 25%,
+        #f5d53d 50%,
+        #f8ac29 75%,
+        #1f2121 100%
+    );
+    border-radius: 5vh;
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
 }

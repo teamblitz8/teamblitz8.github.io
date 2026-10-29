@@ -88,11 +88,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
     const menu = document.querySelector('#profile-menu');
     const profile = document.querySelector('#profile');
     const username = document.querySelector('#profile p');
     const nav = document.querySelector('#nav');
+
+    const wait = (milliseconds) =>
+        new Promise(resolve => setTimeout(resolve, milliseconds));
+
+    const waitForUsername = async () => {
+        while (username.textContent.trim() === '') {
+            await wait(100);
+        }
+
+        nav.style.display = 'flex';
+        menu.style.width = `${profile.offsetWidth}px`;
+    };
+
+    waitForUsername();
 });
 
 const logout = async () => {

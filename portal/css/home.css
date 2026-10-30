@@ -98,7 +98,7 @@ body h1 {
 .popup-shroud {
     position: absolute;
     background-color: rgba(31,33,33,0.6);
-    display: none;
+    display: flex;
     top: 0;
     left: 0;
     padding: 0;
@@ -335,4 +335,16 @@ i {
     ); 
     color: #1f2121;
     font-weight: 600;
+}
+
+select {
+    width: auto;
+}
+
+textarea {
+    width: 50%;
+}
+
+#changes h3 {
+    margin-bottom: 0.25em;
 }

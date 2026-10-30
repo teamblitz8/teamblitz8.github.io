@@ -27,9 +27,14 @@ h3 {
     color: white;
 }
 
-p, input, label, a, button, li {
+p, input, label, a, button, li, textarea, select, option {
     color: white;
     font-size: 1em;
+}
+
+select::picker-icon {
+    color: #f8ac29;
+    padding: 0.4em;
 }
 
 ul {

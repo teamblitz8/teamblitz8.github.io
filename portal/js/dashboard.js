@@ -160,7 +160,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('title').innerText = 'Latest Cars';
         document.getElementById('loadMore').style.display = 'flex';
         document.querySelector('model-viewer').style.height = '100%';
-        document.querySelector('model-viewer').style.height = `${document.querySelector('model-viewer').offsetHeight}px`
+        document.querySelector('model-viewer').style.height = `${document.querySelector('model-viewer').offsetHeight}px`;
+        document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
     }
     catch (error) {
         document.querySelector('#error').textContent = error.message;

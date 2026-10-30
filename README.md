@@ -63,6 +63,7 @@ A lot!
 - My Account is UI only
 - My Designs is an empty page but will be used to load designs made by your account
 - Remember me checkbox
+- It's quite horrendous on mobile right now
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
 

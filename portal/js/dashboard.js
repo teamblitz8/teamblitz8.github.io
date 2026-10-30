@@ -1,3 +1,21 @@
+const form = document.querySelector('#car-info');
+const error = document.querySelector('#metadata-error');
+const carName = document.querySelector('#name');
+const dateCreated = document.querySelector('#date');
+const frontalArea = document.querySelector('#frontal-area');
+const dragCoefficient = document.querySelector('#drag-coefficient');
+const scrutineerer = document.querySelector('input[name="scrutineerer"]:checked');
+const derivedCar = document.querySelector('#derived-car');
+const changelog = document.querySelector('#changelog');
+const addDetails = document.querySelector('#add-notes');
+const carModel = document.querySelector('#car-model');
+const iso = document.querySelector('#iso');
+const planes = document.querySelector('#planes');
+
+const calcDrag = (cd, fa) => {
+    return 0.5 * 1.196 * 400 * Number(fa) * Number(cd) / 1000000;
+}
+
 const unfurl = async (iteration) => {
     document.querySelector(`.i${iteration}`).classList.toggle('hidden');
     const button = document.querySelector(`.i${iteration}`).parentNode.querySelector('.buttons .button button');
@@ -115,7 +133,7 @@ const loadMore = async () => {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    document.getElementById('error').textContent = 'Fetching car data..';
+    document.querySelector('#main-error').innerText = 'Fetching car data..';
 
     try {
         const dat = await getData('fullworks', 'latest');
@@ -154,7 +172,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             derivation = '';
         }
 
-        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div><div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div><div class="image">${preview}</div></div>`;
+        let addNotes;
+        if (data['additional_notes']) {
+            addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div>`;
+        }
+
+        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
         document.getElementById('error').style.display = 'none';
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
@@ -164,8 +187,97 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
     }
     catch (error) {
-        document.querySelector('#error').textContent = error.message;
-        document.querySelector('#error').style.display = 'inline-block';
+        document.querySelector('#main-error').textContent = error.message;
+        document.querySelector('#main-error').style.display = 'inline-block';
         console.error(error);
     }
+
+    dragCoefficient.addEventListener('input', () => {
+        document.querySelector('#drag-calc').innerText = `Based on your values, we have calculated drag to be ${calcDrag(dragCoefficient.value, frontalArea.value)}N`
+    });
+    frontalArea.addEventListener('input', () => {
+        document.querySelector('#drag-calc').innerText = `Based on your values, we have calculated drag to be ${calcDrag(dragCoefficient.value, frontalArea.value)}N`
+    });
+    form.addEventListener('change', () => {
+        const currentValue = form.elements['scrutineerer'].value;
+        if (currentValue !== 'chen') {
+            document.querySelector('#funny').style.display = 'inline';
+        }
+        else {
+            document.querySelector('#funny').style.display = 'none';
+        }
+    })
 });
+let errored;
+form.addEventListener('submit', async (e) => {
+    error.style.display = 'none';
+    e.preventDefault();
+    const errors = [];
+    errored = false;
+
+    // check if everything exists
+    const theGreatArray = [carName, dateCreated, frontalArea, dragCoefficient, scrutineerer, derivedCar, changelog, carModel, iso, planes];
+    const theGreatExistenceArray = [carName.value, dateCreated.value, frontalArea.value, dragCoefficient.value, scrutineerer, derivedCar.value, changelog.value, carModel.files[0], iso.files[0], planes.files[0]];
+    if (!theGreatExistenceArray.every(Boolean)) {
+        errored = true;
+        for (let i of theGreatArray) {
+            if (!i && i === scrutineerer) {
+                errors.push('Please provide a value for the person who scrutineered your car.');
+            }
+            else if (!i.value) {
+                errors.push(`Please provide a value for ${i.name}.`);
+            }
+        }
+    }
+
+    if (carName.value.length > 50) {
+        errored = true;
+        errors.push('Please enter a shorter car name.');
+    }
+    if (carName.value.length < 3 && carName.value.length > 0) {
+        errored = true;
+        errors.push('Please enter a longer car name.');
+    }
+
+    const dateCreated = new Date(dateCreated.value);
+    const upperBound = new Date('2028-01-01');
+    const lowerBound = new Date('2026-10-01');
+    if (dateCreated > upperBound) {
+        errored = true;
+        errors.push('Please enter a valid date.');
+    }
+    if (dateCreated < lowerBound) {
+        errored = true;
+        errors.push('Please enter a valid date.');
+    }
+
+    if (frontalArea > 5000) {
+        errored = true;
+        errors.push('Please enter a valid frontal area.');
+    }
+    if (frontalArea < 1000) {
+        errored = true;
+        errors.push('Please enter a valid frontal area.');
+    }
+
+    if (dragCoefficient > 2) {
+        errored = true;
+        errors.push('Please enter a valid drag coefficient.');
+    }
+    if (dragCoefficient < 0) {
+        errored = true;
+        errors.push('Please enter a valid drag coefficient.');
+    }
+
+    if (scrutineerer)
+
+    if (errored) {
+        let text = '';
+        for (let i of errors) {
+            text += " ";
+            text += i;
+        }
+        error.innerText = text;
+        error.style.display = 'inline-block';
+    }
+})

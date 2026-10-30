@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
             if (data.message === 'Unauthorised') {
-                document.querySelector('#error').textContent = 'You must be logged in to see this page';
-                document.querySelector('#error').style.display = 'inline-block';
+                document.querySelector('#main-error').textContent = 'You must be logged in to see this page';
+                document.querySelector('#main-error').style.display = 'inline-block';
                 return setTimeout(() => {
                     window.location.replace('https://teamblitz.pages.dev/portal/login');
                 }, 1000);
@@ -82,8 +82,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     catch (error) {
-        document.querySelector('#error').textContent = error.message;
-        document.querySelector('#error').style.display = 'inline-block';
+        document.querySelector('#main-error').textContent = error.message;
+        document.querySelector('#main-error').style.display = 'inline-block';
         console.error(error);
     }
 });

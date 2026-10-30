@@ -274,11 +274,21 @@ i {
     width: 100%;
 }
 
-#changelog {
+#add-info div div {
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+#add-info div div label {
+    text-align: center;
+    width: 100%;
+}
+
+#changelog, #add-notes {
     height: 15em;
 }
 
-.upload-file a {
+.upload-file button {
     width: 33%;
 }
 
@@ -347,4 +357,14 @@ textarea {
 
 #changes h3 {
     margin-bottom: 0.25em;
+}
+
+#funny {
+    display: none;
+}
+
+#metadata-error {
+    padding: 0.5em 2em;
+    margin: 0.25em 0;
+    width: 80%;
 }

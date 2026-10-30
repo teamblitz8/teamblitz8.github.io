@@ -32,6 +32,8 @@ All pages have a consistent layout with a responsive navigation menu that transf
 
 The site should adapt to different viewport sizes. Images may load slowly on mobile devices as some banner images can be quite large.
 
+![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/website-homepage.png?raw=true)
+
 > How was this developed?
 
 It is just a static HTML/CSS/JS site with no backend.
@@ -50,6 +52,8 @@ This part of the site involved a lot of learning for me. It is designed to allow
 - Loading the latest car designs, related statistics, files and other information that may help someone improve on it
     - To make things easier this is split into multiple requests; one for metadata and one for each file.
     - This allows me to send files as binary blobs and generally make things easier instead of needing to convert between Base64.
+
+![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
 
 > How was this developed?
 
@@ -78,6 +82,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Reduce CPU time of the worker
 - Add rate-limiting across all API endpoints on the backend
 - Add remember me functionality
+- Improve how errors are handled on both ends
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

@@ -33,6 +33,7 @@ All pages have a consistent layout with a responsive navigation menu that transf
 The site should adapt to different viewport sizes. Images may load slowly on mobile devices as some banner images can be quite large.
 
 > How was this developed?
+
 It is just a static HTML/CSS/JS site with no backend.
 
 ### Portal
@@ -42,6 +43,7 @@ This part of the site involved a lot of learning for me. It is designed to allow
     - There is protection against timing attacks by running hash calculations to delay time if say the username was incorrect.
     - Date and time of logins are recorded in the database.
     - There is some rate limiting based off IP addresses. This should be fine as I am planning to manage accounts on the Wrangler CLI since there should only be 5 accounts, all of them used by people I know.
+    - Remember me doesn't work yet.
 - Authentication using session tokens
     - Session tokens are also hashed with the same algorithm using a pepper, passed to the client as a cookie
     - Expired session tokens are deleted off the database daily with a Cloudflare Cron Trigger which fires every night at midnight.
@@ -50,13 +52,16 @@ This part of the site involved a lot of learning for me. It is designed to allow
     - This allows me to send files as binary blobs and generally make things easier instead of needing to convert between Base64.
 
 > How was this developed?
+
 The backend and API endpoints are handled on the Cloudflare Workers network. I used the native Cloudflare D1 database solution since it was pretty well supported by Cloudflare and relatively easy to get started with. It's an SQLite-based database. For file storage I used Cloudflare's R2 object storage solution which also pairs very well with Workers.
 
 As you can tell, I love cloudflare
 
 ## Usage
 Go to https://teamblitz.pages.dev to see the latest version of the site in action.
+
 The portal can be accessed at https://teamblitz.pages.dev/portal.
+
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
 ## To-do
@@ -72,6 +77,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Prompt first-time users to change password upon login.
 - Reduce CPU time of the worker
 - Add rate-limiting across all API endpoints on the backend
+- Add remember me functionality
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

@@ -29,80 +29,97 @@
             </div>
         </div>
         <div class="popup-shroud">
-            <div class="popup">
-                <button id="X" onclick="showPopup()"><i class="fa-solid fa-x"></i></button>
-                <h3 id="popup-title">Upload a new design</h3>
-                <p>Logged in as John</p>
-                <div class="upload-file"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file (.f3d)</a></div>
-                <div class="info">
-                    <h2>Tell us more about your design</h2>
-                    <form id="car-info" action="" novalidate>
-                        <div class="section">
-                            <div>
-                                <label for="name">Name of prototype</label>
-                                <input type="text" id="name" name="name" placeholder="Deodorant 64" required>
-                            </div>
-                            <div>
-                                <label for="date">Date created</label>
-                                <input type="date" id="date" name="date" placeholder="Deodorant 64" min="2026-10-01" max="2028-01-01">
-                            </div>
-                        </div>
-                        <div class="section">
-                            <h3 class="section-title">Quantitative CFD data</h3>
-                            <div class="cfd">
-                                <div class="cfd-field">
-                                    <label for="frontal-area">Frontal Area</label>
-                                    <input type="number" id="frontal-area" name="frontal-area" placeholder="2000.000" min="1000" max="3000" required>
-                                    <p class="label">mm2</p>
-                                </div>
-                                <div class="cfd-field">
-                                    <label for="frontal-area">Drag Coefficient</label>
-                                    <input type="number" id="drag-coefficient" name="drag-coefficient" placeholder="0.67676767" min="0" max="2" required>
-                                    <p class="label">(dimensionless scalar)</p>
+            <div id="popup-container">
+                <div class="popup">
+                    <button id="X" onclick="showPopup()"><i class="fa-solid fa-x"></i></button>
+                    <h3 id="popup-title">Upload a new design</h3>
+                    <p>Logged in as John</p>
+                    <div class="upload-file"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file (.f3d)</a></div>
+                    <div class="info">
+                        <h2>Tell us more about your design</h2>
+                        <form id="car-info" action="" novalidate>
+                            <div class="section">
+                                <div>
+                                    <div>
+                                        <label for="name">Name of prototype</label>
+                                        <input type="text" id="name" name="name" placeholder="Deodorant 64" min="1000" max="3000" required>
+                                        <p class="label"></p>
+                                    </div>
+                                    <div>
+                                        <label for="date">Date created</label>
+                                        <input type="date" id="date" name="date" placeholder="01-10-2026" required>
+                                        <p class="label"></p>
+                                    </div>
                                 </div>
                             </div>
-                            <p id="drag-calc">Based on your values, we have calculated drag to be 0.5N</p>
-                        </div>
-                        <div class="section" id="scrutineer">
-                            <h3>Who scrutineered the car?</h3>
-                            <div>
-                                <input type="radio" id="yash" name="scrutineerer" value="yash" required>
-                                <label for="yash">Yash</label>
+                            <div class="section">
+                                <h3 class="section-title">Quantitative CFD data</h3>
+                                <div>
+                                    <div>
+                                        <label for="frontal-area">Frontal Area</label>
+                                        <input type="number" id="frontal-area" name="frontal-area" placeholder="2000.000" min="1000" max="3000" required>
+                                        <p class="label">mm²</p>
+                                    </div>
+                                    <div>
+                                        <label for="drag-coefficient">Drag Coefficient</label>
+                                        <input type="number" id="drag-coefficient" name="drag-coefficient" placeholder="0.67676767" min="0" max="2" required>
+                                        <p class="label">(dimensionless scalar)</p>
+                                    </div>
+                                </div>
+                                <p id="drag-calc">Based on your values, we have calculated drag to be 0.5N</p>
                             </div>
-                            <div>
-                                <input type="radio" id="chen" name="scrutineerer" value="chen" required>
-                                <label for="chen">Chen</label>
+                            <div class="section" id="scrutineer">
+                                <h3 class="section-title">Who scrutineered the car?</h3>
+                                <div>
+                                    <div>
+                                        <input type="radio" id="yash" name="scrutineerer" value="yash" required>
+                                        <label for="yash">Yash</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="chen" name="scrutineerer" value="chen" required>
+                                        <label for="chen">Chen</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="pranit" name="scrutineerer" value="pranit" required>
+                                        <label for="pranit">Pranit</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="josh" name="scrutineerer" value="josh" required>
+                                        <label for="pranit">Josh</label>
+                                    </div>
+                                </div>
+                                <p>Cooked bro, that guy is not trustworthy at all</p>
                             </div>
-                            <div>
-                                <input type="radio" id="pranit" name="scrutineerer" value="pranit" required>
-                                <label for="pranit">Pranit</label>
+                            <div class="section" id="changes">
+                                <h3 class="section-title">Changes</h3>
+                                <div>
+                                    <div>
+                                        <label for="derived-car">Which car was this design derived or built upon from?</label>
+                                        <select id="derived-car" name="derived-car" required>
+                                            <option>Latest iteration: Beta by Chen (Iteration 1)</option>
+                                            <option>This wasn't built based on any existing car</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="changelog">What changed from it, or what are its key features?</label>
+                                        <textarea id="changelog" name="changelog" placeholder="Enter all changes made from previous design; please separate each one by placing [BRK;] between each one" required></textarea>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <input type="radio" id="josh" name="scrutineerer" value="josh" required>
-                                <label for="pranit">Josh</label>
+                            <div class="section">
+                                <h3 class="section-title">Qualitative CFD data</h3>
+                                <div>
+                                    <div class="upload-file"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload iso surfaces screenshot (.png)</a></div>
+                                    <div class="upload-file"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload planes screenshot (.png)</a></div>
+                                </div>
                             </div>
-                            <p>Cooked bro, that guy is not trustworthy at all</p>
-                        </div>
-                        <div class="section">
-                            <h3>Changes</h3>
-                            <div>
-                                <label for="derived-car">Which car was this design derived or built upon from?</label>
-                                <select id="derived-car" name="derived-car" required>
-                                    <option>Latest iteration: Beta by Chen (Iteration 1)</option>
-                                    <option>This wasn't built based on any existing car</option>
-                                </select>
+                            <div class="section">
+                                <div>
+                                    <div id="submission"><input type="submit" id="submit" name="submit"></div>
+                                </div>
                             </div>
-                            <div>
-                                <label for="pranit">What changed from it, or what are its key features?</label>
-                                <textarea id="changelog" name="changelog" placeholder="Enter all changes made from previous design" required></textarea>
-                            </div>
-                        </div>
-                        <div class="section">
-                            <h3>Qualitative CFD data</h3>
-                            <div class="upload-file"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload iso surfaces screenshot (.png)</a></div>
-                            <div class="upload-file"><a><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload planes screenshot (.png)</a></div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

@@ -7,6 +7,8 @@
 
 html {
     font-size: 1vw;
+    scrollbar-width: thin;
+    scrollbar-color: #f8ac29 #1f2121;
 }
 
 body {
@@ -48,13 +50,20 @@ a, button {
     text-align: center;
 }
 
-input {
+input, select, textarea {
     background-color: #1f2121;
+    color: white;
     border: 1px solid #f8ac29;
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
     border-radius: 100vh;
     padding: 0 1em;
     text-align: center;
+}
+
+textarea {
+    border-radius: 2em !important;
+    padding: 1em !important;
+    resize: none;
 }
 
 #nav {

@@ -98,30 +98,39 @@ body h1 {
 .popup-shroud {
     position: absolute;
     background-color: rgba(31,33,33,0.6);
-    height: 100%;
-    width: 100%;
-    z-index: 2;
     display: none;
-    justify-content: center;
-    align-items: center;
     top: 0;
     left: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#popup-container {
+    width: 80%;
+    height: 80%;
+    overflow: hidden;
+    border-radius: 2em;
+    border: 1px solid #f8ac29;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    box-sizing: border-box;
+    background-color: #1f2121;
+    opacity: 1;
     padding: 0;
 }
 
 .popup {
-    height: 80%;
-    width: 80%;
-    box-sizing: border-box;
-    border: 1px solid #f8ac29;
-    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
-    border-radius: 2em;
-    background-color: #1f2121;
-    opacity: 1;
+    height: 100%;
+    width: 100%;
     text-align: center;
-    padding: 0;
     position: relative;
-    overflow: scroll;
+    overflow-y: scroll;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 #popup-title {
@@ -142,9 +151,10 @@ form {
 
 .section-title {
     margin-bottom: 0.75em;
+    color: #f8ac29;
 }
 
-.cfd {
+.section div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -165,15 +175,16 @@ label {
     text-align: left;
 }
 
-.cfd-field {
+.section div div {
     width: 75%;
     display: flex;
     gap: 1em;
     margin: auto;
     justify-content: center;
+    flex-direction: row;
 }
 
-#car-info input {
+#car-info input, select, textarea {
     background-color: #1f2121;
     border: 1px solid #f8ac29;
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
@@ -183,10 +194,15 @@ label {
     padding: 0 1em;
 }
 
+#scrutineer .section-title {
+    margin-bottom: 0.25em;
+}
+
 #scrutineer div {
     width: 5%;
     margin: auto;
     text-align: left;
+    gap: 0.4em;
 }
 
 #scrutineer div input {
@@ -246,4 +262,77 @@ body:has(.popup-open) {
 
 i {
     margin-right: 0.25em;
+}
+
+#changes div div {
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+#changes div div label {
+    text-align: center;
+    width: 100%;
+}
+
+#changelog {
+    height: 15em;
+}
+
+.upload-file a {
+    width: 33%;
+}
+
+.popup::-webkit-scrollbar {
+    width: 0.2em;
+    height: 5em;
+}
+
+.popup::-webkit-scrollbar-track {
+    background: transparent;
+    width: 0px;
+    opacity: 0;
+    z-index: -1;
+}
+
+.popup::-webkit-scrollbar-thumb {
+    border-radius: 100vh;
+    background-color: #f8ac29;
+}
+
+.popup::-webkit-scrollbar-button {
+    display: none;
+}
+
+#date {
+    position: relative;
+}
+
+#date::-webkit-calendar-picker-indicator { 
+    background-color: #f8ac29;
+    border-radius: 100vh;
+    padding: 0.2em;
+    position: absolute;
+    right: 0.2em;
+    cursor: pointer;
+}
+
+#submission {
+    width: 75%;
+    margin-top: 1.5em;
+}
+
+#submission input {
+    width: 36%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(
+        135deg,
+        #1f2121 0%,
+        #f8ac29 25%,
+        #f5d53d 50%,
+        #f8ac29 75%,
+        #1f2121 100%
+    ); 
+    color: #1f2121;
+    font-weight: 600;
 }

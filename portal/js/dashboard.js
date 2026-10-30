@@ -1,5 +1,15 @@
 const unfurl = async (iteration) => {
     document.querySelector(`.i${iteration}`).classList.toggle('hidden');
+    const button = document.querySelector(`.i${iteration}`).parentNode.querySelector('.buttons .button button');
+
+    if (button.textContent === ' See more details') {
+        button.innerText = ' See fewer details';
+        button.querySelector('i').className = 'fa-solid fa-caret-up';
+    }
+    else if (button.textContent === ' See fewer details') {
+        button.innerText = ' See more details';
+        button.querySelector('i').className = 'fa-solid fa-caret-down';
+    }
 }
 
 const getData = async (type, iterationNumber) => {

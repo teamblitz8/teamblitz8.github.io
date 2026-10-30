@@ -1,10 +1,7 @@
 # Blitz STEM Racing Website
 This is a website and full-stack app wholly developed by Chen dedicated to Blitz, a STEM Racing Professional Class team, providing both public information about the team and internal functions to improve team work efficiency.
 
-## Overview
-The website is made up of two main parts: the main site and the portal.
-
-### Main site
+## Main site
 This is the main part of the site you will see when visiting the domain. This portion of the site is mainly targeted twoard attracting potential sponsors and introducing the team and what the STEM Racing program is. Pages include:
 
 - A homepage, summarising what STEM Racing is and who we are as a collective team.
@@ -32,20 +29,24 @@ All pages have a consistent layout with a responsive navigation menu that transf
 
 The site should adapt to different viewport sizes. Images may load slowly on mobile devices as some banner images can be quite large.
 
+### > What doesn't work yet?
+
+- Contact form on Contact Us page.
+- There's some unused pages dedicated to a blog. Not sure if this will happen though. Maybe if I have hours to kill on a week in Terra.
+
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/website-homepage.png?raw=true)
 
-> How was this developed?
+### > How was this developed?
 
 It is just a static HTML/CSS/JS site with no backend.
 
-### Portal
+## Portal
 This part of the site involved a lot of learning for me. It is designed to allow team members to log in and see the work of other members (specifically allowing them to download car design 3D model files), to allow them to build on others' work and make it better. It also makes it easier to share files especially when people are away from home and see performance of each others' designs. Key features include:
 - A fully secure login system
     - Passwords are hashed using PBKDF2-HMAC-SHA512. Their hash and salts are stored in the database and checked with a hashed version of the user's input.
     - There is protection against timing attacks by running hash calculations to delay time if say the username was incorrect.
     - Date and time of logins are recorded in the database.
     - There is some rate limiting based off IP addresses. This should be fine as I am planning to manage accounts on the Wrangler CLI since there should only be 5 accounts, all of them used by people I know.
-    - Remember me doesn't work yet.
 - Authentication using session tokens
     - Session tokens are also hashed with the same algorithm using a pepper, passed to the client as a cookie
     - Expired session tokens are deleted off the database daily with a Cloudflare Cron Trigger which fires every night at midnight.
@@ -53,9 +54,19 @@ This part of the site involved a lot of learning for me. It is designed to allow
     - To make things easier this is split into multiple requests; one for metadata and one for each file.
     - This allows me to send files as binary blobs and generally make things easier instead of needing to convert between Base64.
 
+### > What doesn't work yet?
+
+A lot!
+
+- Upload button and form is UI only
+- Load more button doesn't fetch anything
+- My Account is UI only
+- My Designs is an empty page but will be used to load designs made by your account
+- Remember me checkbox
+
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
 
-> How was this developed?
+### > How was this developed?
 
 The backend and API endpoints are handled on the Cloudflare Workers network. I used the native Cloudflare D1 database solution since it was pretty well supported by Cloudflare and relatively easy to get started with. It's an SQLite-based database. For file storage I used Cloudflare's R2 object storage solution which also pairs very well with Workers.
 

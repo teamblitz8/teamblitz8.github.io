@@ -29,14 +29,14 @@ All pages have a consistent layout with a responsive navigation menu that transf
 
 The site should adapt to different viewport sizes. Images may load slowly on mobile devices as some banner images can be quite large.
 
-### > What doesn't work yet?
+### What doesn't work yet?
 
 - Contact form on Contact Us page.
 - There's some unused pages dedicated to a blog. Not sure if this will happen though. Maybe if I have hours to kill on a week in Terra.
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/website-homepage.png?raw=true)
 
-### > How was this developed?
+> How was this developed?
 
 It is just a static HTML/CSS/JS site with no backend.
 
@@ -54,7 +54,7 @@ This part of the site involved a lot of learning for me. It is designed to allow
     - To make things easier this is split into multiple requests; one for metadata and one for each file.
     - This allows me to send files as binary blobs and generally make things easier instead of needing to convert between Base64.
 
-### > What doesn't work yet?
+### What doesn't work yet?
 
 A lot!
 
@@ -66,7 +66,7 @@ A lot!
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
 
-### > How was this developed?
+> How was this developed?
 
 The backend and API endpoints are handled on the Cloudflare Workers network. I used the native Cloudflare D1 database solution since it was pretty well supported by Cloudflare and relatively easy to get started with. It's an SQLite-based database. For file storage I used Cloudflare's R2 object storage solution which also pairs very well with Workers.
 

@@ -7,7 +7,7 @@ const dragCoefficient = document.querySelector('#drag-coefficient');
 const scrutineerer = document.querySelector('input[name="scrutineerer"]:checked');
 const derivedCar = document.querySelector('#derived-car');
 const changelog = document.querySelector('#changelog');
-const addDetails = document.querySelector('#add-notes');
+let addDetails = document.querySelector('#add-notes');
 const carModel = document.querySelector('#car-model');
 const iso = document.querySelector('#iso');
 const planes = document.querySelector('#planes');
@@ -94,7 +94,7 @@ const upload = async (type, data) => {
 }
 
 const calcDrag = (cd, fa) => {
-    return 0.5 * 1.196 * 400 * Number(fa) * Number(cd) / 1000000;
+    return 0.5 * 1.196 * 225 * Number(fa) * Number(cd) / 1000000;
 }
 
 const unfurl = async (iteration) => {
@@ -322,11 +322,11 @@ form.addEventListener('submit', async (e) => {
         }
     }
 
-    if (carName.value.length > 50) {
+    if (carName.value.trim().length > 50) {
         errored = true;
         errors.push('Please enter a shorter car name.');
     }
-    if (carName.value.length < 3 && carName.value.length > 0) {
+    if (carName.value.trim().length < 3 && carName.value.trim().length > 0) {
         errored = true;
         errors.push('Please enter a longer car name.');
     }
@@ -366,21 +366,33 @@ form.addEventListener('submit', async (e) => {
         errors.push('Please enter a valid scrutineerer.');
     }
 
-    if (changelog.value.length < 10) {
+    if (changelog.value.trim().length < 10) {
         errored = true;
         errors.push('Please enter more changes.');
     }
     
-    if (changelog.value.length > 1000) {
+    if (changelog.value.trim().length > 1000) {
         errored = true;
         errors.push('Please enter fewer changes.');
     }
 
-    const changes = changelog.value.split('[BRK;]');
+    const changes = changelog.value.trim().split('[BRK;]');
+
+    for (let i of changes) {
+        if (i.trim() === '') {
+            errored = true;
+            errors.push('Please do not put multiple separators in the changelog in a row.');
+            break;
+        } 
+    }
     
-    if (addDetails.value.length > 1000) {
+    if (addDetails.value.trim().length > 1000) {
         errored = true;
         errors.push('Please enter less additional information.');
+    }
+
+    if (addDetails === null) {
+        addDetails = 'null';
     }
 
     if (carModel.files[0].name.split('.')[1] !== 'f3d' || carModel.files[0].name.split('.')[1] !== 'f3z') {
@@ -388,7 +400,7 @@ form.addEventListener('submit', async (e) => {
         errors.push('Please upload an .f3d or .f3z file.');
     }
 
-    if (carModel.files[0].name.size > 15000000) {
+    if (carModel.files[0].size > 15000000) {
         errored = true;
         errors.push('Your car model file must not exceed 15MB.');
     }
@@ -398,7 +410,7 @@ form.addEventListener('submit', async (e) => {
         errors.push('Please upload an .f3d or .f3z file.');
     }
 
-    if (iso.files[0].name.size > 5000000) {
+    if (iso.files[0].size > 5000000) {
         errored = true;
         errors.push('Your iso surfaces image file must not exceed 5MB.');
     }
@@ -408,7 +420,7 @@ form.addEventListener('submit', async (e) => {
         errors.push('Please upload an .f3d or .f3z file.');
     }
 
-    if (planes.files[0].name.size > 5000000) {
+    if (planes.files[0].size > 5000000) {
         errored = true;
         errors.push('Your planes image file must not exceed 5MB.');
     }
@@ -418,7 +430,7 @@ form.addEventListener('submit', async (e) => {
         errors.push('Your car preview must be either a .glb or .png file.');
     }
 
-    if (preview.files[0].name.size > 15000000) {
+    if (preview.files[0].size > 15000000) {
         errored = true;
         errors.push('Your car preview file must not exceed 15MB.');
     }
@@ -440,14 +452,14 @@ form.addEventListener('submit', async (e) => {
 
         const success = await upload('fullworks', {
             metadata: {
-                carName: carName,
+                carName: carName.trim(),
                 dateCreated: dateMade.toISOString(),
                 frontalArea: frontalArea.value,
                 dragCoefficient: dragCoefficient.value,
-                scrutineerer: scrutineerer.lower(),
+                scrutineerer: scrutineerer.toLowerCase(),
                 derivedCar: derivedCar,
-                changelog: changes,
-                addDetails: addDetails
+                changelog: changes.trim(),
+                addDetails: addDetails.trim()
             },
             carModel: carModel.files[0],
             iso: iso.files[0],

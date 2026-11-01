@@ -27,7 +27,58 @@
                 <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
             </div>
         </div>
-        
-        <div id="main-error" style="display:none;"></div>
+
+        <h1>My Designs</h1>     
+        <div id="main-error" class="error" style="display:none;"></div>
+        <div id="development-container">
+            <div class="car">
+                <div class="details">
+                    <h3>CarName - Iteration #IterationNumber</h3>
+                    <div class="creator">
+                        <img src="./imgs/josh_lowres_square.JPG" class="portrait">
+                        <div class="person">
+                            <h3>CreatorName</h3>
+                            <p class="date"><i class="fa-solid fa-calendar"></i> Created AAA DD MM YYYY</p>
+                            <p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by Scrutineerer</p>
+                        </div>
+                    </div>
+                    <p>Frontal Area: FrontalAreamm²</p>
+                    <p>Drag Coefficient: DragCoefficient</p>
+                    <p class="drag">Drag: DragForceN</p>
+                    <div class="buttons">
+                        <div class="download">
+                            <a href="carmodelurl" download="carname.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a>
+                        </div>
+                        <div class="button">
+                            <button onclick="unfurl(iterationnumber)"><i class="fa-solid fa-caret-down"></i> See more details</button>
+                        </div>
+                    </div>
+                    <div class="i[iterationnumber] hidden more-details">
+                        <div class="iso-surfaces">
+                            <h3>Iso Surfaces</h3>
+                            <img src="${isourl}">
+                        </div>
+                        <div class="planes">
+                            <h3>Planes</h3>
+                            <img src="${planesurl}">
+                        </div>
+                        <div class="changes">
+                            <h3>Changes</h3>
+                            <p>This design was derived from iteration #derivedcariterationnumber, derivedcarname. Changes include:</p>
+                            <ul>
+                                <li>change #1</li>
+                                <li>change #2</li>
+                                <li>change #3</li>
+                            </ul>
+                        </div>
+                        <div class="notes">
+                            <h3>Additional notes</h3>
+                            <p>${data['additional_notes']}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image">preview image here</div>
+            </div>
+        </div>
     </body>
 </html>

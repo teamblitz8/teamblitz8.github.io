@@ -35,8 +35,8 @@
                     <h3 id="popup-title">Upload a new design</h3>
                     <p id="logged-username"></p>
                     <div class="upload-file">
-                        <button type="button" onclick="document.getElementById('car-model').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload file (.f3d)</button>
-                        <input type="file" id="car-model" name="car-model" style="display: none;">
+                        <button type="button" id="car-model-button" onclick="document.getElementById('car-model').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload file (.f3d)</button>
+                        <input type="file" id="car-model" name="car-model" style="display: none;" accept="image/png">
                     </div>
                     <div class="info">
                         <h2>Tell us more about your design</h2>
@@ -76,19 +76,19 @@
                                 <h3 class="section-title">Who scrutineered the car?</h3>
                                 <div>
                                     <div>
-                                        <input type="radio" id="yash" name="scrutineerer" value="yash" required>
+                                        <input type="radio" id="yash" name="scrutineerer" value="yash">
                                         <label for="yash">Yash</label>
                                     </div>
                                     <div>
-                                        <input type="radio" id="chen" name="scrutineerer" value="chen" required>
+                                        <input type="radio" id="chen" name="scrutineerer" value="chen">
                                         <label for="chen">Chen</label>
                                     </div>
                                     <div>
-                                        <input type="radio" id="pranit" name="scrutineerer" value="pranit" required>
+                                        <input type="radio" id="pranit" name="scrutineerer" value="pranit">
                                         <label for="pranit">Pranit</label>
                                     </div>
                                     <div>
-                                        <input type="radio" id="josh" name="scrutineerer" value="josh" required>
+                                        <input type="radio" id="josh" name="scrutineerer" value="josh">
                                         <label for="pranit">Josh</label>
                                     </div>
                                 </div>
@@ -114,12 +114,12 @@
                                 <h3 class="section-title">Qualitative CFD data</h3>
                                 <div>
                                     <div class="upload-file">
-                                        <button type="button" onclick="document.getElementById('iso').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload iso surfaces screenshot (.png)</button>
-                                        <input type="file" id="iso" name="iso" style="display: none;">
+                                        <button type="button" id="iso-button" onclick="document.getElementById('iso').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload iso surfaces screenshot (.png)</button>
+                                        <input type="file" id="iso" name="iso" style="display: none;" accept="image/png">
                                     </div>
                                     <div class="upload-file">
-                                        <button type="button" onclick="document.getElementById('planes').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload planes screenshot (.png)</button>
-                                        <input type="file" id="planes" name="planes" style="display: none;">
+                                        <button type="button" id="planes-button" onclick="document.getElementById('planes').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload planes screenshot (.png)</button>
+                                        <input type="file" id="planes" name="planes" style="display: none;" accept="image/png">
                                     </div>
                                 </div>
                             </div>
@@ -129,6 +129,13 @@
                                     <div>
                                         <label for="add-notes">Any additional details?</label>
                                         <textarea id="add-notes" name="add-notes" placeholder="Enter any additional details"></textarea>
+                                    </div>
+                                    <div>
+                                        <label for="add-notes">Please upload either a .glb 3D model file or a .png screenshot of the car.</label>
+                                        <div class="upload-file">
+                                            <button type="button" id="preview-button" onclick="document.getElementById('preview').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload car preview (.png/.glb)</button>
+                                            <input type="file" id="preview" name="preview" style="display: none;" accept="image/png, model/gltf-binary">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

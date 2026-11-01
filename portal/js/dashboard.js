@@ -11,6 +11,87 @@ const addDetails = document.querySelector('#add-notes');
 const carModel = document.querySelector('#car-model');
 const iso = document.querySelector('#iso');
 const planes = document.querySelector('#planes');
+const preview = document.querySelector('#preview');
+
+const upload = async (type, data) => {
+    let body;
+    let contentHeader;
+
+    if (type === 'fullworks') {
+        const metadata = await upload('metadata', data.metadata);
+        if (!metadata.success) return { success: false, error: metadata.error };
+        const carModel = await upload('f3d', data.carModel);
+        if (!carModel.success) return { success: false, error: carModel.error };
+        const iso = await upload('iso', data.iso);
+        if (!iso.success) return { success: false, error: iso.error };
+        const planes = await upload('planes', data.planes);
+        if (!planes.success) return { success: false, error: planes.error };
+        const preview = await upload('preview', data.preview);
+        if (!preview.success) return { success: false, error: preview.error };
+
+        return { success: true };
+    }
+    else if (type === 'metadata') {
+        body = JSON.stringify(data);
+        contentHeader = 'application/json';
+    }
+    else if (type === 'f3d') {
+        body = data;
+        contentHeader = 'application/octet-stream';
+    }
+    else if (type === 'iso') {
+        body = data;
+        contentHeader = 'image/png';
+    }
+    else if (type === 'planes') {
+        body = data;
+        contentHeader = 'image/png';
+    }
+    else if (type === 'preview') {
+        body = data;
+        if (data.name.split('.')[1] === 'png') {
+            contentHeader = 'image/png';
+        }
+        else if (data.name.split('.')[1] === 'glb') {
+            contentHeader = 'model/gltf-binary';
+        }
+    }
+    else {
+        return { success: false, error: 'Incorrect upload type.' };
+    }
+
+    try {
+        const response = await fetch(`https://teamblitz.workers.dev/api/dashboard/${type}`, {
+            method: 'POST',
+            body: body,
+            headers: {
+                'Content-Type': contentHeader
+            },
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            let data;
+            try {
+                data = await response.json();
+                console.error(data.message);
+            }
+            catch {
+                console.error(`Malformed JSON response from server when uploading ${type}`);
+            }
+            throw new Error('There was an error uploading the car data to the server. Please contact the administrator.');
+        }
+        else {
+            return { success: true }
+        }
+    }
+    catch (error) {
+        return {
+            success: false,
+            error: error
+        }
+    }
+}
 
 const calcDrag = (cd, fa) => {
     return 0.5 * 1.196 * 400 * Number(fa) * Number(cd) / 1000000;
@@ -206,9 +287,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         else {
             document.querySelector('#funny').style.display = 'none';
         }
-    })
+    });
+    carModel.addEventListener('change', () => {
+        document.getElementById('car-model-button').innerText = `File selected: ${carModel.files[0].name}, ${carModel.files[0].size} bytes`;
+    });
+    iso.addEventListener('change', () => {
+        document.getElementById('iso-button').innerText = `File selected: ${iso.files[0].name}, ${iso.files[0].size} bytes`;
+    });
+    planes.addEventListener('change', () => {
+        document.getElementById('planes-button').innerText = `File selected: ${planes.files[0].name}, ${planes.files[0].size} bytes`;
+    });
 });
+
 let errored;
+
 form.addEventListener('submit', async (e) => {
     error.style.display = 'none';
     e.preventDefault();
@@ -216,8 +308,8 @@ form.addEventListener('submit', async (e) => {
     errored = false;
 
     // check if everything exists
-    const theGreatArray = [carName, dateCreated, frontalArea, dragCoefficient, scrutineerer, derivedCar, changelog, carModel, iso, planes];
-    const theGreatExistenceArray = [carName.value, dateCreated.value, frontalArea.value, dragCoefficient.value, scrutineerer, derivedCar.value, changelog.value, carModel.files[0], iso.files[0], planes.files[0]];
+    const theGreatArray = [carName, dateCreated, frontalArea, dragCoefficient, scrutineerer, derivedCar, changelog, carModel, iso, planes, preview];
+    const theGreatExistenceArray = [carName.value, dateCreated.value, frontalArea.value, dragCoefficient.value, scrutineerer, derivedCar.value, changelog.value, carModel.files[0], iso.files[0], planes.files[0], preview.files[0]];
     if (!theGreatExistenceArray.every(Boolean)) {
         errored = true;
         for (let i of theGreatArray) {
@@ -239,37 +331,97 @@ form.addEventListener('submit', async (e) => {
         errors.push('Please enter a longer car name.');
     }
 
-    const dateCreated = new Date(dateCreated.value);
+    const dateMade = new Date(dateCreated.value);
     const upperBound = new Date('2028-01-01');
     const lowerBound = new Date('2026-10-01');
-    if (dateCreated > upperBound) {
+    if (dateMade > upperBound) {
         errored = true;
         errors.push('Please enter a valid date.');
     }
-    if (dateCreated < lowerBound) {
+    if (dateMade < lowerBound) {
         errored = true;
         errors.push('Please enter a valid date.');
     }
 
-    if (frontalArea > 5000) {
+    if (frontalArea.value > 5000) {
         errored = true;
         errors.push('Please enter a valid frontal area.');
     }
-    if (frontalArea < 1000) {
+    if (frontalArea.value < 1000) {
         errored = true;
         errors.push('Please enter a valid frontal area.');
     }
 
-    if (dragCoefficient > 2) {
+    if (dragCoefficient.value > 2) {
         errored = true;
         errors.push('Please enter a valid drag coefficient.');
     }
-    if (dragCoefficient < 0) {
+    if (dragCoefficient.value < 0) {
         errored = true;
         errors.push('Please enter a valid drag coefficient.');
     }
 
-    if (scrutineerer)
+    if (!['chen', 'yash', 'pranit', 'josh'].includes(scrutineerer)) {
+        errored = true;
+        errors.push('Please enter a valid scrutineerer.');
+    }
+
+    if (changelog.value.length < 10) {
+        errored = true;
+        errors.push('Please enter more changes.');
+    }
+    
+    if (changelog.value.length > 1000) {
+        errored = true;
+        errors.push('Please enter fewer changes.');
+    }
+
+    const changes = changelog.value.split('[BRK;]');
+    
+    if (addDetails.value.length > 1000) {
+        errored = true;
+        errors.push('Please enter less additional information.');
+    }
+
+    if (carModel.files[0].name.split('.')[1] !== 'f3d' || carModel.files[0].name.split('.')[1] !== 'f3z') {
+        errored = true;
+        errors.push('Please upload an .f3d or .f3z file.');
+    }
+
+    if (carModel.files[0].name.size > 15000000) {
+        errored = true;
+        errors.push('Your car model file must not exceed 15MB.');
+    }
+
+    if (iso.files[0].name.split('.')[1] !== 'png') {
+        errored = true;
+        errors.push('Please upload an .f3d or .f3z file.');
+    }
+
+    if (iso.files[0].name.size > 5000000) {
+        errored = true;
+        errors.push('Your iso surfaces image file must not exceed 5MB.');
+    }
+
+    if (planes.files[0].name.split('.')[1] !== 'png') {
+        errored = true;
+        errors.push('Please upload an .f3d or .f3z file.');
+    }
+
+    if (planes.files[0].name.size > 5000000) {
+        errored = true;
+        errors.push('Your planes image file must not exceed 5MB.');
+    }
+
+    if (preview.files[0].name.split('.')[1] !== 'png' || preview.files[0].name.split('.')[1] !== 'glb') {
+        errored = true;
+        errors.push('Your car preview must be either a .glb or .png file.');
+    }
+
+    if (preview.files[0].name.size > 15000000) {
+        errored = true;
+        errors.push('Your car preview file must not exceed 15MB.');
+    }
 
     if (errored) {
         let text = '';
@@ -279,5 +431,38 @@ form.addEventListener('submit', async (e) => {
         }
         error.innerText = text;
         error.style.display = 'inline-block';
+    }
+    else {
+        submit.disabled = true;
+
+        error.innerText = 'Uploading data..';
+        error.style.display = 'inline-block';
+
+        const success = await upload('fullworks', {
+            metadata: {
+                carName: carName,
+                dateCreated: dateMade.toISOString(),
+                frontalArea: frontalArea.value,
+                dragCoefficient: dragCoefficient.value,
+                scrutineerer: scrutineerer.lower(),
+                derivedCar: derivedCar,
+                changelog: changes,
+                addDetails: addDetails
+            },
+            carModel: carModel.files[0],
+            iso: iso.files[0],
+            planes: planes.files[0],
+            preview: preview.files[0]
+        });
+
+        if (success.success) {
+            error.innerText = 'Upload successful!';
+            setTimeout(() => {
+                window.location.replace('https://teamblitz.pages.dev/portal/');
+            }, 1000);
+        }
+        else {
+            error.innerText = success.error;
+        }
     }
 })

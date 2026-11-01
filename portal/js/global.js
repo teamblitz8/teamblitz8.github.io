@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error('There was an error parsing the JSON. Please contact the administrator.');
             }
             if (data.message === 'Unauthorised') {
-                document.querySelector('#main-error').textContent = 'You must be logged in to see this page';
+                document.querySelector('#main-error').innerText = 'You must be logged in to see this page';
                 document.querySelector('#main-error').style.display = 'inline-block';
                 return setTimeout(() => {
                     window.location.replace('https://teamblitz.pages.dev/portal/login');
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     catch (error) {
-        document.querySelector('#main-error').textContent = error.message;
+        document.querySelector('#main-error').innerText = error.message;
         document.querySelector('#main-error').style.display = 'inline-block';
         console.error(error);
     }
@@ -108,6 +108,21 @@ window.addEventListener('load', async () => {
 
     waitForUsername();
 });
+
+const showPassword = async (field) => {
+    const element = document.getElementById(field);
+    const div = element.parentNode;
+    const i = div.querySelector('i');
+    
+    if (element.type === 'password') {
+        element.type = 'text';
+        i.className = 'fa-solid fa-eye-slash';
+    }
+    else if (element.type === 'text') {
+        element.type = 'password';
+        i.className = 'fa-solid fa-eye';
+    }
+}
 
 const logout = async () => {
     try {

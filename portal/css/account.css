@@ -12,6 +12,11 @@
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
     margin: auto;
     padding: 2em;
+    border-radius: 3em;
+}
+
+#account-box h1 {
+    margin-top: 10vh;
 }
 
 #main-menu h2 {
@@ -20,8 +25,61 @@
 
 .question {
     margin: 1em 0;
+    width: 100%;
 }
 
-ul {
+.question p {
+    margin-top: 1em;
+}
+
+.security-box {
+    margin: auto;
+    margin-top: 2em;
+    width: 50%;
+    border: 1px solid #f8ac29;
+    border-radius: 3em;
+    padding: 2em;
+}
+
+.question div input {
+    width: 100%;
+}
+
+.question div {
+    display: flex;
+    gap: 1em;
+    width: 100%;
+}
+
+#submit-box {
+    margin: 0;
+    text-align: center;
+}
+
+.reveal {
+    height: 2em;
+    width: 2em;
+    display: block;
+}
+
+.reveal i {
+    transform: translateX(-50%);
+}
+
+.session {
+    border: 1px solid #f8ac29;
+    border-radius: 2em;
+    padding: 1.5em 2em;
     margin: 1em 0;
+}
+
+.session button {
+    margin-top: 1em;
+}
+
+.session:last-of-type {
+    border: 0px;
+    padding: 0;
+    margin: 0;
+    text-align: center;
 }

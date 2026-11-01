@@ -232,10 +232,10 @@ const loadMore = async () => {
 
         let preview;
         if (data.preview.contentType === 'image/png') {
-            preview = `<img src="${data.preview.url}" class="model-viewer">`;
+            preview = `<img src="${data.preview.url}" class="model-viewer ii${data.iteration}">`;
         }
         else if (data.preview.contentType === 'model/gltf-binary') {
-            preview = `<model-viewer id="car-model" src="${data.preview.url}" class="model-viewer" camera-controls></model-viewer>`;
+            preview = `<model-viewer id="car-model" src="${data.preview.url}" class="model-viewer ii${data.iteration}" camera-controls></model-viewer>`;
         }
         else {
             preview = `<div id="error">There was an error loading the preview.</div>`;
@@ -265,9 +265,9 @@ const loadMore = async () => {
 
         devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
         
-        document.querySelector('.model-viewer').style.height = '100%';
-        document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
-        document.querySelector('#loadMore button').innerText = 'Load more';
+        document.querySelector(`.ii${data.iteration}`).style.height = '100%';
+        document.querySelector(`.ii${data.iteration}`).style.height = `${document.querySelector(`.ii${data.iteration}`).offsetHeight}px`;
+        document.querySelector('#loadMore button').innerText = '<i class="fa-solid fa-chevron-down"></i> Load more';
     }
     catch (error) {
         document.querySelector('#loadMore button').innerText = error.message;
@@ -277,6 +277,7 @@ const loadMore = async () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('#main-error').innerText = 'Fetching car data..';
+    document.querySelector('#loadMore button').style.display = 'none';
 
     try {
         const dat = await getData('fullworks', 'latest');

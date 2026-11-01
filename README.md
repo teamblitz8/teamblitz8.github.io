@@ -33,6 +33,7 @@ The site should adapt to different viewport sizes. Images may load slowly on mob
 
 - Contact form on Contact Us page.
 - There's some unused pages dedicated to a blog. Not sure if this will happen though. Maybe if I have hours to kill on a week in Terra.
+- There is also an empty Sponsors page which will be filled in later on. The navigation bar should have the link to this omitted.
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/website-homepage.png?raw=true)
 
@@ -58,10 +59,7 @@ This part of the site involved a lot of learning for me. It is designed to allow
 
 A lot!
 
-- Upload button and form is UI only
-- Load more button doesn't fetch anything
-- My Account is UI only
-- My Designs is an empty page but will be used to load designs made by your account
+- My Account & My Designs is UI only
 - Remember me checkbox
 - It's quite horrendous on mobile right now
 
@@ -83,10 +81,6 @@ The portal is strictly for internal team use only. If you would like to see a de
 ## To-do
 - Complete the contact form on the main site
 - Transfer the site from being hosted on GitHub Pages to Cloudflare on custom domain.
-- Create the UI for the account and My Designs page
-- My Designs should be somewhat similar to the dashboard.
-- Complete the load more button.
-- My Account should include an area to change password and log out of all sessions.
 - Add a filter, sort by bar on the dashboard
 - Fix up the spaghetti code on the backend
 - Prompt first-time users to change password upon login.

@@ -1,5 +1,7 @@
 const form = document.querySelector('#car-info');
 const error = document.querySelector('#metadata-error');
+const frontalArea = document.querySelector('#frontal-area');
+const dragCoefficient = document.querySelector('#drag-coefficient');
 let theCar;
 
 const upload = async (type, data, carid, fileType) => {
@@ -257,7 +259,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('title').innerText = 'Latest Cars';
         document.getElementById('loadMore').style.display = 'flex';
         document.querySelector('.model-viewer').style.height = '100%';
-        document.querySelector('.model-viewer').style.height = `${document.querySelector('#model-viewer').offsetHeight}px`;
+        document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
         document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
     }
     catch (error) {
@@ -308,8 +310,6 @@ form.addEventListener('submit', async (e) => {
 
     const carName = document.querySelector('#name');
     const dateCreated = document.querySelector('#date');
-    const frontalArea = document.querySelector('#frontal-area');
-    const dragCoefficient = document.querySelector('#drag-coefficient');
     const scrutineerer = document.querySelector('input[name="scrutineerer"]:checked');
     const derivedCar = document.querySelector('#derived-car');
     const changelog = document.querySelector('#changelog');

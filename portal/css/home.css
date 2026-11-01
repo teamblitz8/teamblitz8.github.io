@@ -98,7 +98,7 @@ body h1 {
 .popup-shroud {
     position: absolute;
     background-color: rgba(31,33,33,0.6);
-    display: flex;
+    display: none;
     top: 0;
     left: 0;
     padding: 0;

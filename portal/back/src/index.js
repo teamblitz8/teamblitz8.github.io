@@ -1526,8 +1526,9 @@ export default {
 						reqJson.addDetails = null;
 					}
 
+					const carid = crypto.randomUUID();
+
 					try {
-						const carid = crypto.randomUUID();
 						const formattedScrutineerName = `${reqJson.scrutineerer[0].toUpperCase()}${reqJson.scrutineerer.slice(1).toLowerCase()}`;
 						const scrutineeridQuery = env.blitz.prepare('SELECT userid FROM users WHERE name = ?').bind(formattedScrutineerName);
 						const scrutineerIdQueried = await scrutineeridQuery.run();
@@ -1569,7 +1570,10 @@ export default {
 						});
 					}
 					
-					return new Response(JSON.stringify({ message: 'Metadata upload successful.' }), {
+					return new Response(JSON.stringify({ 
+						message: 'Metadata upload successful.',
+						carid: carid
+					}), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
@@ -1787,8 +1791,192 @@ export default {
 					});
 				}
 				else if (request.method === 'POST') {
-					let responseObject = {};
-					return new Response(JSON.stringify(responseObject), {
+					const contentType = request.headers.get('Content-Type');
+					if (!contentType || typeof contentType !== 'string') {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (contentType.split(';')[0].toLowerCase() !== 'application/octet-stream') {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					let blobbed;
+
+					try {
+						blobbed = await request.blob();
+						if (!blobbed) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (blobbed.size > 15000000) {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const url = new URL(request.url);
+					const carid = url.searchParams.get('carid');
+					const fileType = url.searchParams.get('fileType');
+
+					if (!carid) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+					if (carid.length !== 36) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const checkExistenceQuery = env.blitz.prepare('SELECT date_created FROM cars WHERE carid = ?').bind(carid);
+					const checkExistence = await checkExistenceQuery.run();
+
+					if (checkExistence.results.length === 0) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const carDate = new Date(checkExistence.results[0]['date_created']);
+					const today = new Date();
+					if (carDate.toDateString() !== today.toDateString()) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (!fileType) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+					if (fileType.length !== 3) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+					if (fileType.toLowerCase() !== 'f3d' || fileType.toLowerCase() !== 'f3z') {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					try {
+						const object = await env.blitzr2.put(`assets/f3d/${carid}.${fileType.toLowerCase()}`, blobbed);
+						if (object === null) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+							status: 500,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					return new Response(JSON.stringify({ message: 'Car model upload successful.' }), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
@@ -2028,8 +2216,154 @@ export default {
 					});
 				}
 				else if (request.method === 'POST') {
-					let responseObject = {};
-					return new Response(JSON.stringify(responseObject), {
+					let fileType;
+					const contentType = request.headers.get('Content-Type');
+					if (!contentType || typeof contentType !== 'string') {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (contentType.split(';')[0].toLowerCase() === 'image/png') fileType = 'png';
+					else if (contentType.split(';')[0].toLowerCase() === 'model/gltf-binary') fileType = 'glb';
+					else {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					let blobbed;
+
+					try {
+						blobbed = await request.blob();
+						if (!blobbed) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (blobbed.size > 15000000) {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const url = new URL(request.url);
+					const carid = url.searchParams.get('carid');
+
+					if (!carid) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+					if (carid.length !== 36) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const checkExistenceQuery = env.blitz.prepare('SELECT date_created FROM cars WHERE carid = ?').bind(carid);
+					const checkExistence = await checkExistenceQuery.run();
+
+					if (checkExistence.results.length === 0) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const carDate = new Date(checkExistence.results[0]['date_created']);
+					const today = new Date();
+					if (carDate.toDateString() !== today.toDateString()) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					try {
+						const object = await env.blitzr2.put(`assets/preview/${carid}.${fileType}`, blobbed);
+						if (object === null) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+							status: 500,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					return new Response(JSON.stringify({ message: 'Car preview upload successful.' }), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
@@ -2247,8 +2581,151 @@ export default {
 					});
 				}
 				else if (request.method === 'POST') {
-					let responseObject = {};
-					return new Response(JSON.stringify(responseObject), {
+					const contentType = request.headers.get('Content-Type');
+					if (!contentType || typeof contentType !== 'string') {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (contentType.split(';')[0].toLowerCase() !== 'image/png') {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					let blobbed;
+
+					try {
+						blobbed = await request.blob();
+						if (!blobbed) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (blobbed.size > 5000000) {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const url = new URL(request.url);
+					const carid = url.searchParams.get('carid');
+
+					if (!carid) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+					if (carid.length !== 36) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const checkExistenceQuery = env.blitz.prepare('SELECT date_created FROM cars WHERE carid = ?').bind(carid);
+					const checkExistence = await checkExistenceQuery.run();
+
+					if (checkExistence.results.length === 0) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const carDate = new Date(checkExistence.results[0]['date_created']);
+					const today = new Date();
+					if (carDate.toDateString() !== today.toDateString()) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					try {
+						const object = await env.blitzr2.put(`assets/iso/${carid}.png`, blobbed);
+						if (object === null) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+							status: 500,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					return new Response(JSON.stringify({ message: 'Iso surfaces upload successful.' }), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
@@ -2466,8 +2943,151 @@ export default {
 					});
 				}
 				else if (request.method === 'POST') {
-					let responseObject = {};
-					return new Response(JSON.stringify(responseObject), {
+					const contentType = request.headers.get('Content-Type');
+					if (!contentType || typeof contentType !== 'string') {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (contentType.split(';')[0].toLowerCase() !== 'image/png') {
+						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
+							status: 415,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					let blobbed;
+
+					try {
+						blobbed = await request.blob();
+						if (!blobbed) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					if (blobbed.size > 5000000) {
+						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const url = new URL(request.url);
+					const carid = url.searchParams.get('carid');
+
+					if (!carid) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+					if (carid.length !== 36) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const checkExistenceQuery = env.blitz.prepare('SELECT date_created FROM cars WHERE carid = ?').bind(carid);
+					const checkExistence = await checkExistenceQuery.run();
+
+					if (checkExistence.results.length === 0) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					const carDate = new Date(checkExistence.results[0]['date_created']);
+					const today = new Date();
+					if (carDate.toDateString() !== today.toDateString()) {
+						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
+							status: 400,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					try {
+						const object = await env.blitzr2.put(`assets/planes/${carid}.png`, blobbed);
+						if (object === null) throw new Error();
+					}
+					catch {
+						return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
+							status: 500,
+							headers: {
+								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+								'Content-Type': 'application/json; charset=UTF-8',
+								'Cache-Control': 'no-store',
+								'X-Content-Type-Options': 'nosniff',
+								'Vary': 'Origin',
+								'Access-Control-Allow-Credentials': 'true'
+							}
+						});
+					}
+
+					return new Response(JSON.stringify({ message: 'Planes upload successful.' }), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',

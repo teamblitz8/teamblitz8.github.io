@@ -12,21 +12,22 @@ const carModel = document.querySelector('#car-model');
 const iso = document.querySelector('#iso');
 const planes = document.querySelector('#planes');
 const preview = document.querySelector('#preview');
+let theCar;
 
-const upload = async (type, data) => {
+const upload = async (type, data, carid, fileType) => {
     let body;
     let contentHeader;
 
     if (type === 'fullworks') {
-        const metadata = await upload('metadata', data.metadata);
+        const metadata = await upload('metadata', data.metadata, carid, fileType);
         if (!metadata.success) return { success: false, error: metadata.error };
-        const carModel = await upload('f3d', data.carModel);
+        const carModel = await upload('f3d', data.carModel, carid, fileType);
         if (!carModel.success) return { success: false, error: carModel.error };
-        const iso = await upload('iso', data.iso);
+        const iso = await upload('iso', data.iso, carid, fileType);
         if (!iso.success) return { success: false, error: iso.error };
-        const planes = await upload('planes', data.planes);
+        const planes = await upload('planes', data.planes, carid, fileType);
         if (!planes.success) return { success: false, error: planes.error };
-        const preview = await upload('preview', data.preview);
+        const preview = await upload('preview', data.preview, carid, fileType);
         if (!preview.success) return { success: false, error: preview.error };
 
         return { success: true };
@@ -61,7 +62,9 @@ const upload = async (type, data) => {
     }
 
     try {
-        const response = await fetch(`https://teamblitz.workers.dev/api/dashboard/${type}`, {
+        const url = new URL(`https://teamblitz.workers.dev/api/dashboard/${type}`);
+        url.search = new URLSearchParams({ carid: carid, fileType: fileType });
+        const response = await fetch(url, {
             method: 'POST',
             body: body,
             headers: {
@@ -70,19 +73,21 @@ const upload = async (type, data) => {
             credentials: 'include'
         });
 
-        if (!response.ok) {
-            let data;
-            try {
-                data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+            if (!response.ok) {
                 console.error(data.message);
+                throw new Error('There was an error uploading the car data to the server. Please contact the administrator.');
             }
-            catch {
-                console.error(`Malformed JSON response from server when uploading ${type}`);
+            else {
+                theCar = data.carid;
+                return { success: true }
             }
-            throw new Error('There was an error uploading the car data to the server. Please contact the administrator.');
         }
-        else {
-            return { success: true }
+        catch {
+            console.error(`Malformed JSON response from server when uploading ${type}`);
+            throw new Error(`Malformed JSON response from server when uploading ${type}`)
         }
     }
     catch (error) {
@@ -465,7 +470,7 @@ form.addEventListener('submit', async (e) => {
             iso: iso.files[0],
             planes: planes.files[0],
             preview: preview.files[0]
-        });
+        }, theCar, carModel.files[0].name.split('.')[1]);
 
         if (success.success) {
             error.innerText = 'Upload successful!';

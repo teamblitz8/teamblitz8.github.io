@@ -95,6 +95,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Add rate-limiting across all API endpoints on the backend
 - Add remember me functionality
 - Improve how errors are handled on both ends
+- Complete input validation for files, by analysing the actual binary contents
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

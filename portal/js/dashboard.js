@@ -211,7 +211,7 @@ const showPopup = () => {
 }
 
 const loadMore = async () => {
-    document.querySelector('#loadMore').innerText = 'Fetching car data..';
+    document.querySelector('#loadMore button').innerText = 'Fetching car data..';
 
     try {
         const dat = await getData('fullworks', nextIteration);
@@ -257,10 +257,10 @@ const loadMore = async () => {
 
         nextIteration = Number(data.iteration) - 1;
         if (nextIteration !== 0) {
-            document.getElementById('loadMore').style.display = 'flex';
+            document.querySelector('#loadMore button').style.display = 'flex';
         }
         else {
-            document.getElementById('loadMore').style.display = 'none';
+            document.querySelector('#loadMore button').style.display = 'none';
         }
 
         devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;

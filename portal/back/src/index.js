@@ -1152,9 +1152,7 @@ export default {
 						}
 						let checkAllFields = ['carName', 'dateCreated', 'frontalArea', 'dragCoefficient', 'scrutineerer', 'derivedCar', 'changelog', 'addDetails'];
 						checkAllFields.forEach((field, index) => checkAllFields[index] = Object.hasOwn(reqJson, field));
-						const fieldsSet = new Set(checkAllFields);
-
-						if (fieldsSet.length !== 1 || !fieldsSet[0]) {
+						if (!checkAllFields.every(Boolean)) {
 							throw new Error();
 						}
 					}
@@ -1436,7 +1434,7 @@ export default {
 					}
 
 					for (let i of reqJson.changelog) {
-						if (i.trim() > 1000) {
+						if (i.trim().length > 1000) {
 							return new Response(JSON.stringify({ message: 'Bad request.' }), { 
 								status: 400,
 								headers: {
@@ -1494,26 +1492,12 @@ export default {
 						});
 					}
 
-					if (reqJson.addDetails.length === 0) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.addDetails === 'null') {
+					if (reqJson.addDetails === '' || reqJson.addDetails === 'null') {
 						reqJson.addDetails = null;
 					}
 
 					let derivedCar;
-					if (reqJson.derivedCar !== '0') {
+					if (reqJson.derivedCar !== 0) {
 						derivedCar = await pullCar(reqJson.derivedCar, env);
 						if (!derivedCar) {
 							return new Response(JSON.stringify({ message: 'Bad request.' }), { 
@@ -1896,22 +1880,6 @@ export default {
 					const checkExistence = await checkExistenceQuery.run();
 
 					if (checkExistence.results.length === 0) {
-						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					const carDate = new Date(checkExistence.results[0]['date_created']);
-					const today = new Date();
-					if (carDate.toDateString() !== today.toDateString()) {
 						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
 							status: 400,
 							headers: {
@@ -2336,22 +2304,6 @@ export default {
 						});
 					}
 
-					const carDate = new Date(checkExistence.results[0]['date_created']);
-					const today = new Date();
-					if (carDate.toDateString() !== today.toDateString()) {
-						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
 					try {
 						const object = await env.blitzr2.put(`assets/previews/${carid}.${fileType}`, blobbed);
 						if (object === null) throw new Error();
@@ -2370,7 +2322,10 @@ export default {
 						});
 					}
 
-					return new Response(JSON.stringify({ message: 'Car preview upload successful.' }), {
+					return new Response(JSON.stringify({ 
+						message: 'Car preview upload successful.',
+						carid: carid
+					}), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
@@ -2698,22 +2653,6 @@ export default {
 						});
 					}
 
-					const carDate = new Date(checkExistence.results[0]['date_created']);
-					const today = new Date();
-					if (carDate.toDateString() !== today.toDateString()) {
-						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
 					try {
 						const object = await env.blitzr2.put(`assets/iso/${carid}.png`, blobbed);
 						if (object === null) throw new Error();
@@ -2732,7 +2671,10 @@ export default {
 						});
 					}
 
-					return new Response(JSON.stringify({ message: 'Iso surfaces upload successful.' }), {
+					return new Response(JSON.stringify({
+						message: 'Iso surfaces upload successful.',
+						carid: carid
+					}), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
@@ -3060,22 +3002,6 @@ export default {
 						});
 					}
 
-					const carDate = new Date(checkExistence.results[0]['date_created']);
-					const today = new Date();
-					if (carDate.toDateString() !== today.toDateString()) {
-						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
 					try {
 						const object = await env.blitzr2.put(`assets/planes/${carid}.png`, blobbed);
 						if (object === null) throw new Error();
@@ -3094,7 +3020,10 @@ export default {
 						});
 					}
 
-					return new Response(JSON.stringify({ message: 'Planes upload successful.' }), {
+					return new Response(JSON.stringify({
+						message: 'Planes upload successful.',
+						carid: carid
+					}), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',

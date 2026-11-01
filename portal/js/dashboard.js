@@ -6,6 +6,7 @@ const carModel = document.querySelector('#car-model');
 const iso = document.querySelector('#iso');
 const planes = document.querySelector('#planes');
 const preview = document.querySelector('#preview');
+let nextIteration;
 let theCar;
 
 const upload = async (type, data, carid, fileType) => {
@@ -111,6 +112,7 @@ const unfurl = async (iteration) => {
 }
 
 const getData = async (type, iterationNumber) => {
+    if (iterationNumber < 1) return;
     try {
         if (type === 'fullworks') {
             try {
@@ -209,7 +211,68 @@ const showPopup = () => {
 }
 
 const loadMore = async () => {
-    // do nothing rn
+    document.querySelector('#loadMore').innerText = 'Fetching car data..';
+
+    try {
+        const dat = await getData('fullworks', 'latest');
+
+        if (!dat.success) {
+            throw new Error(`There was an unexpected error when fetching car data. Please contact the administrator. Error logs: ${dat.data}`);
+        }
+        const data = dat.data;
+        const greeting = document.querySelector('#greeting');
+        greeting.textContent = `Hello, ${data.name}`;
+
+        const devContainer = document.querySelector('#development-container');
+
+        let changelog = '';
+        for (let i of data.changelog) {
+            changelog += `<li>${i}</li>`;
+        }
+
+        let preview;
+        if (data.preview.contentType === 'image/png') {
+            preview = `<img src="${data.preview.url}" class="model-viewer">`;
+        }
+        else if (data.preview.contentType === 'model/gltf-binary') {
+            preview = `<model-viewer id="car-model" src="${data.preview.url}" class="model-viewer" camera-controls></model-viewer>`;
+        }
+        else {
+            preview = `<div id="error">There was an error loading the preview.</div>`;
+        }
+        // switch from innerhtml asap
+
+        let derivation;
+        if (data.derivedCarIteration && data.derivedCarName) {
+            derivation = `<p>This design was derived from iteration #${data.derivedCarIteration}, ${data.derivedCarName}. Changes include:</p>`;
+        }
+        else {
+            derivation = '';
+        }
+
+        let addNotes = '';
+        if (data['additional_notes'] !== null) {
+            addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div>`;
+        }
+
+        nextIteration = Number(data.iteration) - 1;
+        if (nextIteration !== 0) {
+            document.getElementById('loadMore').style.display = 'flex';
+        }
+        else {
+            document.getElementById('loadMore').style.display = 'none';
+        }
+
+        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
+        
+        document.querySelector('.model-viewer').style.height = '100%';
+        document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
+        document.querySelector('#loadMore').innerText = 'Load more';
+    }
+    catch (error) {
+        document.querySelector('#loadMore').innerText = error.message;
+        console.error(error);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -257,20 +320,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div>`;
         }
 
+        nextIteration = Number(data.iteration) - 1;
+
         devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
         document.getElementById('main-error').style.display = 'none';
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
-        document.getElementById('loadMore').style.display = 'flex';
         document.querySelector('.model-viewer').style.height = '100%';
         document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
         document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
+
+        if (nextIteration !== 0) document.getElementById('loadMore').style.display = 'flex';
     }
     catch (error) {
         document.querySelector('#main-error').textContent = error.message;
         document.querySelector('#main-error').style.display = 'inline-block';
         console.error(error);
     }
+
+    document.querySelector('#funny').style.display = 'none';
 
     dragCoefficient.addEventListener('input', () => {
         document.querySelector('#drag-calc').innerText = `Based on your values, we have calculated drag to be ${calcDrag(dragCoefficient.value, frontalArea.value)}N`

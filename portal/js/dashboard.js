@@ -214,7 +214,7 @@ const loadMore = async () => {
     document.querySelector('#loadMore').innerText = 'Fetching car data..';
 
     try {
-        const dat = await getData('fullworks', 'latest');
+        const dat = await getData('fullworks', nextIteration);
 
         if (!dat.success) {
             throw new Error(`There was an unexpected error when fetching car data. Please contact the administrator. Error logs: ${dat.data}`);
@@ -267,10 +267,10 @@ const loadMore = async () => {
         
         document.querySelector('.model-viewer').style.height = '100%';
         document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
-        document.querySelector('#loadMore').innerText = 'Load more';
+        document.querySelector('#loadMore button').innerText = 'Load more';
     }
     catch (error) {
-        document.querySelector('#loadMore').innerText = error.message;
+        document.querySelector('#loadMore button').innerText = error.message;
         console.error(error);
     }
 }
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
         document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
 
-        if (nextIteration !== 0) document.getElementById('loadMore').style.display = 'flex';
+        if (nextIteration !== 0) document.querySelector('loadMore button').style.display = 'flex';
     }
     catch (error) {
         document.querySelector('#main-error').textContent = error.message;

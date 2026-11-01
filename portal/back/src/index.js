@@ -1951,7 +1951,10 @@ export default {
 						});
 					}
 
-					return new Response(JSON.stringify({ message: 'Car model upload successful.' }), {
+					return new Response(JSON.stringify({
+						message: 'Car model upload successful.',
+						carid: carid
+					}), {
 						status: 200,
 						headers: {
 							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',

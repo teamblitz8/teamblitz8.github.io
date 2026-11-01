@@ -1847,7 +1847,7 @@ export default {
 						});
 					}
 
-					if (blobbed.size > 15000000) {
+					if (blobbed.size > 100000000) {
 						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
 							status: 400,
 							headers: {
@@ -2275,7 +2275,7 @@ export default {
 						});
 					}
 
-					if (blobbed.size > 15000000) {
+					if (blobbed.size > 100000000) {
 						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
 							status: 400,
 							headers: {

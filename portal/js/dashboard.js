@@ -420,9 +420,9 @@ form.addEventListener('submit', async (e) => {
             errors.push('Please upload an .f3d or .f3z file for car model.');
         }
 
-        if (carModel.files[0].size > 15000000) {
+        if (carModel.files[0].size > 100000000) {
             errored = true;
-            errors.push('Your car model file must not exceed 15MB.');
+            errors.push('Your car model file must not exceed 100MB.');
         }
     }
 
@@ -456,9 +456,9 @@ form.addEventListener('submit', async (e) => {
             errors.push('Your car preview must be either a .glb or .png file.');
         }
 
-        if (preview.files[0].size > 15000000) {
+        if (preview.files[0].size > 100000000) {
             errored = true;
-            errors.push('Your car preview file must not exceed 15MB.');
+            errors.push('Your car preview file must not exceed 100MB.');
         }
     }
 

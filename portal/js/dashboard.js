@@ -2,6 +2,10 @@ const form = document.querySelector('#car-info');
 const error = document.querySelector('#metadata-error');
 const frontalArea = document.querySelector('#frontal-area');
 const dragCoefficient = document.querySelector('#drag-coefficient');
+const carModel = document.querySelector('#car-model');
+const iso = document.querySelector('#iso');
+const planes = document.querySelector('#planes');
+const preview = document.querySelector('#preview');
 let theCar;
 
 const upload = async (type, data, carid, fileType) => {
@@ -294,8 +298,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     planes.addEventListener('change', () => {
-        if (iso.files.length !== 0) {
+        if (planes.files.length !== 0) {
             document.getElementById('planes-button').innerText = `File selected: ${planes.files[0].name}, ${planes.files[0].size} bytes`;
+        }
+    });
+    preview.addEventListener('change', () => {
+        if (preview.files.length !== 0) {
+            document.getElementById('preview-button').innerText = `File selected: ${preview.files[0].name}, ${preview.files[0].size} bytes`;
         }
     });
 });
@@ -314,10 +323,6 @@ form.addEventListener('submit', async (e) => {
     const derivedCar = document.querySelector('#derived-car');
     const changelog = document.querySelector('#changelog');
     let addDetails = document.querySelector('#add-notes');
-    const carModel = document.querySelector('#car-model');
-    const iso = document.querySelector('#iso');
-    const planes = document.querySelector('#planes');
-    const preview = document.querySelector('#preview');
 
     // check if everything exists
     const theGreatArray = [carName, dateCreated, frontalArea, dragCoefficient, scrutineerer, derivedCar, changelog, carModel, iso, planes, preview];

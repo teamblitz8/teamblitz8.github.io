@@ -35,6 +35,7 @@
                 <h2>Security</h2>
                 <form novalidate id="formz" class="security-box">
                     <h3>Change my password</h3>
+                    <div class="error" style="display:none;"></div>
                     <div id="error-box" style="display:none;"><span class="error">There has been an error in changing your password. Please contact the administrator.</span></div>
                     <div class="question">
                         <label for="current-password">Current password</label><br>
@@ -54,8 +55,8 @@
                             <li>be at least 10 characters long</li>
                             <li>have at least one uppercase letter</li>
                             <li>have at least one lowercase letter</li>
-                            <li>contain at least 1 number</li>
-                            <li>contain at least 1 special character - any from !"£$%^&*()-+[]{}:;@'~#?/>.<,\|¬`</li>
+                            <li>contain at least one number</li>
+                            <li>contain at least one special character - any from .!@#$%^&*()_+-=</li>
                             <li>must not contain easily guessable words or phrases e.g. password or yashhasnolife</li>
                         </ul>
                     </div>

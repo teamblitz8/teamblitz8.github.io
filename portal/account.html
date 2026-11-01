@@ -38,11 +38,13 @@
                     <div id="error-box" style="display:none;"><span class="error">There has been an error in changing your password. Please contact the administrator.</span></div>
                     <div class="question">
                         <label for="current-password">Current password</label><br>
-                        <input type="text" placeholder="password123" name="current-password" id="current-password">
+                        <input type="password" placeholder="password123" name="current-password" id="current-password">
+                        <button onclick="showPassword('current-password')"></button>
                     </div>
                     <div class="question">
                         <label for="new-password">New password</label><br>
-                        <input type="text" placeholder="mysupersupersecureUNGuesSablePASSWORD123!??$?$?$?!?£*&$£" name="new-password" id="new-password">
+                        <input type="password" placeholder="mysupersupersecureUNGuesSablePASSWORD123!??$?$?$?!?£*&$£" name="new-password" id="new-password">
+                        <button onclick="showPassword('new-password')"></button>
                         <p>New passwords must:</p>
                         <ul>
                             <li>be at least 10 characters long</li>
@@ -55,7 +57,8 @@
                     </div>
                     <div class="question">
                         <label for="confirm-password">Confirm new password</label><br>
-                        <input type="text" placeholder="Type your new password here again" name="confirm-password" id="confirm-password">
+                        <input type="password" placeholder="Type your new password here again" name="confirm-password" id="confirm-password">
+                        <button onclick="showPassword('confirm-password')"></button>
                     </div>
                     <div class="question">
                         <input type="submit" id="submit" name="submit">

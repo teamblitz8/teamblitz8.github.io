@@ -1150,7 +1150,8 @@ export default {
 						if (Array.isArray(reqJson)){
 							throw new Error();
 						}
-						const checkAllFields = ['carName', 'dateCreated', 'frontalArea', 'dragCoefficient', 'scrutineerer', 'derivedCar', 'changelog', 'addDetails'].forEach(field => Object.hasOwn(reqJson, field));
+						let checkAllFields = ['carName', 'dateCreated', 'frontalArea', 'dragCoefficient', 'scrutineerer', 'derivedCar', 'changelog', 'addDetails'];
+						checkAllFields.forEach((field, index) => checkAllFields[index] = Object.hasOwn(reqJson, field));
 						const fieldsSet = new Set(checkAllFields);
 
 						if (fieldsSet.length !== 1 || !fieldsSet[0]) {
@@ -1406,21 +1407,6 @@ export default {
 						});
 					}
 
-					const derivedCar = await pullCar(reqJson.derivedCar)
-					if (!derivedCar) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
 					if (!Array.isArray(reqJson.changelog)) {
 						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
 							status: 400,
@@ -1508,7 +1494,7 @@ export default {
 						});
 					}
 
-					if (reqJson.length === 0) {
+					if (reqJson.addDetails.length === 0) {
 						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
 							status: 400,
 							headers: {
@@ -1526,6 +1512,27 @@ export default {
 						reqJson.addDetails = null;
 					}
 
+					let derivedCar;
+					if (reqJson.derivedCar !== '0') {
+						derivedCar = await pullCar(reqJson.derivedCar, env);
+						if (!derivedCar) {
+							return new Response(JSON.stringify({ message: 'Bad request.' }), { 
+								status: 400,
+								headers: {
+									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+									'Content-Type': 'application/json; charset=UTF-8',
+									'Cache-Control': 'no-store',
+									'X-Content-Type-Options': 'nosniff',
+									'Vary': 'Origin',
+									'Access-Control-Allow-Credentials': 'true'
+								}
+							});
+						}
+					}
+					else {
+						derivedCar = { carid: null }
+					}
+
 					const carid = crypto.randomUUID();
 
 					try {
@@ -1535,24 +1542,24 @@ export default {
 						if (scrutineerIdQueried.results.length === 0) {
 							throw new Error();
 						}
-						const scrutineerid = scrutineerIdQueried.results[0];
+						const scrutineerid = scrutineerIdQueried.results[0].userid;
 
-						const dragForce = 0.5 * 1.196 * 225 * reqJson.dragCoefficient * reqJson.frontalArea;
+						const dragForce = 0.5 * 1.196 * 225 * reqJson.dragCoefficient * reqJson.frontalArea / 1000000;
 						const derivedCarID = derivedCar.carid;
 						const changelog = reqJson.changelog.join('[BRK;]');
 
 						const maxIterationQuery = env.blitz.prepare('SELECT MAX(iteration) as max_iteration FROM cars');
 						const maxIterationProcess = await maxIterationQuery.run();
 						// what if db empty?
-						const maxIteration = maxIterationProcess.results[0];
+						const maxIteration = maxIterationProcess.results[0]['max_iteration'];
 
-						const query = env.blitz.prepare('INSERT INTO cars (creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes) VALUES (? ? ? ? ? ? ? ? ? ? ? ?)').bind(userid, scrutineerid, carid, derivedCarID, reqJson.carName, (maxIteration + 1), dateMade.toISOString(), reqJson.frontalArea, reqJson.dragCoefficient, dragForce, changelog, reqJson.addDetails);
+						const query = env.blitz.prepare('INSERT INTO cars (creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(userid, scrutineerid, carid, derivedCarID, reqJson.carName, (maxIteration + 1), dateMade.toISOString(), reqJson.frontalArea, reqJson.dragCoefficient, dragForce, changelog, reqJson.addDetails);
 						await query.run();
 
 						const check = env.blitz.prepare('SELECT carid FROM cars WHERE iteration = ?').bind(maxIteration + 1);
 						const checking = await check.run();
 
-						if (checking.results[0] !== carid) {
+						if (checking.results[0].carid !== carid) {
 							throw new Error();
 						}
 					}
@@ -1944,7 +1951,7 @@ export default {
 							}
 						});
 					}
-					if (fileType.toLowerCase() !== 'f3d' || fileType.toLowerCase() !== 'f3z') {
+					if (fileType.toLowerCase() !== 'f3d' && fileType.toLowerCase() !== 'f3z') {
 						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
 							status: 400,
 							headers: {
@@ -2346,7 +2353,7 @@ export default {
 					}
 
 					try {
-						const object = await env.blitzr2.put(`assets/preview/${carid}.${fileType}`, blobbed);
+						const object = await env.blitzr2.put(`assets/previews/${carid}.${fileType}`, blobbed);
 						if (object === null) throw new Error();
 					}
 					catch {

@@ -1,17 +1,5 @@
 const form = document.querySelector('#car-info');
 const error = document.querySelector('#metadata-error');
-const carName = document.querySelector('#name');
-const dateCreated = document.querySelector('#date');
-const frontalArea = document.querySelector('#frontal-area');
-const dragCoefficient = document.querySelector('#drag-coefficient');
-const scrutineerer = document.querySelector('input[name="scrutineerer"]:checked');
-const derivedCar = document.querySelector('#derived-car');
-const changelog = document.querySelector('#changelog');
-let addDetails = document.querySelector('#add-notes');
-const carModel = document.querySelector('#car-model');
-const iso = document.querySelector('#iso');
-const planes = document.querySelector('#planes');
-const preview = document.querySelector('#preview');
 let theCar;
 
 const upload = async (type, data, carid, fileType) => {
@@ -19,15 +7,15 @@ const upload = async (type, data, carid, fileType) => {
     let contentHeader;
 
     if (type === 'fullworks') {
-        const metadata = await upload('metadata', data.metadata, carid, fileType);
+        const metadata = await upload('metadata', data.metadata, theCar, fileType);
         if (!metadata.success) return { success: false, error: metadata.error };
-        const carModel = await upload('f3d', data.carModel, carid, fileType);
+        const carModel = await upload('f3d', data.carModel, theCar, fileType);
         if (!carModel.success) return { success: false, error: carModel.error };
-        const iso = await upload('iso', data.iso, carid, fileType);
+        const iso = await upload('iso', data.iso, theCar, fileType);
         if (!iso.success) return { success: false, error: iso.error };
-        const planes = await upload('planes', data.planes, carid, fileType);
+        const planes = await upload('planes', data.planes, theCar, fileType);
         if (!planes.success) return { success: false, error: planes.error };
-        const preview = await upload('preview', data.preview, carid, fileType);
+        const preview = await upload('preview', data.preview, theCar, fileType);
         if (!preview.success) return { success: false, error: preview.error };
 
         return { success: true };
@@ -62,7 +50,7 @@ const upload = async (type, data, carid, fileType) => {
     }
 
     try {
-        const url = new URL(`https://teamblitz.workers.dev/api/dashboard/${type}`);
+        const url = new URL(`https://back.teamblitz.workers.dev/api/dashboard/${type}`);
         url.search = new URLSearchParams({ carid: carid, fileType: fileType });
         const response = await fetch(url, {
             method: 'POST',
@@ -93,7 +81,7 @@ const upload = async (type, data, carid, fileType) => {
     catch (error) {
         return {
             success: false,
-            error: error
+            error: error.message
         }
     }
 }
@@ -240,10 +228,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let preview;
         if (data.preview.contentType === 'image/png') {
-            preview = `<img src="${data.preview.url}">`;
+            preview = `<img src="${data.preview.url}" class="model-viewer">`;
         }
         else if (data.preview.contentType === 'model/gltf-binary') {
-            preview = `<model-viewer id="car-model" src="${data.preview.url}" camera-controls></model-viewer>`;
+            preview = `<model-viewer id="car-model" src="${data.preview.url}" class="model-viewer" camera-controls></model-viewer>`;
         }
         else {
             preview = `<div id="error">There was an error loading the preview.</div>`;
@@ -258,18 +246,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             derivation = '';
         }
 
-        let addNotes;
-        if (data['additional_notes']) {
+        let addNotes = '';
+        if (data['additional_notes'] !== null) {
             addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div>`;
         }
 
-        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
+        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
         document.getElementById('error').style.display = 'none';
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
         document.getElementById('loadMore').style.display = 'flex';
-        document.querySelector('model-viewer').style.height = '100%';
-        document.querySelector('model-viewer').style.height = `${document.querySelector('model-viewer').offsetHeight}px`;
+        document.querySelector('.model-viewer').style.height = '100%';
+        document.querySelector('.model-viewer').style.height = `${document.querySelector('#model-viewer').offsetHeight}px`;
         document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
     }
     catch (error) {
@@ -294,13 +282,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     carModel.addEventListener('change', () => {
-        document.getElementById('car-model-button').innerText = `File selected: ${carModel.files[0].name}, ${carModel.files[0].size} bytes`;
+        if (carModel.files.length !== 0) {
+            document.getElementById('car-model-button').innerText = `File selected: ${carModel.files[0].name}, ${carModel.files[0].size} bytes`;
+        }
     });
     iso.addEventListener('change', () => {
-        document.getElementById('iso-button').innerText = `File selected: ${iso.files[0].name}, ${iso.files[0].size} bytes`;
+        if (iso.files.length !== 0) {
+            document.getElementById('iso-button').innerText = `File selected: ${iso.files[0].name}, ${iso.files[0].size} bytes`;
+        }
     });
     planes.addEventListener('change', () => {
-        document.getElementById('planes-button').innerText = `File selected: ${planes.files[0].name}, ${planes.files[0].size} bytes`;
+        if (iso.files.length !== 0) {
+            document.getElementById('planes-button').innerText = `File selected: ${planes.files[0].name}, ${planes.files[0].size} bytes`;
+        }
     });
 });
 
@@ -311,6 +305,19 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const errors = [];
     errored = false;
+
+    const carName = document.querySelector('#name');
+    const dateCreated = document.querySelector('#date');
+    const frontalArea = document.querySelector('#frontal-area');
+    const dragCoefficient = document.querySelector('#drag-coefficient');
+    const scrutineerer = document.querySelector('input[name="scrutineerer"]:checked');
+    const derivedCar = document.querySelector('#derived-car');
+    const changelog = document.querySelector('#changelog');
+    let addDetails = document.querySelector('#add-notes');
+    const carModel = document.querySelector('#car-model');
+    const iso = document.querySelector('#iso');
+    const planes = document.querySelector('#planes');
+    const preview = document.querySelector('#preview');
 
     // check if everything exists
     const theGreatArray = [carName, dateCreated, frontalArea, dragCoefficient, scrutineerer, derivedCar, changelog, carModel, iso, planes, preview];
@@ -348,27 +355,29 @@ form.addEventListener('submit', async (e) => {
         errors.push('Please enter a valid date.');
     }
 
-    if (frontalArea.value > 5000) {
+    if (frontalArea.valueAsNumber > 5000) {
         errored = true;
         errors.push('Please enter a valid frontal area.');
     }
-    if (frontalArea.value < 1000) {
+    if (frontalArea.valueAsNumber < 1000) {
         errored = true;
         errors.push('Please enter a valid frontal area.');
     }
 
-    if (dragCoefficient.value > 2) {
+    if (dragCoefficient.valueAsNumber > 2) {
         errored = true;
         errors.push('Please enter a valid drag coefficient.');
     }
-    if (dragCoefficient.value < 0) {
+    if (dragCoefficient.valueAsNumber < 0) {
         errored = true;
         errors.push('Please enter a valid drag coefficient.');
     }
 
-    if (!['chen', 'yash', 'pranit', 'josh'].includes(scrutineerer)) {
+    if (scrutineerer) {
+        if (!['chen', 'yash', 'pranit', 'josh'].includes(scrutineerer.value)) {
         errored = true;
         errors.push('Please enter a valid scrutineerer.');
+        }
     }
 
     if (changelog.value.trim().length < 10) {
@@ -390,54 +399,62 @@ form.addEventListener('submit', async (e) => {
             break;
         } 
     }
+
+    if (addDetails === null) {
+        addDetails = 'null';
+    }
     
     if (addDetails.value.trim().length > 1000) {
         errored = true;
         errors.push('Please enter less additional information.');
     }
 
-    if (addDetails === null) {
-        addDetails = 'null';
+    if (carModel.files[0]) {
+        if (carModel.files[0].name.split('.')[1] !== 'f3d' && carModel.files[0].name.split('.')[1] !== 'f3z') {
+            errored = true;
+            errors.push('Please upload an .f3d or .f3z file for car model.');
+        }
+
+        if (carModel.files[0].size > 15000000) {
+            errored = true;
+            errors.push('Your car model file must not exceed 15MB.');
+        }
     }
 
-    if (carModel.files[0].name.split('.')[1] !== 'f3d' || carModel.files[0].name.split('.')[1] !== 'f3z') {
-        errored = true;
-        errors.push('Please upload an .f3d or .f3z file.');
+    if (iso.files[0]) {
+        if (iso.files[0].name.split('.')[1] !== 'png') {
+            errored = true;
+            errors.push('Please upload a png file for iso surfaces.');
+        }
+
+        if (iso.files[0].size > 5000000) {
+            errored = true;
+            errors.push('Your iso surfaces image file must not exceed 5MB.');
+        }
     }
 
-    if (carModel.files[0].size > 15000000) {
-        errored = true;
-        errors.push('Your car model file must not exceed 15MB.');
+    if (planes.files[0]) {
+        if (planes.files[0].name.split('.')[1] !== 'png') {
+            errored = true;
+            errors.push('Please upload a png file for planes.');
+        }
+
+        if (planes.files[0].size > 5000000) {
+            errored = true;
+            errors.push('Your planes image file must not exceed 5MB.');
+        }
     }
 
-    if (iso.files[0].name.split('.')[1] !== 'png') {
-        errored = true;
-        errors.push('Please upload an .f3d or .f3z file.');
-    }
+    if (preview.files[0]) {
+        if (preview.files[0].name.split('.')[1] !== 'png' && preview.files[0].name.split('.')[1] !== 'glb') {
+            errored = true;
+            errors.push('Your car preview must be either a .glb or .png file.');
+        }
 
-    if (iso.files[0].size > 5000000) {
-        errored = true;
-        errors.push('Your iso surfaces image file must not exceed 5MB.');
-    }
-
-    if (planes.files[0].name.split('.')[1] !== 'png') {
-        errored = true;
-        errors.push('Please upload an .f3d or .f3z file.');
-    }
-
-    if (planes.files[0].size > 5000000) {
-        errored = true;
-        errors.push('Your planes image file must not exceed 5MB.');
-    }
-
-    if (preview.files[0].name.split('.')[1] !== 'png' || preview.files[0].name.split('.')[1] !== 'glb') {
-        errored = true;
-        errors.push('Your car preview must be either a .glb or .png file.');
-    }
-
-    if (preview.files[0].size > 15000000) {
-        errored = true;
-        errors.push('Your car preview file must not exceed 15MB.');
+        if (preview.files[0].size > 15000000) {
+            errored = true;
+            errors.push('Your car preview file must not exceed 15MB.');
+        }
     }
 
     if (errored) {
@@ -457,14 +474,14 @@ form.addEventListener('submit', async (e) => {
 
         const success = await upload('fullworks', {
             metadata: {
-                carName: carName.trim(),
+                carName: carName.value.trim(),
                 dateCreated: dateMade.toISOString(),
-                frontalArea: frontalArea.value,
-                dragCoefficient: dragCoefficient.value,
-                scrutineerer: scrutineerer.toLowerCase(),
-                derivedCar: derivedCar,
-                changelog: changes.trim(),
-                addDetails: addDetails.trim()
+                frontalArea: frontalArea.valueAsNumber,
+                dragCoefficient: dragCoefficient.valueAsNumber,
+                scrutineerer: scrutineerer.value.toLowerCase(),
+                derivedCar: Number(derivedCar.value),
+                changelog: changes,
+                addDetails: addDetails.value.trim()
             },
             carModel: carModel.files[0],
             iso: iso.files[0],

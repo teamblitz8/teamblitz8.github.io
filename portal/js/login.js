@@ -65,11 +65,11 @@ form.addEventListener('submit', async (e) => {
             else {
                 attempts++;
                 if (!data) {
-                    errorText.textContent = data.message || 'An unexpected error occurred. Please contact the administrator.';
+                    errorText.textContent = 'An unexpected error occurred. Please contact the administrator.';
                     submit.disabled = false;
                 }
                 else if (typeof data === 'object' && Object.hasOwn(data, 'message')) {
-                    errorText.textContent = data.message || 'An unexpected error occurred. Please contact the administrator.';
+                    errorText.textContent = data.message;
                     submit.disabled = false;
                 }
                 else {

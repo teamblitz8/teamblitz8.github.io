@@ -81,7 +81,6 @@ The portal can be accessed at https://teamblitz.pages.dev/portal.
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
 ## To-do
-- Complete upload button logic
 - Complete the contact form on the main site
 - Transfer the site from being hosted on GitHub Pages to Cloudflare on custom domain.
 - Create the UI for the account and My Designs page
@@ -96,6 +95,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Add remember me functionality
 - Improve how errors are handled on both ends
 - Complete input validation for files, by analysing the actual binary contents
+- Downloads file names need to be .f3d or .f3z based on file type
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

@@ -36,7 +36,7 @@
                     <p id="logged-username"></p>
                     <div class="upload-file">
                         <button type="button" id="car-model-button" onclick="document.getElementById('car-model').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i>Upload file (.f3d)</button>
-                        <input type="file" id="car-model" name="car-model" style="display: none;" accept="image/png">
+                        <input type="file" id="car-model" name="car-model" style="display: none;" accept=".f3d,.f3z">
                     </div>
                     <div class="info">
                         <h2>Tell us more about your design</h2>
@@ -89,7 +89,7 @@
                                     </div>
                                     <div>
                                         <input type="radio" id="josh" name="scrutineerer" value="josh">
-                                        <label for="pranit">Josh</label>
+                                        <label for="josh">Josh</label>
                                     </div>
                                 </div>
                                 <p id="funny">Cooked bro, that guy is not trustworthy at all</p>
@@ -101,7 +101,7 @@
                                         <label for="derived-car">Which car was this design derived or built upon from?</label>
                                         <select id="derived-car" name="derived-car" required>
                                             <option value="1">Latest iteration: Beta by Chen (Iteration 1)</option>
-                                            <option>This wasn't built based on any existing car</option>
+                                            <option value="0">This wasn't built based on any existing car</option>
                                         </select>
                                     </div>
                                     <div>

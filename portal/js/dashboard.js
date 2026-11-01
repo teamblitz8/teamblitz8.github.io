@@ -13,7 +13,7 @@ const upload = async (type, data, carid, fileType) => {
     let contentHeader;
 
     if (type === 'fullworks') {
-        const metadata = await upload('metadata', data.metadata, theCar, fileType);
+        const metadata = await upload('text', data.metadata, theCar, fileType);
         if (!metadata.success) return { success: false, error: metadata.error };
         const carModel = await upload('f3d', data.carModel, theCar, fileType);
         if (!carModel.success) return { success: false, error: carModel.error };
@@ -26,7 +26,7 @@ const upload = async (type, data, carid, fileType) => {
 
         return { success: true };
     }
-    else if (type === 'metadata') {
+    else if (type === 'text') {
         body = JSON.stringify(data);
         contentHeader = 'application/json';
     }

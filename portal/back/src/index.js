@@ -2,156 +2,8 @@
 // improve how errors are sent (make them more useful)
 // clean up spaghetti code
 
-const errorHeader = 'application/json; charset=UTF-8';
-
-const compare = (a, b) => {
-	const encoder = new TextEncoder();
-	const bufferA = encoder.encode(a);
-	const bufferB = encoder.encode(b);
-	
-	if (bufferA.byteLength !== bufferB.byteLength) {
-		crypto.subtle.timingSafeEqual(bufferA, bufferA);
-		return false;
-	}
-	else {
-		return crypto.subtle.timingSafeEqual(bufferA, bufferB);
-	}
-}
-
-const checkIPBanned = async (ip, env) => {
-	const query = env.blitz.prepare('SELECT ip FROM ipbans');
-	const queryResult = await query.run()
-	const banList = queryResult.results;
-	
-	if (banList.length !== 0) {
-		for (let i of banList) {
-			if (i.ip === ip) {
-				return true;
-			}	
-		}
-		return false;
-	}
-}
-
-const banIP = async (ip, env) => {
-	const currentDate = (new Date()).toISOString();
-	const insertion = env.blitz.prepare(`INSERT INTO ipbans (ip, date_banned) VALUES (?, ?);`).bind(ip, currentDate);
-	await insertion.run();
-
-	const check = env.blitz.prepare('SELECT ip from ipbans WHERE date_banned = ?;').bind(currentDate);
-	let checkResults = await check.run()
-	checkResults = checkResults.results[0];
-
-	if (!checkResults) return false;
-
-	if (checkResults.ip === ip) {
-		console.log(`New IP banned: ${ip}`);
-		return true;
-	}
-	else {
-		console.log('IP couldn\'t be banned. Check database.');
-		return false;
-	}
-}
-
-const checkUsername = async (username, env) => {
-	const hasher = require('../hasher.js')
-	const query = env.blitz.prepare('SELECT username FROM users WHERE username = ?').bind(username);
-	let result = await query.run();
-	result = result.results;
-
-	if (!result || result.length === 0) {
-		// do some fake hashing to delay time
-		const fakeHash = hasher.hash('676767676767').hash;
-		compare(fakeHash, fakeHash);
-		return false;
-	}
-	else {
-		return true;
-	}
-}
-
-const authenticate = async (username, enteredPassword, env) => {
-	const hasher = require('../hasher.js');
-	const query = env.blitz.prepare('SELECT password_hash, password_salt FROM users WHERE username = ?').bind(username);
-	let result = await query.run()
-	result = result.results;
-	
-	const trueHash = result[0]['password_hash'];
-	const trueSalt = Buffer.from(result[0]['password_salt'], 'hex');
-
-	const hashAttempt = hasher.hash(enteredPassword, trueSalt).hash;
-	const hashesMatch = compare(trueHash, hashAttempt);
-
-	if (hashesMatch) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-const checkIfActive = async (username, env) => {
-	const query = env.blitz.prepare('SELECT active FROM users WHERE username = ?').bind(username);
-	let result = await query.run()
-	result = result.results[0].active;
-
-	if (result === 1) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-const lockAccount = async (username, env) => {
-	const query = env.blitz.prepare('UPDATE users SET active = 0 WHERE username = ?').bind(username);
-	await query.run();
-
-	const check = env.blitz.prepare('SELECT active FROM users WHERE username = ?').bind(username)
-	let result = await check.run()
-	result = result.results[0].active;
-
-	if (result === 0) {
-		console.log(`Account ${username} has been disabled`);
-		return true;
-	}
-	else {
-		console.log(`Account ${username} couldn't be disabled. Check logs.`);
-		return false;
-	}
-}
-
-const addNewSessionToken = async (sessionToken, env, enteredUsername) => {
-	const hasher = require('../hasher.js');
-
-	const idQuery = env.blitz.prepare('SELECT userid FROM users WHERE username = ?').bind(enteredUsername);
-	const idResult = await idQuery.run();
-	const userID = idResult.results[0].userid;
-
-	const date = new Date();
-	date.setDate(date.getDate() + 1);
-	const expiry = date.toISOString();
-
-	const tokenSalt = Buffer.from(env.sessionTokenSalt, 'hex');
-	const hashedToken = hasher.hash(sessionToken, tokenSalt);
-	const tokenHash = hashedToken.hash;
-
-	const query = env.blitz.prepare('INSERT INTO sessiontokens (session_token_hash, userid, expiration_date) VALUES (?, ?, ?);').bind(tokenHash, userID, expiry);
-	await query.run();
-
-	const check = env.blitz.prepare('SELECT session_token_hash FROM sessiontokens WHERE expiration_date = ?').bind(expiry);
-	const checkResult = await check.run();
-
-	const comparison = compare(checkResult.results[0]['session_token_hash'], tokenHash);
-
-	if (comparison) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
+const normalHeader = 'application/json; charset=UTF-8';
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest } = require('../helpers.js');
 
 const checkSessionToken = async (sessionToken, env) => {
 	const hasher = require('../hasher.js');
@@ -408,124 +260,6 @@ const pullCarPlanes = async (iterationNumber, env) => {
 	}
 }
 
-const buildResponse = async (message, status, contentType) => {
-	return new Response(JSON.stringify({ message: `${message} Timestamp: ${new Date().toISOString()}` }), {
-		headers: {
-			'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-			'Content-Type': contentType,
-			'Cache-Control': 'no-store',
-			'X-Content-Type-Options': 'nosniff',
-			'Vary': 'Origin',
-			'Access-Control-Allow-Credentials': 'true'
-		},
-		status: status
-	});
-}
-
-
-const log = async (isError, pathname, request, message, stack) => {
-	if (isError) {
-		console.error({
-			timestamp: new Date().toISOString(),
-			apiPath: pathname,
-			message: message,
-			originIP: request.headers.get('cf-connecting-ip'),
-			originLocation: `${request.cf.city}, ${request.cf.country}`,
-			errorStack: stack
-		});
-	}
-	else {
-		console.warn({
-			timestamp: new Date().toISOString(),
-			apiPath: pathname,
-			failurePoint: failurePoint,
-			message: message,
-			originIP: request.headers.get('cf-connecting-ip'),
-			originLocation: `${request.cf.city}, ${request.cf.country}`
-		});
-	}
-}
-
-const checkRequest = async (pathname, request, expectedMethod, expectedContentHeader) => {
-	let response;
-	let success = true;
-
-	if (request.method !== expectedMethod) {
-		log(false, pathname, request, `Incorrect request method; expected ${expectedMethod}, received ${request.method}`);
-		response = await buildResponse('There was an unexpected error.', 405, errorHeader);
-		success = false;
-	}
-
-	const requestContentHeader = request.headers.get('Content-Type');
-	if (requestContentHeader === null) {
-		log(false, pathname, request, 'No content header received.');
-		response = await buildResponse('There was an unexpected error.', 415, errorHeader);
-		success = false;
-	}
-
-	const requestContentHeaders = requestContentHeader.split(';');
-	if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
-		log(false, pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
-		response = await buildResponse('There was an unexpected error.', 415, errorHeader);
-		success = false;
-	}
-
-	return {
-		success: success,
-		response: response
-	}
-}
-
-const parseRequestJSON = async (pathname, request, requiredFields) => {
-	let json;
-	let success;
-	let response;
-
-	try {
-		try {
-			json = await request.json();
-		}
-		catch (error) {
-			log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
-			response = await buildResponse('There was an unexpected error.', 400, errorHeader);
-			success = false;
-			throw new Error();
-		}
-
-		if (json === null) {
-			log(false, pathname, request, 'Malformed request body received; request body is null.', error);
-			response = await buildResponse('There was an unexpected error.', 400, errorHeader);
-			success = false;
-			throw new Error();
-		}
-
-		if (Array.isArray(json)) {
-			log(false, pathname, request, 'Malformed request body received; request body is an array.', error);
-			response = await buildResponse('There was an unexpected error.', 400, errorHeader);
-			success = false;
-			throw new Error();
-		}
-		
-		for (let i of requiredFields) {
-			if (!Object.hasOwn(json, i)) {
-				log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
-				response = await buildResponse('There was an unexpected error.', 400, errorHeader);
-				success = false;
-				throw new Error();
-			}
-		}
-
-		throw new Error();
-	}
-	catch {
-		return {
-			success: success,
-			response: response,
-			json: json
-		}
-	}
-}
-
 export default {
 	async fetch(request, env, ctx) {
 		const { pathname } = new URL(request.url);
@@ -546,7 +280,7 @@ export default {
 
 		try {
 			if (pathname === '/api/auth') {
-				const requestCheck = await checkRequest(pathname, request, 'POST', 'application/json')
+				const requestCheck = await checkRequest(pathname, request, ['POST'], 'application/json')
 				if (!requestCheck.success) return requestCheck.response;
 
 				const parseRequest = await parseRequestJSON(pathname, request, ['username', 'password']);
@@ -554,216 +288,45 @@ export default {
 
 				const enteredUsername = parseRequest.json.username;
 				const enteredPassword = parseRequest.json.password;
-
-				if (typeof enteredUsername !== 'string' || typeof enteredPassword !== 'string') {
-					await checkUsername("67", env);
-					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				if (!enteredUsername || !enteredPassword) {
-					await checkUsername("67", env);
-					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				if (enteredUsername.length === 0 || enteredUsername.length > 25) {
-					await checkUsername("67", env);
-					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				if (enteredPassword.length === 0 || enteredPassword.length > 128) {
-					await checkUsername("67", env);
-					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				const ip = request.headers.get('cf-connecting-ip');
-				if (!ip) {
-					return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
-						status: 500,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				const ipBanned = await checkIPBanned(ip, env)
-
-				if (ipBanned) {
-					return new Response(JSON.stringify({ message: 'You have been blocked from making further attempts. Please contact the administrator.' }), { 
-						status: 429,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				const { success } = await env.ratelimiter.limit({ key: ip });
-
-				if (!success) {
-					const attempt = await banIP(ip, env);
-					const lockAttempt = await lockAccount(reqJson.username, env);
-
-					if (attempt && lockAttempt) {
-						return new Response(JSON.stringify({ message: 'You have been blocked from making further attempts. Please contact the administrator.' }), { 
-							status: 429,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
+				const inputs = [{
+					input: enteredUsername,
+					requirements: {
+						dataType: 'string',
+						minLength: 3,
+						maxLength: 25
 					}
-					else {
-						return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
-							status: 500,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
+				}, {
+					input: enteredPassword,
+					requirements: {
+						dataType: 'string',
+						minLength: 3,
+						maxLength: 128
 					}
-				}
+				}];
+
+				const inputCheck = await validateInputs(pathname, request, inputs, env, true);
+				if (!inputCheck.success) return inputCheck.response;
+
+				const handleIP = await handleIPBan(pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
 				
-				const usernameExists = await checkUsername(enteredUsername, env);
+				const usernameExists = await checkUsername(enteredUsername, env, pathname, request);
+				if (!usernameExists.allow) return usernameExists.response;
 
-				if (!usernameExists) {
-					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				const passwordCorrect = await authenticate(enteredUsername, enteredPassword, env, pathname, request);
 
-				const passwordCorrect = await authenticate(enteredUsername, enteredPassword, env);
-
-				if (passwordCorrect) {
-					const active = await checkIfActive(enteredUsername, env);
-					if (active) {
+				if (passwordCorrect.allow) {
+					const active = await checkIfActive(enteredUsername, env, pathname, request);
+					if (active.allow) {
 						const sessionToken = crypto.randomUUID();
-						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername);
+						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, pathname, request);
 
-						if (attempt) {
-							const currentDate = (new Date()).toISOString();
-							const query = env.blitz.prepare('UPDATE users SET last_login = ? WHERE username = ?').bind(currentDate, enteredUsername);
-							await query.run();
-
-							return new Response(JSON.stringify({ message: 'Login successful' }), { 
-								status: 200,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true',
-									'Set-Cookie': `session_token=${sessionToken}; HttpOnly; Max-Age=86400; Path=/; SameSite=None; Secure;`
-								}
-							});
-						}
-						else {
-							console.log('Was unable to register a new session token; please check database!');
-							return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
-								status: 500,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
-						}
+						if (attempt.success) return await updateLastLogin(pathname, request, env, enteredUsername);
+						else return attempt.response;
 					}
-					else {
-						return new Response(JSON.stringify({ message: 'Your account has been disabled. Please contact the administrator.' }), {
-							status: 403,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true',
-							}
-						});
-					}
+					else return active.response;
 				}
-				else {
-					return new Response(JSON.stringify({ message: 'Invalid username or password.' }), { 
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				else return passwordCorrect.response;
 			}
 			else if (pathname === '/api/account') {
 				if (request.method !== 'GET') {
@@ -3285,4 +2848,4 @@ export default {
 
 		console.log('Performed automatic session token cleanup.');
 	}
-};
+}

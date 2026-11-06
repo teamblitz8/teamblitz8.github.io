@@ -1,0 +1,469 @@
+const crypto = require('node:crypto');
+
+const convertBufferToString = (buffer) => {
+    return Array.from(new Uint8Array(buffer)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+const hash = (password, salt) => {
+    const iterations = 100000;
+    const digest = 'sha512';
+
+    let salted;
+    if (!salt) {
+        salted = crypto.randomBytes(16);
+    }
+    else {
+        salted = salt;
+    }
+
+    const buffer = crypto.pbkdf2Sync(password, salted, iterations, 64, digest);
+    salted = convertBufferToString(salted);
+
+    const output = {
+        hash: convertBufferToString(buffer),
+        salt: salted
+    }
+    return output;
+}
+
+const compare = (a, b) => {
+	const encoder = new TextEncoder();
+	const bufferA = encoder.encode(a);
+	const bufferB = encoder.encode(b);
+	
+	if (bufferA.byteLength !== bufferB.byteLength) {
+		crypto.subtle.timingSafeEqual(bufferA, bufferA);
+		return false;
+	}
+	else {
+		return crypto.subtle.timingSafeEqual(bufferA, bufferB);
+	}
+}
+
+const buildResponse = async (message, status, contentType) => {
+	return new Response(JSON.stringify({ message: `${message} Timestamp: ${new Date().toISOString()}` }), {
+		headers: {
+			'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+			'Content-Type': contentType,
+			'Cache-Control': 'no-store',
+			'X-Content-Type-Options': 'nosniff',
+			'Vary': 'Origin',
+			'Access-Control-Allow-Credentials': 'true'
+		},
+		status: status
+	});
+}
+
+const log = async (type, pathname, request, message, stack) => {
+	if (type === 'error') {
+		console.error({
+			timestamp: new Date().toISOString(),
+			apiPath: pathname,
+			message: message,
+			originIP: request.headers.get('cf-connecting-ip'),
+			originLocation: `${request.cf.city}, ${request.cf.country}`,
+			errorStack: stack
+		});
+	}
+	else if (type === 'warn') {
+		console.warn({
+			timestamp: new Date().toISOString(),
+			apiPath: pathname,
+			failurePoint: failurePoint,
+			message: message,
+			originIP: request.headers.get('cf-connecting-ip'),
+			originLocation: `${request.cf.city}, ${request.cf.country}`
+		});
+	}
+	else if (type === 'info') {
+		console.log({
+			timestamp: new Date().toISOString(),
+			apiPath: pathname,
+			message: message,
+			originIP: request.headers.get('cf-connecting-ip'),
+			originLocation: `${request.cf.city}, ${request.cf.country}`,
+		});
+	}
+}
+
+const checkRequest = async (pathname, request, expectedMethods, expectedContentHeader) => {
+	let response;
+	let success = true;
+
+	if (!expectedMethods.includes(request.method)) {
+		await log('warn', pathname, request, `Incorrect request method; expected ${expectedMethods}, received ${request.method}`);
+		response = await buildResponse('There was an unexpected error.', 405, normalHeader);
+		success = false;
+	}
+
+	const requestContentHeader = request.headers.get('Content-Type');
+	if (requestContentHeader === null) {
+		await log('warn', pathname, request, 'No content header received.');
+		response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+		success = false;
+	}
+
+	const requestContentHeaders = requestContentHeader.split(';');
+	if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
+		await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
+		response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+		success = false;
+	}
+
+	return {
+		success: success,
+		response: response
+	}
+}
+
+const parseRequestJSON = async (pathname, request, requiredFields) => {
+	let json;
+	let success;
+	let response;
+
+	try {
+		try {
+			json = await request.json();
+		}
+		catch (error) {
+			log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
+			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+			success = false;
+			throw new Error();
+		}
+
+		if (json === null) {
+			log(false, pathname, request, 'Malformed request body received; request body is null.', error);
+			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+			success = false;
+			throw new Error();
+		}
+
+		if (Array.isArray(json)) {
+			log(false, pathname, request, 'Malformed request body received; request body is an array.', error);
+			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+			success = false;
+			throw new Error();
+		}
+		
+		for (let i of requiredFields) {
+			if (!Object.hasOwn(json, i)) {
+				log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
+				response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+				success = false;
+				throw new Error();
+			}
+		}
+
+		throw new Error();
+	}
+	catch {
+		return {
+			success: success,
+			response: response,
+			json: json
+		}
+	}
+}
+
+const validateInputs = async (pathname, request, inputs, env, delay) => {
+	/*
+	i = {
+		input
+		requirements: {
+			dataType,
+			minLength,
+			maxLength
+		}
+	}
+	*/
+	success = true;
+	errorMsg = '';
+	for (let i of inputs) {
+		if (i.input === null) {
+			success = false;
+			errorMsg = `${Object.keys(i.input)[0]} is null`;
+			break;
+		}
+		if (typeof i.input !== i.requirements.dataType) {
+			success = false;
+			errorMsg = `${Object.keys(i.input)[0]} does not match expected data type; expected ${i.requirements.dataType}, received ${typeof i.input}`;
+			break;
+		}
+		if ((i.input.length > i.requirements.maxLength) || (i.input.length < i.requirements.minLength)) {
+			success = false;
+			errorMsg = `${Object.keys(i.input)[0]} does not match expected length; expected at least ${i.requirements.minLength} and at most ${i.requirements.maxLength}, received ${i.input.length}`;
+			break;
+		}
+	}
+
+	if (!success) {
+		if (delay) {
+			await checkUsername('67', env);
+		}
+		await log(false, pathname, request, errorMsg);
+		const response = await buildResponse('There was an unexpected error.', 401, normalHeader);
+		return {
+			success: false,
+			response: response
+		}
+	}
+	else {
+		return {
+			success: true
+		}
+	}
+}
+
+const handleIPBan = async (pathname, request, env) => {
+	let allow = true;
+	let response;
+
+	const ip = request.headers.get('cf-connecting-ip');
+	if (!ip) {
+		allow = false;
+		await log('warn', pathname, request, 'No IP address found');
+		response = await buildResponse('There was an unexpected error.', 403, normalHeader);
+	}
+
+	const ipBanned = await checkIPBanned(ip, env);
+	if (!ipBanned.success) {
+		allow = false;
+		response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+	}
+	if (ipBanned.banned) {
+		allow = false;
+		response = await buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
+	}
+
+	const { success } = await env.ratelimiter.limit({ key: ip });
+	if (!success) {
+		allow = false;
+		response = await banIP(ip, env);
+	}
+
+	return {
+		allow: allow,
+		response: response
+	}
+}
+
+const updateLastLogin = async (pathname, request, env, enteredUsername) => {
+	const currentDate = (new Date()).toISOString();
+	const statement = 'UPDATE users SET last_login = ? WHERE username = ?';
+
+	try {
+		const query = env.blitz.prepare(statement).bind(currentDate, enteredUsername);
+		await query.run();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return await buildResponse('There was an unexpected error.', 500, normalHeader)
+	}
+
+	return await buildResponse('Logging in...', 200, normalHeader)
+}
+
+const checkIPBanned = async (pathname, request, ip, env) => {
+	let result;
+	try {
+		const query = env.blitz.prepare('SELECT ip FROM ipbans');
+		result = await query.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+		}
+	}
+	const banList = result.results;
+	for (let i of banList) {
+		if (i.ip === ip) {
+			await log('warn', pathname, request, 'Attempt from a banned IP address was blocked');
+			return {
+				success: true,
+				banned: true
+			}
+		}	
+	}
+	return {
+		success: true,
+		banned: false
+	}
+}
+
+const banIP = async (pathname, request, ip, env) => {
+	const currentDate = new Date().toISOString();
+
+	try {
+		const statement = 'INSERT INTO ipbans (ip, date_banned) VALUES (?, ?);'
+		const insertion = env.blitz.prepare(statement).bind(ip, currentDate);
+		await insertion.run();
+		await log('info', pathname, request, `Successfully banned IP: ${ip}`);
+		return await buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return await buildResponse('There was an unexpected error.', 500, normalHeader);
+	}
+}
+
+const checkUsername = async (username, env, pathname, request) => {
+	let result;
+	const statement = 'SELECT username FROM users WHERE username = ?';
+
+	try {
+		const query = env.blitz.prepare(statement).bind(username);
+		result = await query.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			allow: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	if (!result.results.length === 0) {
+		const fakeHash = hash('676767676767').hash;
+		await compare(fakeHash, fakeHash);
+		return {
+			allow: false,
+			response: await buildResponse('Invalid username or password', 401, normalHeader)
+		}
+	}
+	else {
+		return {
+			allow: true
+		}
+	}
+}
+
+const authenticate = async (username, enteredPassword, env, pathname, request) => {
+	const statement = 'SELECT password_hash, password_salt FROM users WHERE username = ?';
+	let result;
+
+	try {
+		const query = env.blitz.prepare(statement).bind(username);
+		result = await query.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			allow: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	result = result.results;
+	
+	const trueHash = result[0]['password_hash'];
+	const trueSalt = Buffer.from(result[0]['password_salt'], 'hex');
+
+	const hashAttempt = hash(enteredPassword, trueSalt).hash;
+	const hashesMatch = compare(trueHash, hashAttempt);
+
+	if (hashesMatch) {
+		return {
+			allow: true
+		}
+	}
+	else {
+		return {
+			allow: false,
+			response: await buildResponse('Invalid username or password', 401, normalHeader)
+		}
+	}
+}
+
+const checkIfActive = async (username, env, pathname, request) => {
+	const statement = 'SELECT active FROM users WHERE username = ?';
+	let result;
+
+	try {
+		const query = env.blitz.prepare(statement).bind(username);
+		result = await query.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			allow: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+	result = result.results[0].active;
+
+	if (result === 1) {
+		return {
+			allow: true
+		}
+	}
+	else {
+		return {
+			allow: false,
+			response: await buildResponse('Your account has been disabled.', 403, normalHeader)
+		}
+	}
+}
+
+const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, request) => {
+	const selectionStatement = 'SELECT userid FROM users WHERE username = ?';
+	let selectionResult;
+
+	try {
+		const selection = env.blitz.prepare(selectionStatement).bind(enteredUsername);
+		selectionResult = await selection.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	const userID = idResult.results[0].userid;
+
+	const date = new Date();
+	date.setDate(date.getDate() + 1);
+	const expiry = date.toISOString();
+
+	const tokenSalt = Buffer.from(env.sessionTokenSalt, 'hex');
+	const hashedToken = hash(sessionToken, tokenSalt);
+	const tokenHash = hashedToken.hash;
+
+	const insertionStatement = 'INSERT INTO sessiontokens (session_token_hash, userid, expiration_date) VALUES (?, ?, ?);';
+	try {
+		const insertion = env.blitz.prepare(insertionStatement).bind(tokenHash, userID, expiry);
+		await insertion.run();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${insertionStatement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	await log('info', pathname, request, 'Session token successfully generated');
+	return {
+		success: true
+	}
+}
+
+module.exports = {
+    convertBufferToString,
+    hash,
+    compare,
+    addNewSessionToken,
+    checkIfActive,
+    authenticate,
+    checkUsername,
+    banIP,
+    checkIPBanned,
+    updateLastLogin,
+    handleIPBan,
+    validateInputs,
+    parseRequestJSON,
+    checkRequest
+};

@@ -2,6 +2,8 @@
 // improve how errors are sent (make them more useful)
 // clean up spaghetti code
 
+const errorHeader = 'application/json; charset=UTF-8';
+
 const compare = (a, b) => {
 	const encoder = new TextEncoder();
 	const bufferA = encoder.encode(a);
@@ -406,6 +408,124 @@ const pullCarPlanes = async (iterationNumber, env) => {
 	}
 }
 
+const buildResponse = async (message, status, contentType) => {
+	return new Response(JSON.stringify({ message: `${message} Timestamp: ${new Date().toISOString()}` }), {
+		headers: {
+			'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+			'Content-Type': contentType,
+			'Cache-Control': 'no-store',
+			'X-Content-Type-Options': 'nosniff',
+			'Vary': 'Origin',
+			'Access-Control-Allow-Credentials': 'true'
+		},
+		status: status
+	});
+}
+
+
+const log = async (isError, pathname, request, message, stack) => {
+	if (isError) {
+		console.error({
+			timestamp: new Date().toISOString(),
+			apiPath: pathname,
+			message: message,
+			originIP: request.headers.get('cf-connecting-ip'),
+			originLocation: `${request.cf.city}, ${request.cf.country}`,
+			errorStack: stack
+		});
+	}
+	else {
+		console.warn({
+			timestamp: new Date().toISOString(),
+			apiPath: pathname,
+			failurePoint: failurePoint,
+			message: message,
+			originIP: request.headers.get('cf-connecting-ip'),
+			originLocation: `${request.cf.city}, ${request.cf.country}`
+		});
+	}
+}
+
+const checkRequest = async (pathname, request, expectedMethod, expectedContentHeader) => {
+	let response;
+	let success = true;
+
+	if (request.method !== expectedMethod) {
+		log(false, pathname, request, `Incorrect request method; expected ${expectedMethod}, received ${request.method}`);
+		response = await buildResponse('There was an unexpected error.', 405, errorHeader);
+		success = false;
+	}
+
+	const requestContentHeader = request.headers.get('Content-Type');
+	if (requestContentHeader === null) {
+		log(false, pathname, request, 'No content header received.');
+		response = await buildResponse('There was an unexpected error.', 415, errorHeader);
+		success = false;
+	}
+
+	const requestContentHeaders = requestContentHeader.split(';');
+	if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
+		log(false, pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
+		response = await buildResponse('There was an unexpected error.', 415, errorHeader);
+		success = false;
+	}
+
+	return {
+		success: success,
+		response: response
+	}
+}
+
+const parseRequestJSON = async (pathname, request, requiredFields) => {
+	let json;
+	let success;
+	let response;
+
+	try {
+		try {
+			json = await request.json();
+		}
+		catch (error) {
+			log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
+			response = await buildResponse('There was an unexpected error.', 400, errorHeader);
+			success = false;
+			throw new Error();
+		}
+
+		if (json === null) {
+			log(false, pathname, request, 'Malformed request body received; request body is null.', error);
+			response = await buildResponse('There was an unexpected error.', 400, errorHeader);
+			success = false;
+			throw new Error();
+		}
+
+		if (Array.isArray(json)) {
+			log(false, pathname, request, 'Malformed request body received; request body is an array.', error);
+			response = await buildResponse('There was an unexpected error.', 400, errorHeader);
+			success = false;
+			throw new Error();
+		}
+		
+		for (let i of requiredFields) {
+			if (!Object.hasOwn(json, i)) {
+				log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
+				response = await buildResponse('There was an unexpected error.', 400, errorHeader);
+				success = false;
+				throw new Error();
+			}
+		}
+
+		throw new Error();
+	}
+	catch {
+		return {
+			success: success,
+			response: response,
+			json: json
+		}
+	}
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		const { pathname } = new URL(request.url);
@@ -426,83 +546,14 @@ export default {
 
 		try {
 			if (pathname === '/api/auth') {
-				if (request.method !== 'POST') {
-					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
-						status: 405,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true',
-							'Allow': 'POST, OPTIONS'
-						}
-					});
-				}
+				const requestCheck = await checkRequest(pathname, request, 'POST', 'application/json')
+				if (!requestCheck.success) return requestCheck.response;
 
-				const contentType = request.headers.get('Content-Type');
-				if (!contentType || typeof contentType !== 'string') {
-					return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
-						status: 415,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				const parseRequest = await parseRequestJSON(pathname, request, ['username', 'password']);
+				if (!parseRequest.success) return parseRequest.response;
 
-				if (contentType.split(';')[0].toLowerCase() !== 'application/json') {
-					return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
-						status: 415,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				let reqJson;
-
-				try {
-					reqJson = await request.json();
-					if (!reqJson) {
-						throw new Error();
-					}
-					if (typeof reqJson !== 'object'){
-						throw new Error();
-					}
-					if (Array.isArray(reqJson)){
-						throw new Error();
-					}
-					if (!Object.hasOwn(reqJson, 'username') || !Object.hasOwn(reqJson, 'password')) {
-						throw new Error();
-					}
-				}
-				catch {
-					return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-						status: 400,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				const enteredUsername = reqJson.username;
-				const enteredPassword = reqJson.password;
+				const enteredUsername = parseRequest.json.username;
+				const enteredPassword = parseRequest.json.password;
 
 				if (typeof enteredUsername !== 'string' || typeof enteredPassword !== 'string') {
 					await checkUsername("67", env);

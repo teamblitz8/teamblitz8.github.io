@@ -244,7 +244,7 @@ model-viewer {
 }
 
 #X {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     background: none;
@@ -367,4 +367,8 @@ textarea {
     padding: 0.5em 2em;
     margin: 0.25em 0;
     width: 80%;
+}
+
+#loadMore button i {
+    line-height: 1.5em;
 }

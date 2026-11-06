@@ -102,12 +102,10 @@ const unfurl = async (iteration) => {
     const button = document.querySelector(`.i${iteration}`).parentNode.querySelector('.buttons .button button');
 
     if (button.textContent === ' See more details') {
-        button.innerText = ' See fewer details';
-        button.querySelector('i').className = 'fa-solid fa-caret-up';
+        button.innerText = '<i class="fa-solid fa-caret-up"></i>  See fewer details';
     }
     else if (button.textContent === ' See fewer details') {
-        button.innerText = ' See more details';
-        button.querySelector('i').className = 'fa-solid fa-caret-down';
+        button.innerText = '<i class="fa-solid fa-caret-down"></i>  See more details';
     }
 }
 

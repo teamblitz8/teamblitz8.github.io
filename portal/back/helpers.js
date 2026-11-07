@@ -1,4 +1,5 @@
 const crypto = require('node:crypto');
+const normalHeader = 'application/json; charset=UTF-8';
 
 const convertBufferToString = (buffer) => {
     return Array.from(new Uint8Array(buffer)).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -69,7 +70,6 @@ const log = async (type, pathname, request, message, stack) => {
 		console.warn({
 			timestamp: new Date().toISOString(),
 			apiPath: pathname,
-			failurePoint: failurePoint,
 			message: message,
 			originIP: request.headers.get('cf-connecting-ip'),
 			originLocation: `${request.cf.city}, ${request.cf.country}`
@@ -96,19 +96,21 @@ const checkRequest = async (pathname, request, expectedMethods, expectedContentH
 		success = false;
 	}
 
-	const requestContentHeader = request.headers.get('Content-Type');
-	if (requestContentHeader === null) {
-		await log('warn', pathname, request, 'No content header received.');
-		response = await buildResponse('There was an unexpected error.', 415, normalHeader);
-		success = false;
-	}
+    if (expectedContentHeader) {
+        const requestContentHeader = request.headers.get('Content-Type');
+        if (requestContentHeader === null) {
+            await log('warn', pathname, request, 'No content header received.');
+            response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+            success = false;
+        }
 
-	const requestContentHeaders = requestContentHeader.split(';');
-	if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
-		await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
-		response = await buildResponse('There was an unexpected error.', 415, normalHeader);
-		success = false;
-	}
+        const requestContentHeaders = requestContentHeader.split(';');
+        if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
+            await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
+            response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+            success = false;
+        }
+    }
 
 	return {
 		success: success,
@@ -118,7 +120,7 @@ const checkRequest = async (pathname, request, expectedMethods, expectedContentH
 
 const parseRequestJSON = async (pathname, request, requiredFields) => {
 	let json;
-	let success;
+	let success = true;
 	let response;
 
 	try {
@@ -126,21 +128,21 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 			json = await request.json();
 		}
 		catch (error) {
-			log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
+			log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 
 		if (json === null) {
-			log(false, pathname, request, 'Malformed request body received; request body is null.', error);
+			log('warn', pathname, request, 'Malformed request body received; request body is null.', error);
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 
 		if (Array.isArray(json)) {
-			log(false, pathname, request, 'Malformed request body received; request body is an array.', error);
+			log('warn', pathname, request, 'Malformed request body received; request body is an array.', error);
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
@@ -148,7 +150,7 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 		
 		for (let i of requiredFields) {
 			if (!Object.hasOwn(json, i)) {
-				log(false, pathname, request, 'Malformed request body received; completely unparsable.', error);
+				log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
 				response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 				success = false;
 				throw new Error();
@@ -201,8 +203,8 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 		if (delay) {
 			await checkUsername('67', env);
 		}
-		await log(false, pathname, request, errorMsg);
-		const response = await buildResponse('There was an unexpected error.', 401, normalHeader);
+		await log('warn', pathname, request, errorMsg);
+		const response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 		return {
 			success: false,
 			response: response
@@ -226,7 +228,7 @@ const handleIPBan = async (pathname, request, env) => {
 		response = await buildResponse('There was an unexpected error.', 403, normalHeader);
 	}
 
-	const ipBanned = await checkIPBanned(ip, env);
+	const ipBanned = await checkIPBanned(pathname, request, ip, env);
 	if (!ipBanned.success) {
 		allow = false;
 		response = await buildResponse('There was an unexpected error.', 500, normalHeader);
@@ -239,7 +241,7 @@ const handleIPBan = async (pathname, request, env) => {
 	const { success } = await env.ratelimiter.limit({ key: ip });
 	if (!success) {
 		allow = false;
-		response = await banIP(ip, env);
+		response = await banIP(pathname, request, ip, env);
 	}
 
 	return {
@@ -258,10 +260,10 @@ const updateLastLogin = async (pathname, request, env, enteredUsername) => {
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-		return await buildResponse('There was an unexpected error.', 500, normalHeader)
+		return await buildResponse('There was an unexpected error.', 500, normalHeader);
 	}
 
-	return await buildResponse('Logging in...', 200, normalHeader)
+	return await buildResponse('Logging in...', 200, normalHeader);
 }
 
 const checkIPBanned = async (pathname, request, ip, env) => {
@@ -324,7 +326,7 @@ const checkUsername = async (username, env, pathname, request) => {
 		}
 	}
 
-	if (!result.results.length === 0) {
+	if (result.results.length === 0) {
 		const fakeHash = hash('676767676767').hash;
 		await compare(fakeHash, fakeHash);
 		return {
@@ -422,7 +424,7 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 		}
 	}
 
-	const userID = idResult.results[0].userid;
+	const userID = selectionResult.results[0].userid;
 
 	const date = new Date();
 	date.setDate(date.getDate() + 1);

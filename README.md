@@ -90,6 +90,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Improve how errors are handled on both ends
 - Complete input validation for files, by analysing the actual binary contents
 - Downloads file names need to be .f3d or .f3z based on file type
+- Make a leaderboard!
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

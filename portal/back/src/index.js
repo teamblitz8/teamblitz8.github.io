@@ -5,24 +5,43 @@
 const normalHeader = 'application/json; charset=UTF-8';
 const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest } = require('../helpers.js');
 
-const checkSessionToken = async (sessionToken, env) => {
-	const hasher = require('../hasher.js');
+const checkSessionToken = async (sessionToken, env, pathname, request) => {
 	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
-	const attemptedHash = hasher.hash(sessionToken, theSalt).hash;
+	const attemptedHash = hash(sessionToken, theSalt).hash;
 	const currentDate = (new Date()).toISOString();
 
-	const query = env.blitz.prepare('SELECT session_token_hash, userid FROM sessiontokens WHERE session_token_hash = ? AND expiration_date > ?').bind(attemptedHash, currentDate);
-	const results = await query.run();
+	const statement = 'SELECT session_token_hash, userid FROM sessiontokens WHERE session_token_hash = ? AND expiration_date > ?';
+	let results;
+	try {
+		const query = env.blitz.prepare(statement).bind(attemptedHash, currentDate);
+		results = await query.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			allow: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
 
 	if (results.results.length === 0) {
-		return false;
+		return {
+			allow: false,
+			response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+		}
 	}
 	else {
 		if (compare(attemptedHash, results.results[0]['session_token_hash'])) {
-			return results.results[0].userid;
+			return {
+				allow: true,
+				userid: results.results[0].userid
+			}
 		}
 		else {
-			return false;
+			return {
+				allow: false,
+				response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+			}
 		}
 	}
 }
@@ -260,6 +279,58 @@ const pullCarPlanes = async (iterationNumber, env) => {
 	}
 }
 
+const checkSession = async (request, pathname, env) => {
+	const cookieHeader = request.headers.get('Cookie') || '';
+	const cookies = parseCookies(cookieHeader);
+	const sessionToken = cookies['session_token'];
+
+	if (!sessionToken) {
+		return {
+			allow: false,
+			response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+		}
+	}
+
+	const userid = await checkSessionToken(sessionToken, env, pathname, request);
+	if (!userid.allow) {
+		return {
+			allow: false,
+			response: userid.response
+		}
+	}
+	return {
+		allow: true,
+		userid: userid.userid
+	}
+}
+
+const fetchUserData = async (request, pathname, env, userid) => {
+	const statement = 'SELECT name, username, last_login, iterations FROM users WHERE userid = ?'.bind(userid);
+	let results;
+
+	try {
+		const selection = env.blitz.prepare(statement).bind(userid);
+		results = selection.all();
+	}
+	catch (error) {
+		success = false;
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return await buildResponse('There was an unexpected error.', 500, normalHeader);
+	}
+	
+	if (results.results.length === 0) {
+		await log('error', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
+		return await buildResponse('There was an unexpected error.', 500, normalHeader);
+	}
+	else {
+		let userObject = results.results[0];
+		userObject.lastLogin = userObject['last_login'];
+		delete userObject['last_login'];
+
+		return await buildResponse(userObject, 200, normalHeader);
+	}
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		const { pathname } = new URL(request.url);
@@ -314,13 +385,12 @@ export default {
 				if (!usernameExists.allow) return usernameExists.response;
 
 				const passwordCorrect = await authenticate(enteredUsername, enteredPassword, env, pathname, request);
-
 				if (passwordCorrect.allow) {
 					const active = await checkIfActive(enteredUsername, env, pathname, request);
 					if (active.allow) {
 						const sessionToken = crypto.randomUUID();
-						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, pathname, request);
 
+						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, pathname, request);
 						if (attempt.success) return await updateLastLogin(pathname, request, env, enteredUsername);
 						else return attempt.response;
 					}
@@ -328,77 +398,21 @@ export default {
 				}
 				else return passwordCorrect.response;
 			}
+
 			else if (pathname === '/api/account') {
-				if (request.method !== 'GET') {
-					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
-						status: 405,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true',
-							'Allow': 'GET, POST, OPTIONS'
-						}
-					});
-				}
-				const cookieHeader = request.headers.get('Cookie') || '';
-				const cookies = parseCookies(cookieHeader);
-				const sessionToken = cookies['session_token'];
+				const requestCheck = await checkRequest(pathname, request, ['GET']);
+				if (!requestCheck.success) return requestCheck.response;
 
-				if (!sessionToken) {
-					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				const handleIP = await handleIPBan(pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
 
-				const userid = await checkSessionToken(sessionToken, env);
+				const sessionCheck = await checkSession(request, pathname, env);
+				if (!sessionCheck.allow) return sessionCheck.response;
 
-				if (!userid) {
-					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				const nameQuery = env.blitz.prepare('SELECT name, username, last_login FROM users WHERE userid = ?').bind(userid);
-				const findName = await nameQuery.run();
-				const results = findName.results[0]
-				let responseObject = {
-					name: results.name,
-					username: results.username,
-					lastLogin: results['last_login'],
-					message: 'Account fetched successfully.'
-				};
-
-				return new Response(JSON.stringify(responseObject), {
-					status: 200,
-					headers: {
-						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-						'Content-Type': 'application/json; charset=UTF-8',
-						'Cache-Control': 'no-store',
-						'X-Content-Type-Options': 'nosniff',
-						'Vary': 'Origin',
-						'Access-Control-Allow-Credentials': 'true'
-					}
-				});
+				const userid = sessionCheck.userid;
+				return await fetchUserData(request, pathname, env, userid);
 			}
+
 			else if (pathname === '/api/profile') {
 				if (request.method !== 'GET') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 

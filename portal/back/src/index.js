@@ -3,48 +3,7 @@
 // clean up spaghetti code
 
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest } = require('../helpers.js');
-
-const checkSessionToken = async (sessionToken, env, pathname, request) => {
-	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
-	const attemptedHash = hash(sessionToken, theSalt).hash;
-	const currentDate = (new Date()).toISOString();
-
-	const statement = 'SELECT session_token_hash, userid FROM sessiontokens WHERE session_token_hash = ? AND expiration_date > ?';
-	let results;
-	try {
-		const query = env.blitz.prepare(statement).bind(attemptedHash, currentDate);
-		results = await query.all();
-	}
-	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-		return {
-			allow: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
-		}
-	}
-
-	if (results.results.length === 0) {
-		return {
-			allow: false,
-			response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
-		}
-	}
-	else {
-		if (compare(attemptedHash, results.results[0]['session_token_hash'])) {
-			return {
-				allow: true,
-				userid: results.results[0].userid
-			}
-		}
-		else {
-			return {
-				allow: false,
-				response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
-			}
-		}
-	}
-}
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2 } = require('../helpers.js');
 
 const deleteSessionToken = async (sessionToken, env) => {
 	const hasher = require('../hasher.js');
@@ -95,22 +54,6 @@ const updatePassword = async (userid, env, newPassword) => {
 	else {
 		return true;
 	}
-}
-
-const parseCookies = (cookieHeader) => {
-	const list = {};
-	if (!cookieHeader) return list;
-
-	cookieHeader.split(';').forEach((x) => {
-		let [name, ...rest] = x.split('=');
-		name = name?.trim();
-		if (!name) return;
-		const value = rest.join('=').trim();
-		if (!value) return;
-		list[name] = decodeURIComponent(value);
-	});
-
-	return list;
 }
 
 const pullCar = async (iterationNumber, env) => {
@@ -279,61 +222,9 @@ const pullCarPlanes = async (iterationNumber, env) => {
 	}
 }
 
-const checkSession = async (request, pathname, env) => {
-	const cookieHeader = request.headers.get('Cookie') || '';
-	const cookies = parseCookies(cookieHeader);
-	const sessionToken = cookies['session_token'];
-
-	if (!sessionToken) {
-		return {
-			allow: false,
-			response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
-		}
-	}
-
-	const userid = await checkSessionToken(sessionToken, env, pathname, request);
-	if (!userid.allow) {
-		return {
-			allow: false,
-			response: userid.response
-		}
-	}
-	return {
-		allow: true,
-		userid: userid.userid
-	}
-}
-
-const fetchUserData = async (request, pathname, env, userid) => {
-	const statement = 'SELECT name, username, last_login, iterations FROM users WHERE userid = ?'.bind(userid);
-	let results;
-
-	try {
-		const selection = env.blitz.prepare(statement).bind(userid);
-		results = selection.all();
-	}
-	catch (error) {
-		success = false;
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-		return await buildResponse('There was an unexpected error.', 500, normalHeader);
-	}
-	
-	if (results.results.length === 0) {
-		await log('error', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
-		return await buildResponse('There was an unexpected error.', 500, normalHeader);
-	}
-	else {
-		let userObject = results.results[0];
-		userObject.lastLogin = userObject['last_login'];
-		delete userObject['last_login'];
-
-		return await buildResponse(userObject, 200, normalHeader);
-	}
-}
-
 export default {
 	async fetch(request, env, ctx) {
-		const { pathname } = new URL(request.url);
+		const url = new URL(request.url);
 
 		if (request.method === 'OPTIONS') {
 			return new Response(null, { 
@@ -350,11 +241,11 @@ export default {
 		}
 
 		try {
-			if (pathname === '/api/auth') {
-				const requestCheck = await checkRequest(pathname, request, ['POST'], 'application/json')
+			if (url.pathname === '/api/auth') {
+				const requestCheck = await checkRequest(url.pathname, request, ['POST'], 'application/json')
 				if (!requestCheck.success) return requestCheck.response;
 
-				const parseRequest = await parseRequestJSON(pathname, request, ['username', 'password']);
+				const parseRequest = await parseRequestJSON(url.pathname, request, ['username', 'password']);
 				if (!parseRequest.success) return parseRequest.response;
 
 				const enteredUsername = parseRequest.json.username;
@@ -375,23 +266,23 @@ export default {
 					}
 				}];
 
-				const inputCheck = await validateInputs(pathname, request, inputs, env, true);
+				const inputCheck = await validateInputs(url.pathname, request, inputs, env, true);
 				if (!inputCheck.success) return inputCheck.response;
 
-				const handleIP = await handleIPBan(pathname, request, env);
+				const handleIP = await handleIPBan(url.pathname, request, env);
 				if (!handleIP.allow) return handleIP.response;
 				
-				const usernameExists = await checkUsername(enteredUsername, env, pathname, request);
+				const usernameExists = await checkUsername(enteredUsername, env, url.pathname, request);
 				if (!usernameExists.allow) return usernameExists.response;
 
-				const passwordCorrect = await authenticate(enteredUsername, enteredPassword, env, pathname, request);
+				const passwordCorrect = await authenticate(enteredUsername, enteredPassword, env, url.pathname, request);
 				if (passwordCorrect.allow) {
-					const active = await checkIfActive(enteredUsername, env, pathname, request);
+					const active = await checkIfActive(enteredUsername, env, url.pathname, request);
 					if (active.allow) {
 						const sessionToken = crypto.randomUUID();
 
-						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, pathname, request);
-						if (attempt.success) return await updateLastLogin(pathname, request, env, enteredUsername);
+						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, url.pathname, request);
+						if (attempt.success) return await updateLastLogin(url.pathname, request, env, enteredUsername);
 						else return attempt.response;
 					}
 					else return active.response;
@@ -399,144 +290,50 @@ export default {
 				else return passwordCorrect.response;
 			}
 
-			else if (pathname === '/api/account') {
-				const requestCheck = await checkRequest(pathname, request, ['GET']);
+			else if (url.pathname === '/api/account') {
+				const requestCheck = await checkRequest(url.pathname, request, ['GET']);
 				if (!requestCheck.success) return requestCheck.response;
 
-				const handleIP = await handleIPBan(pathname, request, env);
+				const handleIP = await handleIPBan(url.pathname, request, env);
 				if (!handleIP.allow) return handleIP.response;
 
-				const sessionCheck = await checkSession(request, pathname, env);
+				const sessionCheck = await checkSession(request, url.pathname, env);
 				if (!sessionCheck.allow) return sessionCheck.response;
 
 				const userid = sessionCheck.userid;
-				return await fetchUserData(request, pathname, env, userid);
+				const dataFetch = await fetchUserDataFromUserID(request, url.pathname, env, userid);
+				if (!dataFetch.success) return dataFetch.response;
+				else return await buildResponse('Fetching user data..', 200, normalHeader, dataFetch.response);
 			}
 
-			else if (pathname === '/api/profile') {
-				if (request.method !== 'GET') {
-					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
-						status: 405,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true',
-							'Allow': 'GET, POST, OPTIONS'
-						}
-					});
-				}
-				const cookieHeader = request.headers.get('Cookie') || '';
-				const cookies = parseCookies(cookieHeader);
-				const sessionToken = cookies['session_token'];
+			else if (url.pathname === '/api/profile') {
+				const requestCheck = await checkRequest(url.pathname, request, ['GET']);
+				if (!requestCheck.success) return requestCheck.response;
 
-				if (!sessionToken) {
-					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				const handleIP = await handleIPBan(url.pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
 
-				const userid = await checkSessionToken(sessionToken, env);
+				const sessionCheck = await checkSession(request, url.pathname, env);
+				if (!sessionCheck.allow) return sessionCheck.response;
 
-				if (!userid) {
-					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				const url = new URL(request.url);
 				const username = url.searchParams.get('username');
-
-				if (!username) {
-					return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-						status: 400,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				if (username.trim() === '') {
-					return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-						status: 400,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				if (username.length === 0 || username.length > 25) {
-					return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-						status: 400,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
-
-				const nameQuery = env.blitz.prepare('SELECT userid FROM users WHERE username = ?').bind(username);
-				const findName = await nameQuery.run();
-				const results = findName.results[0].userid;
-				const pfp = await env.blitzr2.get(`assets/profiles/${results}.jpg`);
-
-				if (pfp === null) {
-					return new Response(JSON.stringify({ message: 'Not Found.'}), {
-						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-						'Content-Type': 'application/json; charset=UTF-8',
-						'Cache-Control': 'no-store',
-						'X-Content-Type-Options': 'nosniff',
-						'Vary': 'Origin',
-						'Access-Control-Allow-Credentials': 'true'
-					});
-				}
-				const blobbed = await pfp.blob();
-
-				return new Response(blobbed, {
-					status: 200,
-					headers: {
-						'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-						'Content-Type': 'application/json; charset=UTF-8',
-						'Cache-Control': 'no-store',
-						'X-Content-Type-Options': 'nosniff',
-						'Vary': 'Origin',
-						'Access-Control-Allow-Credentials': 'true'
+				const usernameInput = {
+					input: username,
+					requirements: {
+						minLength: 3,
+						maxLength: 25,
+						dataType: 'string'
 					}
-				});
+				}
+				const inputCheck = await validateInputs(url.pathname, request, [usernameInput], env);
+				if (!inputCheck.success) return inputCheck.response;
+
+				const userFetch = await fetchUserDataFromUsername(request, url.pathname, env, username);
+				if (!userFetch.success) return userFetch.response;
+
+				return await fetchFromR2(request, url.pathname, env, `assets/profiles/${userFetch.response.userid}.jpg`, 'image/jpeg').response;
 			}
-			else if (pathname === '/api/dashboard/text') {
+			else if (url.pathname === '/api/dashboard/text') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
@@ -1218,7 +1015,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/dashboard/f3d') {
+			else if (url.pathname === '/api/dashboard/f3d') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
@@ -1608,7 +1405,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/dashboard/preview') {
+			else if (url.pathname === '/api/dashboard/preview') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
@@ -1982,7 +1779,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/dashboard/iso') {
+			else if (url.pathname === '/api/dashboard/iso') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
@@ -2331,7 +2128,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/dashboard/planes') {
+			else if (url.pathname === '/api/dashboard/planes') {
 				if (request.method !== 'GET' && request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
@@ -2680,7 +2477,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/clear-all-sessions') {
+			else if (url.pathname === '/api/clear-all-sessions') {
 				if (request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,
@@ -2760,7 +2557,7 @@ export default {
 					});
 				}
 			}
-			else if (pathname === '/api/logout') {
+			else if (url.pathname === '/api/logout') {
 				if (request.method !== 'POST') {
 					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
 						status: 405,

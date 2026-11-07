@@ -41,18 +41,22 @@ const compare = (a, b) => {
 	}
 }
 
-const buildResponse = async (message, status, contentType) => {
-	return new Response(JSON.stringify({ message: `${message} Timestamp: ${new Date().toISOString()}` }), {
-		headers: {
-			'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-			'Content-Type': contentType,
-			'Cache-Control': 'no-store',
-			'X-Content-Type-Options': 'nosniff',
-			'Vary': 'Origin',
-			'Access-Control-Allow-Credentials': 'true'
-		},
-		status: status
-	});
+const buildResponse = async (message, status, contentType, object, blob) => {
+    let finalObject = {...{ message: `${message} Timestamp: ${new Date().toISOString()}` }, ...object}
+    if (object === 'BLOB') finalObject = blob;
+    else finalObject = JSON.stringify(finalObject);
+
+    return new Response(finalObject, {
+        headers: {
+            'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
+            'Content-Type': contentType,
+            'Cache-Control': 'no-store',
+            'X-Content-Type-Options': 'nosniff',
+            'Vary': 'Origin',
+            'Access-Control-Allow-Credentials': 'true'
+        },
+        status: status
+    });
 }
 
 const log = async (type, pathname, request, message, stack) => {
@@ -192,7 +196,7 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 			errorMsg = `${Object.keys(i.input)[0]} does not match expected data type; expected ${i.requirements.dataType}, received ${typeof i.input}`;
 			break;
 		}
-		if ((i.input.length > i.requirements.maxLength) || (i.input.length < i.requirements.minLength)) {
+		if ((i.input.trim().length > i.requirements.maxLength) || (i.input.trim().length < i.requirements.minLength)) {
 			success = false;
 			errorMsg = `${Object.keys(i.input)[0]} does not match expected length; expected at least ${i.requirements.minLength} and at most ${i.requirements.maxLength}, received ${i.input.length}`;
 			break;
@@ -417,7 +421,7 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 		selectionResult = await selection.all();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${selectionStatement}`, error);
 		return {
 			success: false,
 			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
@@ -453,6 +457,212 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 	}
 }
 
+const checkSessionToken = async (sessionToken, env, pathname, request) => {
+	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
+	const attemptedHash = hash(sessionToken, theSalt).hash;
+	const currentDate = (new Date()).toISOString();
+
+	const statement = 'SELECT session_token_hash, userid FROM sessiontokens WHERE session_token_hash = ? AND expiration_date > ?';
+	let results;
+	try {
+		const query = env.blitz.prepare(statement).bind(attemptedHash, currentDate);
+		results = await query.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			allow: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	if (results.results.length === 0) {
+		return {
+			allow: false,
+			response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+		}
+	}
+	else {
+		if (compare(attemptedHash, results.results[0]['session_token_hash'])) {
+			return {
+				allow: true,
+				userid: results.results[0].userid
+			}
+		}
+		else {
+			return {
+				allow: false,
+				response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+			}
+		}
+	}
+}
+
+const parseCookies = (cookieHeader) => {
+	const list = {};
+	if (!cookieHeader) return list;
+
+	cookieHeader.split(';').forEach((x) => {
+		let [name, ...rest] = x.split('=');
+		name = name?.trim();
+		if (!name) return;
+		const value = rest.join('=').trim();
+		if (!value) return;
+		list[name] = decodeURIComponent(value);
+	});
+
+	return list;
+}
+
+const checkSession = async (request, pathname, env) => {
+    const cookieHeader = request.headers.get('Cookie') || '';
+    const cookies = parseCookies(cookieHeader);
+    const sessionToken = cookies['session_token'];
+
+    if (!sessionToken) {
+        return {
+            allow: false,
+            response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+        }
+    }
+
+    const userid = await checkSessionToken(sessionToken, env, pathname, request);
+    if (!userid.allow) {
+        return {
+            allow: false,
+            response: userid.response
+        }
+    }
+    return {
+        allow: true,
+        userid: userid.userid
+    }
+}
+
+const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
+	const statement = 'SELECT name, username, last_login, iterations FROM users WHERE userid = ?';
+	let results;
+
+	try {
+		const selection = env.blitz.prepare(statement).bind(userid);
+		results = await selection.all();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+            success: false,
+            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+        }
+	}
+	
+	if (results.results.length === 0) {
+		await log('warn', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
+		return {
+            success: false,
+            response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+        }
+	}
+	else {
+		let userObject = results.results[0];
+		userObject.lastLogin = userObject['last_login'];
+		delete userObject['last_login'];
+        userObject.userID = userid;
+
+        return {
+            success: true,
+            response: userObject
+        }
+	}
+}
+
+const fetchUserDataFromUsername = async (request, pathname, env, username) => {
+    const statement = 'SELECT name, userid, last_login, iterations FROM users WHERE username = ?';
+    let results;
+
+    try {
+        const selection = env.blitz.prepare(statement).bind(username);
+        results = await selection.all();
+    }
+    catch (error) {
+        await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+        return {
+            success: false,
+            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+        }
+    }
+    
+    if (results.results.length === 0) {
+        await log('warn', pathname, request, `User record not found for username ${username}; expected name, userid, last_login, iterations, received none`);
+        return {
+            success: false,
+            response: await buildResponse('User not found.', 404, normalHeader)
+        }
+    }
+    else {
+        let userObject = results.results[0];
+        userObject.lastLogin = userObject['last_login'];
+        delete userObject['last_login'];
+        userObject.username = username;
+
+        return {
+            success: true,
+            response: userObject
+        }
+    }
+}
+
+const fetchFromR2 = async (request, pathname, env, filepath, contentHeader) => {
+    let file;
+
+    try {
+        file = env.blitzr2.get(filepath);
+    }
+    catch (error) {
+        await log('error', pathname, request, `R2 query failed when attempting to fetch file at: ${filepath}`, error);
+        return {
+            success: false,
+            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+        }
+    }
+
+    if (file === null) {
+        await log('warn', pathname, request, `File not found at path: ${filepath}; sending placeholder image`);
+
+        const placeholderFetch = await fetchFromR2()
+        if (!placeholderFetch.success) {
+            return {
+                success: false,
+                response: placeholderFetch.response
+            }
+        }
+        else {
+            return {
+                success: true,
+                response: placeholderFetch.response
+            }
+        }
+    }
+    else {
+        let finalPayload;
+
+        try {
+            finalPayload = file.blob();
+        }
+        catch (error) {
+            await log('error', pathname, request, `Failed to perform blob() method on file at: ${filepath}`, error);
+            return {
+                success: false,
+                response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            }
+        }
+
+        return {
+            success: true,
+            response: await buildResponse('File successfully fetched', 200, contentHeader, 'BLOB', finalPayload)
+        }
+    }
+}
+
 module.exports = {
     convertBufferToString,
     hash,
@@ -467,5 +677,13 @@ module.exports = {
     handleIPBan,
     validateInputs,
     parseRequestJSON,
-    checkRequest
+    checkRequest,
+    checkSessionToken,
+    parseCookies,
+    checkSession,
+    fetchUserDataFromUserID,
+    buildResponse,
+    log,
+    fetchFromR2,
+    fetchUserDataFromUsername,
 };

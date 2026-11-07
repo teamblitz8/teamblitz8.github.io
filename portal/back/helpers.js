@@ -132,21 +132,21 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 			json = await request.json();
 		}
 		catch (error) {
-			log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
+			await log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 
 		if (json === null) {
-			log('warn', pathname, request, 'Malformed request body received; request body is null.', error);
+			await log('warn', pathname, request, 'Malformed request body received; request body is null.', error);
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 
 		if (Array.isArray(json)) {
-			log('warn', pathname, request, 'Malformed request body received; request body is an array.', error);
+			await log('warn', pathname, request, 'Malformed request body received; request body is an array.', error);
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
@@ -154,7 +154,7 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 		
 		for (let i of requiredFields) {
 			if (!Object.hasOwn(json, i)) {
-				log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
+				await log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
 				response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 				success = false;
 				throw new Error();
@@ -175,6 +175,7 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 const validateInputs = async (pathname, request, inputs, env, delay) => {
 	/*
 	i = {
+        name
 		input
 		requirements: {
 			dataType,
@@ -188,19 +189,33 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 	for (let i of inputs) {
 		if (i.input === null) {
 			success = false;
-			errorMsg = `${Object.keys(i.input)[0]} is null`;
+			errorMsg = `Input is null; received object ${i}`;
 			break;
 		}
 		if (typeof i.input !== i.requirements.dataType) {
 			success = false;
-			errorMsg = `${Object.keys(i.input)[0]} does not match expected data type; expected ${i.requirements.dataType}, received ${typeof i.input}`;
+			errorMsg = `${i.name} does not match expected data type; expected ${i.requirements.dataType}, received ${typeof i.input}`;
 			break;
 		}
-		if ((i.input.trim().length > i.requirements.maxLength) || (i.input.trim().length < i.requirements.minLength)) {
-			success = false;
-			errorMsg = `${Object.keys(i.input)[0]} does not match expected length; expected at least ${i.requirements.minLength} and at most ${i.requirements.maxLength}, received ${i.input.length}`;
-			break;
-		}
+        if (i.requirements.dataType === 'number') {
+            if (!Number.isFinite(i.input)) {
+                success = false;
+                errorMsg = `${i.name} is not a safe number; expected a finite number, received ${i.input}`;
+                break;
+            }
+            if ((i.input > i.requirements.maxValue) || (i.input < i.requirements.minValue)) {
+                success = false;
+                errorMsg = `${i.name} does not match expected value; expected at least ${i.requirements.minValue} and at most ${i.requirements.maxValue}, received ${i.input}`;
+                break;
+            }
+        }
+        if (i.requirements.maxLength && i.requirements.minLength) {
+            if ((i.input.trim().length > i.requirements.maxLength) || (i.input.trim().length < i.requirements.minLength)) {
+                success = false;
+                errorMsg = `${i.name} does not match expected length; expected at least ${i.requirements.minLength} and at most ${i.requirements.maxLength}, received ${i.input.length}`;
+                break;
+            }
+        }
 	}
 
 	if (!success) {
@@ -254,7 +269,7 @@ const handleIPBan = async (pathname, request, env) => {
 	}
 }
 
-const updateLastLogin = async (pathname, request, env, enteredUsername) => {
+const updateLastLogin = async (pathname, request, env, enteredUsername, sessionToken) => {
 	const currentDate = (new Date()).toISOString();
 	const statement = 'UPDATE users SET last_login = ? WHERE username = ?';
 
@@ -267,23 +282,34 @@ const updateLastLogin = async (pathname, request, env, enteredUsername) => {
 		return await buildResponse('There was an unexpected error.', 500, normalHeader);
 	}
 
-	return await buildResponse('Logging in...', 200, normalHeader);
+    const response = await buildResponse('Logging in...', 200, normalHeader);
+    response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=86400; Path=/; SameSite=None; Secure;`);
+
+	return response;
 }
 
 const checkIPBanned = async (pathname, request, ip, env) => {
 	let result;
+    const statement = 'SELECT ip FROM ipbans';
 	try {
-		const query = env.blitz.prepare('SELECT ip FROM ipbans');
+		const query = env.blitz.prepare(statement);
 		result = await query.all();
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
-			success: false,
+			success: false
 		}
 	}
+
 	const banList = result.results;
 	for (let i of banList) {
+        if (!Object.hasOwn(i, 'ip')) {
+            await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch ip from ip ban records; statement: ${statement}`);
+            return {
+                success: false
+            }
+        }
 		if (i.ip === ip) {
 			await log('warn', pathname, request, 'Attempt from a banned IP address was blocked');
 			return {
@@ -294,7 +320,7 @@ const checkIPBanned = async (pathname, request, ip, env) => {
 	}
 	return {
 		success: true,
-		banned: false
+		banned: false,
 	}
 }
 
@@ -362,6 +388,26 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 	}
 
 	result = result.results;
+
+    if (result.length === 0) {
+        await log('warn', pathname, request, `No results were found during password fetch when executing the statement: ${statement}`, error);
+		return {
+			allow: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+    }
+
+    const expectedFields = ['password_hash', 'password_salt']
+
+    for (let i of expectedFields) {
+		if (!Object.hasOwn(result[0], i)) {
+			await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch password data for user ${username}; statement: ${statement}`);
+            return {
+                allow: false,
+                response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            }
+		}
+	}
 	
 	const trueHash = result[0]['password_hash'];
 	const trueSalt = Buffer.from(result[0]['password_salt'], 'hex');
@@ -397,6 +443,15 @@ const checkIfActive = async (username, env, pathname, request) => {
 			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
+
+	if (!Object.hasOwn(result.results[0], 'active')) {
+		await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch active data for user ${username}; statement: ${statement}`);
+        return {
+            allow: false,
+            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+        }
+	}
+
 	result = result.results[0].active;
 
 	if (result === 1) {
@@ -413,22 +468,13 @@ const checkIfActive = async (username, env, pathname, request) => {
 }
 
 const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, request) => {
-	const selectionStatement = 'SELECT userid FROM users WHERE username = ?';
-	let selectionResult;
-
-	try {
-		const selection = env.blitz.prepare(selectionStatement).bind(enteredUsername);
-		selectionResult = await selection.all();
-	}
-	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${selectionStatement}`, error);
-		return {
-			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
-		}
-	}
-
-	const userID = selectionResult.results[0].userid;
+	const userID = await fetchUserDataFromUsername(request, pathname, env, enteredUsername);
+    if (!userID) {
+        return {
+            allow: false,
+            response: userID.response
+        }
+    }
 
 	const date = new Date();
 	date.setDate(date.getDate() + 1);
@@ -440,7 +486,7 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 
 	const insertionStatement = 'INSERT INTO sessiontokens (session_token_hash, userid, expiration_date) VALUES (?, ?, ?);';
 	try {
-		const insertion = env.blitz.prepare(insertionStatement).bind(tokenHash, userID, expiry);
+		const insertion = env.blitz.prepare(insertionStatement).bind(tokenHash, userID.response.userid, expiry);
 		await insertion.run();
 	}
 	catch (error) {
@@ -483,11 +529,27 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
 		}
 	}
 	else {
+        if (!Object.hasOwn(results.results[0], 'session_token_hash')) {
+            await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
+            return {
+                allow: false,
+                response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            }
+        }
 		if (compare(attemptedHash, results.results[0]['session_token_hash'])) {
-			return {
-				allow: true,
-				userid: results.results[0].userid
-			}
+            if (!Object.hasOwn(results.results[0], 'userid')) {
+                await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
+                return {
+                    allow: false,
+                    response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                }
+            }
+            else {
+                return {
+                    allow: true,
+                    userid: results.results[0].userid
+                }
+            }
 		}
 		else {
 			return {
@@ -559,10 +621,21 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 		await log('warn', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
 		return {
             success: false,
-            response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+            response: await buildResponse('User not found.', 404, normalHeader)
         }
 	}
 	else {
+        const expectedFields = ['name', 'username', 'last_login', 'iterations'];
+        for (let i of expectedFields) {
+			if (!Object.hasOwn(results.results[0], i)) {
+				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for user id ${userid}; statement: ${statement}`);
+                return {
+                    success: false,
+                    response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                }
+			}
+		}
+
 		let userObject = results.results[0];
 		userObject.lastLogin = userObject['last_login'];
 		delete userObject['last_login'];
@@ -599,6 +672,17 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
         }
     }
     else {
+        const expectedFields = ['name', 'userid', 'last_login', 'iterations'];
+        for (let i of expectedFields) {
+			if (!Object.hasOwn(results.results[0], i)) {
+				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for username ${username}; statement: ${statement}`);
+                return {
+                    success: false,
+                    response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                }
+			}
+		}
+
         let userObject = results.results[0];
         userObject.lastLogin = userObject['last_login'];
         delete userObject['last_login'];
@@ -615,7 +699,7 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader) => {
     let file;
 
     try {
-        file = env.blitzr2.get(filepath);
+        file = await env.blitzr2.get(filepath);
     }
     catch (error) {
         await log('error', pathname, request, `R2 query failed when attempting to fetch file at: ${filepath}`, error);
@@ -628,7 +712,7 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader) => {
     if (file === null) {
         await log('warn', pathname, request, `File not found at path: ${filepath}; sending placeholder image`);
 
-        const placeholderFetch = await fetchFromR2()
+        const placeholderFetch = await fetchFromR2(request, pathname, env, `assets/profiles/placeholder.jpg`, 'image/jpeg');
         if (!placeholderFetch.success) {
             return {
                 success: false,
@@ -646,7 +730,7 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader) => {
         let finalPayload;
 
         try {
-            finalPayload = file.blob();
+            finalPayload = await file.blob();
         }
         catch (error) {
             await log('error', pathname, request, `Failed to perform blob() method on file at: ${filepath}`, error);
@@ -661,6 +745,164 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader) => {
             response: await buildResponse('File successfully fetched', 200, contentHeader, 'BLOB', finalPayload)
         }
     }
+}
+
+const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname, request, findDerivations) => {
+	let data;
+	let response;
+	let success = true;
+
+	try {
+		const carStatement = 'SELECT creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes FROM cars WHERE iteration = ?';
+		const expectedCarFields = ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes'];
+		try {
+			const query = env.blitz.prepare(carStatement).bind(iterationNumber);
+			data = await query.all();
+		}
+		catch (error) {
+			await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
+			success = false;
+			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			throw new Error();
+		}
+
+		if (data.results.length === 0) {
+			await log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
+			success = false;
+			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			throw new Error();
+		}
+
+		for (let i of expectedCarFields) {
+			if (!Object.hasOwn(data.results[0], i)) {
+				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
+				response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+				success = false;
+				throw new Error();
+			}
+		}
+
+		data = data.results[0];
+
+		const creatorData = await fetchUserDataFromUserID(request, pathname, env, data.creatorid);
+		if (!creatorData.success) {
+			success = false;
+			response = creatorData.response;
+			throw new Error();
+		}
+		const scrutineerData = await fetchUserDataFromUserID(request, pathname, env, data.scrutineerid);
+		if (!scrutineerData.success) {
+			success = false;
+			response = scrutineerData.response;
+			throw new Error();
+		}
+
+		data.creatorName = creatorData.response.name;
+		data.creatorUsername = creatorData.response.username;
+		data.scrutineerName = scrutineerData.response.name;
+		data.changelog = data.changelog.split('[BRK;]');
+
+		if ((data['derived_carid'] !== null) && (findDerivations)) {
+			const derivedCar = await pullCarMetaDataWithCarID(data['derived_carid'], env, pathname, request, false);
+			if (!derivedCar.success) {
+				await log('warn', pathname, request, `Fetching car metadata for derived car id ${data['derived_carid']} failed; see earlier error messages for more information`);
+				success = false;
+				response = derivedCar.response;
+				throw new Error();
+			}
+
+			data.derivedCarName = derivedCar.data['car_name'];
+			data.derivedCarIteration = derivedCar.data.iteration;
+		}
+		
+		throw new Error();
+	}
+	catch {
+		return {
+			success: success,
+			response: response,
+			data: data
+		}
+	}
+}
+
+const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDerivations) => {
+	let data;
+	let response;
+	let success = true;
+
+	try {
+		const carStatement = 'SELECT creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes FROM cars WHERE carid = ?';
+		const expectedCarFields = ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes'];
+		try {
+			const query = env.blitz.prepare(carStatement).bind(carid);
+			data = await query.all();
+		}
+		catch (error) {
+			await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
+			success = false;
+			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			throw new Error();
+		}
+
+		if (data.results.length === 0) {
+			await log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
+			success = false;
+			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			throw new Error();
+		}
+
+		for (let i of expectedCarFields) {
+			if (!Object.hasOwn(data.results[0], i)) {
+				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
+				response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+				success = false;
+				throw new Error();
+			}
+		}
+
+		data = data.results[0];
+
+		const creatorData = await fetchUserDataFromUserID(request, pathname, env, data.creatorid);
+		if (!creatorData.success) {
+			success = false;
+			response = creatorData.response;
+			throw new Error();
+		}
+		const scrutineerData = await fetchUserDataFromUserID(request, pathname, env, data.scrutineerid);
+		if (!scrutineerData.success) {
+			success = false;
+			response = scrutineerData.response;
+			throw new Error();
+		}
+
+		data.creatorName = creatorData.response.name;
+		data.creatorUsername = creatorData.response.username;
+		data.scrutineerName = scrutineerData.response.name;
+		data.changelog = data.changelog.split('[BRK;]');
+
+		if ((data['derived_carid'] !== null) && (findDerivations)) {
+			const derivedCar = pullCarMetaDataWithCarID(data['derived_carid'], env, pathname, request, false);
+			if (!derivedCar.success) {
+				await log('warn', pathname, request, `Fetching car metadata for derived car id ${data['derived_carid']} failed; see earlier error messages for more information`);
+				success = false;
+				response = derivedCar.response;
+				throw new Error();
+			}
+
+			data.derivedCarName = derivedCar.data['car_name'];
+			data.derivedCarIteration = derivedCar.data.iteration;
+		}
+		
+		throw new Error();
+	}
+	catch {
+		return {
+			success: success,
+			response: response,
+			data: data
+		}
+	}
 }
 
 module.exports = {
@@ -686,4 +928,6 @@ module.exports = {
     log,
     fetchFromR2,
     fetchUserDataFromUsername,
+    pullCarMetaDataWithIterationNumber,
+    pullCarMetaDataWithCarID
 };

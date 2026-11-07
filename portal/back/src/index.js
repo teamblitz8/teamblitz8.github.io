@@ -1,9 +1,12 @@
 // add ratelimiting to all endpoints
 // improve how errors are sent (make them more useful)
 // clean up spaghetti code
+// replace any .all() with .first()
+// check that all properties exist after d1 query
+// decrease number of helpers e.g. fetchuserdata can do everything
 
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2 } = require('../helpers.js');
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID } = require('../helpers.js');
 
 const deleteSessionToken = async (sessionToken, env) => {
 	const hasher = require('../hasher.js');
@@ -54,60 +57,6 @@ const updatePassword = async (userid, env, newPassword) => {
 	else {
 		return true;
 	}
-}
-
-const pullCar = async (iterationNumber, env) => {
-	let finalObject;
-	try {
-		const query = env.blitz.prepare('SELECT creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes FROM cars WHERE iteration = ?').bind(iterationNumber);
-		const queryDone = await query.run();
-		if (queryDone.results.length === 0) {
-			throw new Error(`Iteration number ${iterationNumber} is missing from db!!`);
-		}
-		if (!queryDone.results[0].creatorid) {
-			throw new Error(`Iteration number ${iterationNumber} is missing a creator id`);
-		}
-
-		finalObject = queryDone.results[0];
-
-		const userQuery = env.blitz.prepare('SELECT username, name FROM users WHERE userid = ?').bind(queryDone.results[0].creatorid);
-		const userDone = await userQuery.run();
-		if (userDone.results.length === 0) {
-			throw new Error(`Creator id for iteration number ${iterationNumber} does not map to an actual user.`);
-		}
-
-		if (!queryDone.results[0].scrutineerid) {
-			throw new Error(`Iteration number ${iterationNumber} is missing a creator id`);
-		}
-
-		const scrutineerQuery = env.blitz.prepare('SELECT name FROM users WHERE userid = ?').bind(queryDone.results[0].scrutineerid);
-		const scrutineerDone = await scrutineerQuery.run();
-		if (scrutineerDone.results.length === 0) {
-			throw new Error(`Scrutineer id for iteration number ${iterationNumber} does not map to an actual user.`);
-		}
-
-		if (queryDone.results[0]['derived_carid'] !== null) {
-			const derivedQuery = env.blitz.prepare('SELECT iteration, car_name FROM cars WHERE carid = ?').bind(queryDone.results[0]['derived_carid']);
-			const derivedDone = await derivedQuery.run();
-			if (derivedDone.results.length === 0) {
-				throw new Error(`Derived car id for iteraiton number ${iterationNumber} does not map to an actual car.`);
-			}
-			finalObject.derivedCarName = derivedDone.results[0]['car_name'];
-			finalObject.derivedCarIteration = derivedDone.results[0].iteration;
-		}
-
-		finalObject.creatorName = userDone.results[0].name;
-		finalObject.creatorUsername = userDone.results[0].username;
-		finalObject.scrutineerName = scrutineerDone.results[0].name;
-
-		if (!queryDone.results[0].changelog) throw new Error(`Iteration number ${iterationNumber} is missing a changelog`);
-		finalObject.changelog = queryDone.results[0].changelog.split('[BRK;]');
-	}
-	catch (error) {
-		console.error(error)
-		return false;
-	}
-	return finalObject;
 }
 
 const pullCarModel = async (iterationNumber, env) => {
@@ -222,6 +171,35 @@ const pullCarPlanes = async (iterationNumber, env) => {
 	}
 }
 
+const identifyMaxIteration = async (request, pathname, env) => {
+	const statement = 'SELECT max(iteration) as max_iteration FROM cars';
+	let selection;
+	try {
+		selection = await env.blitz.prepare(statement).first();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	if (selection === null) {
+		await log('warn', pathname, request, `Maximum iteration could not be found when executing the statement: ${statement}; expected an integer, received null`);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error', 500, normalHeader)
+		}
+	}
+	else {
+		return {
+			success: true,
+			response: selection['max_iteration']
+		}
+	}
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		const url = new URL(request.url);
@@ -251,6 +229,7 @@ export default {
 				const enteredUsername = parseRequest.json.username;
 				const enteredPassword = parseRequest.json.password;
 				const inputs = [{
+					name: 'username',
 					input: enteredUsername,
 					requirements: {
 						dataType: 'string',
@@ -258,6 +237,7 @@ export default {
 						maxLength: 25
 					}
 				}, {
+					name: 'password',
 					input: enteredPassword,
 					requirements: {
 						dataType: 'string',
@@ -282,7 +262,7 @@ export default {
 						const sessionToken = crypto.randomUUID();
 
 						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, url.pathname, request);
-						if (attempt.success) return await updateLastLogin(url.pathname, request, env, enteredUsername);
+						if (attempt.success) return await updateLastLogin(url.pathname, request, env, enteredUsername, sessionToken);
 						else return attempt.response;
 					}
 					else return active.response;
@@ -318,6 +298,7 @@ export default {
 
 				const username = url.searchParams.get('username');
 				const usernameInput = {
+					name: 'username',
 					input: username,
 					requirements: {
 						minLength: 3,
@@ -334,266 +315,61 @@ export default {
 				return await fetchFromR2(request, url.pathname, env, `assets/profiles/${userFetch.response.userid}.jpg`, 'image/jpeg').response;
 			}
 			else if (url.pathname === '/api/dashboard/text') {
-				if (request.method !== 'GET' && request.method !== 'POST') {
-					return new Response(JSON.stringify({ message: 'Incorrect method.' }), { 
-						status: 405,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true',
-							'Allow': 'GET, POST, OPTIONS'
-						}
-					});
-				}
-				const cookieHeader = request.headers.get('Cookie') || '';
-				const cookies = parseCookies(cookieHeader);
-				const sessionToken = cookies['session_token'];
+				const requestCheck = await checkRequest(url.pathname, request, ['GET', 'POST']);
+				if (!requestCheck.success) return requestCheck.response;
 
-				if (!sessionToken) {
-					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				const handleIP = await handleIPBan(url.pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
 
-				const userid = await checkSessionToken(sessionToken, env);
-
-				if (!userid) {
-					return new Response(JSON.stringify({ message: 'Unauthorised' }), {
-						status: 401,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				const sessionCheck = await checkSession(request, url.pathname, env);
+				if (!sessionCheck.allow) return sessionCheck.response;
+				const userid = sessionCheck.userid;
 				
 				if (request.method === 'GET') {
-					const nameQuery = env.blitz.prepare('SELECT name, username FROM users WHERE userid = ?').bind(userid);
-					const findName = await nameQuery.run();
-					const name = findName.results[0].name;
-					const username = findName.results[0].username;
-					let responseObject = {
-						name: name,
-						username: username,
-						message: 'Cars fetched successfully.'
-					};
+					const dataFetch = await fetchUserDataFromUserID(request, url.pathname, env, userid);
+					if (!dataFetch.success) return dataFetch.response;
 
-					const url = new URL(request.url);
-					const iterationNumber = url.searchParams.get('iterationNumber');
+					// breaking change: backend no longer sends username and name, use /api/account for that
+					// breaking change: to call for latest iterations, send 0 in the iteration number parameter
+					// breaking change: backend now just sends the car in json, there is no nested objects now
 
-					if (!iterationNumber) {
-						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
+					const iterationNumber = Number(url.searchParams.get('iterationNumber'));
+					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
+					if (!maxIteration.success) return maxIteration.response;
+					const iterationInput = {
+						name: 'iterationNumber',
+						input: iterationNumber,
+						requirements: {
+							minValue: 0,
+							maxValue: maxIteration.response,
+							dataType: 'number'
+						}
 					}
 
-					const maxIterationQuery = await env.blitz.prepare('SELECT max(iteration) as max_iteration FROM cars').run();
-					const maxIteration = maxIterationQuery.results[0]['max_iteration'];
+					const inputCheck = await validateInputs(url.pathname, request, [iterationInput], env);
+					if (!inputCheck.success) return inputCheck.response;
 
-					if ((!maxIteration) || (maxIteration === null)) {
-						return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-							status: 502,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
+					if (iterationNumber === 0) {
+						const carData = await pullCarMetaDataWithIterationNumber(maxIteration.response, env, url.pathname, request, true);
 
-					if (iterationNumber === 'latest') {
-						const carData = await pullCar(maxIteration, env);
-
-						if (!carData) {
-							return new Response(JSON.stringify({ message: 'There was an error fetching car data. Please contact the administrator.' }), {
-								status: 502,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
-						}
-						else {
-							responseObject.car = carData;
-						}
+						if (!carData.success) return carData.response;
+						else return await buildResponse('Fetched car data', 200, normalHeader, carData.data);
 					}
 					else {
-						if (iterationNumber.trim() === '') {
-							return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
-						}
-						if (!/^(0|[1-9]\d*)$/.test(iterationNumber)) {
-							return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
-						}
-						if ((!Number.isSafeInteger(Number(iterationNumber))) || (Number(iterationNumber) > maxIteration)){
-							return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
-						}
-						if (Number(iterationNumber) === 0) {
-							return new Response(JSON.stringify({ message: 'Error 400: Bad request. Please contact the administrator.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
-						}
+						const carData = await pullCarMetaDataWithIterationNumber(iterationNumber, env, url.pathname, request, true);
 
-						const carData = await pullCar(iterationNumber, env);
-
-						if (!carData) {
-							return new Response(JSON.stringify({ message: 'There was an error fetching car data. Please contact the administrator.' }), {
-								status: 502,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-						});
-						}
-						else {
-							responseObject.car = carData;
-						}
+						if (!carData.success) return carData.response;
+						else return await buildResponse('Fetched car data', 200, normalHeader, carData.data);
 					}
-
-					return new Response(JSON.stringify(responseObject), {
-						status: 200,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
 				}
 				else if (request.method === 'POST') {
-					const contentType = request.headers.get('Content-Type');
-					if (!contentType || typeof contentType !== 'string') {
-						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
-							status: 415,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
+					const requestCheck = await checkRequest(url.pathname, request, ['POST'], 'application/json');
+					if (!requestCheck.success) return requestCheck.response;
 
-					if (contentType.split(';')[0].toLowerCase() !== 'application/json') {
-						return new Response(JSON.stringify({ message: 'Unsupported Media Type.' }), { 
-							status: 415,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
+					const parseRequest = await parseRequestJSON(url.pathname, request, ['carName', 'dateCreated', 'frontalArea', 'dragCoefficient', 'scrutineerer', 'derivedCar', 'changelog', 'addDetails']);
+					if (!parseRequest.success) return parseRequest.response;
 
-					let reqJson;
-					try {
-						reqJson = await request.json();
-						if (!reqJson) {
-							throw new Error();
-						}
-						if (typeof reqJson !== 'object'){
-							throw new Error();
-						}
-						if (Array.isArray(reqJson)){
-							throw new Error();
-						}
-						let checkAllFields = ['carName', 'dateCreated', 'frontalArea', 'dragCoefficient', 'scrutineerer', 'derivedCar', 'changelog', 'addDetails'];
-						checkAllFields.forEach((field, index) => checkAllFields[index] = Object.hasOwn(reqJson, field));
-						if (!checkAllFields.every(Boolean)) {
-							throw new Error();
-						}
-					}
-					catch {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
+					const requestObject = parseRequest.json;
 
 					if (typeof reqJson.carName !== 'string') {
 						return new Response(JSON.stringify({ message: 'Bad request.' }), { 

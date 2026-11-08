@@ -94,32 +94,39 @@ const checkRequest = async (pathname, request, expectedMethods, expectedContentH
 	let response;
 	let success = true;
 
-	if (!expectedMethods.includes(request.method)) {
-		await log('warn', pathname, request, `Incorrect request method; expected ${expectedMethods}, received ${request.method}`);
-		response = await buildResponse('There was an unexpected error.', 405, normalHeader);
-		success = false;
-	}
-
-    if (expectedContentHeader) {
-        const requestContentHeader = request.headers.get('Content-Type');
-        if (requestContentHeader === null) {
-            await log('warn', pathname, request, 'No content header received.');
-            response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+    try {
+        if (!expectedMethods.includes(request.method)) {
+            await log('warn', pathname, request, `Incorrect request method; expected ${expectedMethods}, received ${request.method}`);
+            response = await buildResponse('There was an unexpected error.', 405, normalHeader);
             success = false;
+            throw new Error();
         }
 
-        const requestContentHeaders = requestContentHeader.split(';');
-        if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
-            await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
-            response = await buildResponse('There was an unexpected error.', 415, normalHeader);
-            success = false;
+        if (expectedContentHeader) {
+            const requestContentHeader = request.headers.get('Content-Type');
+            if (requestContentHeader === null) {
+                await log('warn', pathname, request, 'No content header received.');
+                response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+                success = false;
+                throw new Error();
+            }
+
+            const requestContentHeaders = requestContentHeader.split(';');
+            if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
+                await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
+                response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+                success = false;
+                throw new Error();
+            }
+        }
+        throw new Error();
+    }
+    catch {
+        return {
+            success: success,
+            response: response
         }
     }
-
-	return {
-		success: success,
-		response: response
-	}
 }
 
 const parseRequestJSON = async (pathname, request, requiredFields) => {
@@ -1018,6 +1025,50 @@ const uploadCarMetadata = async (request, pathname, env, carArray) => {
 	}
 }
 
+const pullCarFile = async (iterationNumber, env, pathname, request, type) => {
+	const carid = await pullCarMetaDataWithIterationNumber(iterationNumber, env, pathname, request, false);
+	if (!carid.success) {
+		return {
+			success: false,
+			response: carid.response
+		}
+	}
+	
+	let potentialFiles;
+	try {
+		potentialFiles = await env.blitzr2.list({ prefix: `assets/${type}/${carid}` });
+	}
+	catch (error) {
+		await log('error', pathname, request, `R2 query failed when attempting to fetch list of car model files for iteration ${iterationNumber}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	if (potentialFiles.objects.length === 0) {
+		await log('warn', pathname, request, `No car model files were found for iteration ${iterationNumber}.`);
+		return {
+			success: false,
+			response: await buildResponse('Car model file not found.', 404, normalHeader)
+		}
+	}
+
+	const fetch = await fetchFromR2(request, pathname, env, potentialFiles.objects[0].key, 'application/octet-stream');
+	if (!fetch.success) {
+		return {
+			success: false,
+			response: fetch.response
+		}
+	}
+	else {
+		return {
+			success: true,
+			response: fetch.response
+		}
+	}
+}
+
 module.exports = {
     convertBufferToString,
     hash,
@@ -1044,5 +1095,6 @@ module.exports = {
     pullCarMetaDataWithIterationNumber,
     pullCarMetaDataWithCarID,
     uploadCarMetadata,
-    identifyMaxIteration
+    identifyMaxIteration,
+    pullCarFile
 };

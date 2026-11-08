@@ -217,13 +217,11 @@ const loadMore = async () => {
             throw new Error(`There was an unexpected error when fetching car data. Please contact the administrator. Error logs: ${dat.data}`);
         }
         const data = dat;
-        const greeting = document.querySelector('#greeting');
-        greeting.textContent = `Hello, ${data.name}`;
 
         const devContainer = document.querySelector('#development-container');
 
         let changelog = '';
-        for (let i of data.changelog) {
+        for (let i of data.changelog.split('[BRK;]')) {
             changelog += `<li>${i}</li>`;
         }
 
@@ -264,7 +262,7 @@ const loadMore = async () => {
         
         document.querySelector(`.ii${data.iteration}`).style.height = '100%';
         document.querySelector(`.ii${data.iteration}`).style.height = `${document.querySelector(`.ii${data.iteration}`).offsetHeight}px`;
-        document.querySelector('#loadMore button').innerText = '<i class="fa-solid fa-chevron-down"></i> Load more';
+        document.querySelector('#loadMore button').innerText = ' Load more';
     }
     catch (error) {
         document.querySelector('#loadMore button').innerText = error.message;
@@ -282,9 +280,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!data.success) {
             throw new Error(`There was an unexpected error when fetching car data. Please contact the administrator. Error logs: ${data.data}`);
         }
-
-        const greeting = document.querySelector('#greeting');
-        greeting.textContent = `Hello, ${data.name}`; //update this to /api/account
 
         const devContainer = document.querySelector('#development-container');
 
@@ -326,7 +321,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('title').innerText = 'Latest Cars';
         document.querySelector('.model-viewer').style.height = '100%';
         document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
-        document.getElementById('logged-username').innerText = `Logged in as ${data.name}`; // change to /api/account thing
 
         if (nextIteration !== 0) document.querySelector('#loadMore button').style.display = 'flex';
     }

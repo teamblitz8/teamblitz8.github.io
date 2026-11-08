@@ -58,6 +58,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const menu = document.querySelector('#profile p');
             menu.textContent = data.username;
 
+            const greeting = document.querySelector('#greeting');
+            greeting.textContent = `Hello, ${data.name}`;
+            document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
+
             document.querySelector('#profile img').src = pfpurl;
         }
         else {

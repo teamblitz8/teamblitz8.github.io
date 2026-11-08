@@ -115,7 +115,7 @@ const getData = async (type, iterationNumber) => {
             try {
                 const meta = await getData('text', iterationNumber);
                 const model = await getData('f3d', iterationNumber);
-                const preview = await getData('preview', iterationNumber);
+                const preview = await getData('previews', iterationNumber);
                 const iso = await getData('iso', iterationNumber);
                 const planes = await getData('planes', iterationNumber);
 

@@ -60,6 +60,14 @@ const buildResponse = async (message, status, contentType, object, blob) => {
 }
 
 const log = async (type, pathname, request, message, stack) => {
+    const errorStack = stack instanceof Error
+        ? {
+            name: stack.name,
+            message: stack.message,
+            stack: stack.stack
+        }
+        : stack;
+
 	if (type === 'error') {
 		console.error({
 			timestamp: new Date().toISOString(),
@@ -67,7 +75,7 @@ const log = async (type, pathname, request, message, stack) => {
 			message: message,
 			originIP: request.headers.get('cf-connecting-ip'),
 			originLocation: `${request.cf.city}, ${request.cf.country}`,
-			errorStack: stack
+			errorStack: errorStack
 		});
 	}
 	else if (type === 'warn') {
@@ -365,6 +373,8 @@ const handleIPBan = async (pathname, request, env) => {
             response = await banIP(pathname, request, ip, env);
             throw new Error();
         }
+		
+		throw new Error();
     }
     catch {
         return {

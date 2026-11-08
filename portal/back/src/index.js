@@ -258,7 +258,7 @@ export default {
 							dataType: 'number',
 							integer: true,
 							minValue: 0,
-							maxValue: maxIteration,
+							maxValue: maxIteration.response,
 							dbCheck: {
 								statement: 'SELECT * FROM cars WHERE iteration = ?',
 								vars: [data.derivedCar],
@@ -289,7 +289,7 @@ export default {
 					if (!scrutineer.success) return scrutineer.response;
 
 					const carid = crypto.randomUUID();
-					const carArray = [userid, scrutineer.response.userid, carid, derivedCarID, data.carName, maxIteration + 1, data.dateCreated.toISOString(), data.frontalArea, data.dragCoefficient, 0.5 * 1.196 * 225 * data.dragCoefficient * data.frontalArea / 1000000, data.changelog, data.addDetails];
+					const carArray = [userid, scrutineer.response.userid, carid, derivedCarID, data.carName, maxIteration.response + 1, data.dateCreated.toISOString(), data.frontalArea, data.dragCoefficient, 0.5 * 1.196 * 225 * data.dragCoefficient * data.frontalArea / 1000000, data.changelog, data.addDetails];
 
 					const finalUpload = await uploadCarMetadata(request, url.pathname, env, carArray);
 					return finalUpload.response;
@@ -328,7 +328,7 @@ export default {
 					if (!inputCheck.success) return inputCheck.response;
 
 					if (iterationNumber === 0) {
-						const finalFetch = await pullCarFile(maxIteration, env, url.pathname, request);
+						const finalFetch = await pullCarFile(maxIteration.response, env, url.pathname, request);
 						return finalFetch.response;
 					}
 					else {
@@ -380,7 +380,7 @@ export default {
 				else return await buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
 
-			else if (url.pathname === '/api/dashboard/preview') {
+			else if (url.pathname === '/api/dashboard/previews') {
 				const requestCheck = await checkRequest(url.pathname, request, ['POST', 'GET']);
 				if (!requestCheck.success) return requestCheck.response;
 
@@ -411,7 +411,7 @@ export default {
 					if (!inputCheck.success) return inputCheck.response;
 
 					if (iterationNumber === 0) {
-						const finalFetch = await pullCarFile(maxIteration, env, url.pathname, request);
+						const finalFetch = await pullCarFile(maxIteration.response, env, url.pathname, request);
 						return finalFetch.response;
 					}
 					else {
@@ -494,7 +494,7 @@ export default {
 					if (!inputCheck.success) return inputCheck.response;
 
 					if (iterationNumber === 0) {
-						const finalFetch = await pullCarFile(maxIteration, env, url.pathname, request);
+						const finalFetch = await pullCarFile(maxIteration.response, env, url.pathname, request);
 						return finalFetch.response;
 					}
 					else {

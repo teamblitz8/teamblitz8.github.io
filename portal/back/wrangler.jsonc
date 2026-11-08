@@ -39,8 +39,8 @@
 			"name": "ratelimiter",
 			"namespace_id": "6767",
 			"simple": {
-				"limit": 5,
-				"period": 60
+				"limit": 30,
+				"period": 10
 			}
 		}
 	],

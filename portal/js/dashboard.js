@@ -172,7 +172,7 @@ const getData = async (type, iterationNumber) => {
                 data = await response.json();
                 console.log('json')
             }
-            else if (['f3d', 'preview', 'iso', 'planes'].includes(type)) {
+            else if (['f3d', 'previews', 'iso', 'planes'].includes(type)) {
                 console.log('blob')
                 data = await response.blob();
                 console.log('blob')

@@ -219,18 +219,17 @@ const loadMore = async () => {
         const data = dat;
 
         const devContainer = document.querySelector('#development-container');
-
         let changelog = '';
-        for (let i of data.changelog.split('[BRK;]')) {
+        for (let i of data.data.changelog) {
             changelog += `<li>${i}</li>`;
         }
 
         let preview;
-        if (data.preview.contentType === 'image/png') {
-            preview = `<img src="${data.preview.url}" class="model-viewer ii${data.iteration}">`;
+        if (data.data.preview.contentType === 'image/png') {
+            preview = `<img src="${data.data.preview.url}" class="model-viewer">`;
         }
-        else if (data.preview.contentType === 'model/gltf-binary') {
-            preview = `<model-viewer id="car-model" src="${data.preview.url}" class="model-viewer ii${data.iteration}" camera-controls></model-viewer>`;
+        else if (data.data.preview.contentType === 'model/gltf-binary') {
+            preview = `<model-viewer id="car-model" src="${data.data.preview.url}" class="model-viewer" camera-controls></model-viewer>`;
         }
         else {
             preview = `<div id="error">There was an error loading the preview.</div>`;
@@ -238,19 +237,19 @@ const loadMore = async () => {
         // switch from innerhtml asap
 
         let derivation;
-        if (data.derivedCarIteration && data.derivedCarName) {
-            derivation = `<p>This design was derived from iteration #${data.derivedCarIteration}, ${data.derivedCarName}. Changes include:</p>`;
+        if (data.data.derivedCarIteration && data.data.derivedCarName) {
+            derivation = `<p>This design was derived from iteration #${data.data.derivedCarIteration}, ${data.data.derivedCarName}. Changes include:</p>`;
         }
         else {
             derivation = '';
         }
 
         let addNotes = '';
-        if (data['additional_notes'] !== null) {
-            addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div>`;
+        if (data.data['additional_notes'] !== null) {
+            addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data.data['additional_notes']}</p></div></div></div>`;
         }
 
-        nextIteration = Number(data.iteration) - 1;
+        nextIteration = Number(data.data.iteration) - 1;
         if (nextIteration !== 0) {
             document.querySelector('#loadMore button').style.display = 'flex';
         }

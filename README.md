@@ -60,7 +60,6 @@ This part of the site involved a lot of learning for me. It is designed to allow
 A lot!
 
 - My Account & My Designs is UI only
-- Remember me checkbox
 - It's quite horrendous on mobile right now
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)

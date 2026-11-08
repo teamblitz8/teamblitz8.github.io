@@ -9,21 +9,21 @@ const preview = document.querySelector('#preview');
 let nextIteration;
 let theCar;
 
-const upload = async (type, data, carid, fileType) => {
+const upload = async (type, data, carid, carModelFileType, previewFileType) => {
     let body;
     let contentHeader;
 
     if (type === 'fullworks') {
-        const metadata = await upload('text', data.metadata, theCar, fileType);
-        if (!metadata.success) return { success: false, error: metadata.error };
-        const carModel = await upload('f3d', data.carModel, theCar, fileType);
-        if (!carModel.success) return { success: false, error: carModel.error };
-        const iso = await upload('iso', data.iso, theCar, fileType);
-        if (!iso.success) return { success: false, error: iso.error };
-        const planes = await upload('planes', data.planes, theCar, fileType);
-        if (!planes.success) return { success: false, error: planes.error };
-        const preview = await upload('preview', data.preview, theCar, fileType);
-        if (!preview.success) return { success: false, error: preview.error };
+        const metadata = await upload('text', data.metadata, theCar);
+        if (!metadata.success) return { success: false, error: metadata.data };
+        const carModel = await upload('f3d', data.carModel, theCar, carModelFileType);
+        if (!carModel.success) return { success: false, error: carModel.data };
+        const iso = await upload('iso', data.iso, theCar, 'png');
+        if (!iso.success) return { success: false, error: iso.data };
+        const planes = await upload('planes', data.planes, theCar, 'png');
+        if (!planes.success) return { success: false, error: planes.data };
+        const preview = await upload('preview', data.preview, theCar, previewFileType);
+        if (!preview.success) return { success: false, error: preview.data };
 
         return { success: true };
     }
@@ -58,7 +58,7 @@ const upload = async (type, data, carid, fileType) => {
 
     try {
         const url = new URL(`https://back.teamblitz.workers.dev/api/dashboard/${type}`);
-        url.search = new URLSearchParams({ carid: carid, fileType: fileType });
+        url.search = new URLSearchParams({ carid: carid, fileType: carModelFileType });
         const response = await fetch(url, {
             method: 'POST',
             body: body,
@@ -110,7 +110,6 @@ const unfurl = async (iteration) => {
 }
 
 const getData = async (type, iterationNumber) => {
-    if (iterationNumber < 1) return;
     try {
         if (type === 'fullworks') {
             try {
@@ -185,7 +184,7 @@ const getData = async (type, iterationNumber) => {
         if (type === 'text') {
             return {
                 success: true,
-                data: { ...data.car, name: data.name, username: data.username },
+                data: data,
             };
         }
         else if (['f3d', 'preview', 'iso', 'planes'].includes(type)) {
@@ -217,7 +216,7 @@ const loadMore = async () => {
         if (!dat.success) {
             throw new Error(`There was an unexpected error when fetching car data. Please contact the administrator. Error logs: ${dat.data}`);
         }
-        const data = dat.data;
+        const data = dat;
         const greeting = document.querySelector('#greeting');
         greeting.textContent = `Hello, ${data.name}`;
 
@@ -278,28 +277,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('#loadMore button').style.display = 'none';
 
     try {
-        const dat = await getData('fullworks', 'latest');
+        const data = await getData('fullworks', 0);
 
-        if (!dat.success) {
-            throw new Error(`There was an unexpected error when fetching car data. Please contact the administrator. Error logs: ${dat.data}`);
+        if (!data.success) {
+            throw new Error(`There was an unexpected error when fetching car data. Please contact the administrator. Error logs: ${data.data}`);
         }
-        const data = dat.data;
+
         const greeting = document.querySelector('#greeting');
-        greeting.textContent = `Hello, ${data.name}`;
+        greeting.textContent = `Hello, ${data.name}`; //update this to /api/account
 
         const devContainer = document.querySelector('#development-container');
 
         let changelog = '';
-        for (let i of data.changelog) {
+        for (let i of data.data.changelog) {
             changelog += `<li>${i}</li>`;
         }
 
         let preview;
-        if (data.preview.contentType === 'image/png') {
-            preview = `<img src="${data.preview.url}" class="model-viewer">`;
+        if (data.data.preview.contentType === 'image/png') {
+            preview = `<img src="${data.data.preview.url}" class="model-viewer">`;
         }
-        else if (data.preview.contentType === 'model/gltf-binary') {
-            preview = `<model-viewer id="car-model" src="${data.preview.url}" class="model-viewer" camera-controls></model-viewer>`;
+        else if (data.data.preview.contentType === 'model/gltf-binary') {
+            preview = `<model-viewer id="car-model" src="${data.data.preview.url}" class="model-viewer" camera-controls></model-viewer>`;
         }
         else {
             preview = `<div id="error">There was an error loading the preview.</div>`;
@@ -307,27 +306,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         // switch from innerhtml asap
 
         let derivation;
-        if (data.derivedCarIteration && data.derivedCarName) {
-            derivation = `<p>This design was derived from iteration #${data.derivedCarIteration}, ${data.derivedCarName}. Changes include:</p>`;
+        if (data.data.derivedCarIteration && data.data.derivedCarName) {
+            derivation = `<p>This design was derived from iteration #${data.data.derivedCarIteration}, ${data.data.derivedCarName}. Changes include:</p>`;
         }
         else {
             derivation = '';
         }
 
         let addNotes = '';
-        if (data['additional_notes'] !== null) {
-            addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data['additional_notes']}</p></div></div></div>`;
+        if (data.data['additional_notes'] !== null) {
+            addNotes = `<div class="notes"><h3>Additional notes</h3><p>${data.data['additional_notes']}</p></div></div></div>`;
         }
 
-        nextIteration = Number(data.iteration) - 1;
+        nextIteration = Number(data.data.iteration) - 1;
 
-        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
+        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data.data['car_name']} - Iteration #${data.data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data.data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.data.scrutineerName}</p></div></div><p>Frontal Area: ${data.data['frontal_area']}mm²</p><p>Drag Coefficient: ${data.data['drag_coefficient']}</p><p class="drag">Drag: ${data.data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.data.model.url}" download="${data.data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
         document.getElementById('main-error').style.display = 'none';
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
         document.querySelector('.model-viewer').style.height = '100%';
         document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
-        document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
+        document.getElementById('logged-username').innerText = `Logged in as ${data.name}`; // change to /api/account thing
 
         if (nextIteration !== 0) document.querySelector('#loadMore button').style.display = 'flex';
     }
@@ -462,15 +461,7 @@ form.addEventListener('submit', async (e) => {
         errors.push('Please enter fewer changes.');
     }
 
-    const changes = changelog.value.trim().split('[BRK;]');
-
-    for (let i of changes) {
-        if (i.trim() === '') {
-            errored = true;
-            errors.push('Please do not put multiple separators in the changelog in a row.');
-            break;
-        } 
-    }
+    const changes = changelog.value.trim();
 
     if (addDetails === null) {
         addDetails = 'null';
@@ -559,7 +550,7 @@ form.addEventListener('submit', async (e) => {
             iso: iso.files[0],
             planes: planes.files[0],
             preview: preview.files[0]
-        }, theCar, carModel.files[0].name.split('.')[1]);
+        }, theCar, carModel.files[0].name.split('.')[1], preview.files[0].name.split('.')[1]);
 
         if (success.success) {
             error.innerText = 'Upload successful!';

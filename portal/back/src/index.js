@@ -1,16 +1,11 @@
 // breaking change: backend no longer sends username and name, use /api/account for that
-// breaking change: to call for latest iterations, send 0 in the iteration number parameter
 // breaking change: backend now just sends the car in json, there is no nested objects now
-// breaking change: backend now only accepts changelog in a string
-// breaking change: a null derived car number must be sent as 0
-// breaking change: fileType must now be passed explicitly via urlsearchparams
 
 const normalHeader = 'application/json; charset=UTF-8';
 const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens } = require('../helpers.js');
 
 const updatePassword = async (userid, env, newPassword) => {
-	const hasher = require('../hasher.js');
-	const hashAndSalt = hasher.hash(newPassword);
+	const hashAndSalt = hash(newPassword);
 	const query = env.blitz.prepare('UPDATE users SET password_hash = ?, password_salt = ? WHERE userid = ?').bind(hashAndSalt.hash, hashAndSalt.salt, userid);
 	await query.run();
 

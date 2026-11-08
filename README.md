@@ -92,6 +92,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - replace any .all() with .first()
 - decrease number of helpers e.g. fetchuserdata can do everything
 - check that the carid belongs to the authenticated user
+- fix the messy code on frontend
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

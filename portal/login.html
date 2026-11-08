@@ -18,18 +18,20 @@
             <div id="login-box">
                 <h1>Login</h1>
                 <form id="login">
-                    <div id="error-box"><span class="error">You have been blocked from making further attempts. Please contact the administrator.</span></div>
+                    <div id="error-box"><span class="error"></span></div>
                     <div class="question">
                         <label for="username">Username</label>
                         <input type="text" id="username" name="username" placeholder="Username">
                     </div>
                     <div class="question">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Password">
-                        <button onclick="showPassword('password')"></button>
+                        <div id="password-box">
+                            <input type="password" id="password" name="password" placeholder="Password">
+                            <button onclick="showPassword('password')" type="button" id="show-password"><i class="fa-solid fa-eye"></i></button>
+                        </div>
                     </div>
                     <div class="question" id="forever-container">
-                        <input type="checkbox" name="forever" id="forever">
+                        <input type="checkbox" name="forever" id="forever" value="remember-me">
                         <label for="forever">Stay logged in</label>
                     </div>
                     <div class="question">

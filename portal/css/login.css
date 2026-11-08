@@ -139,6 +139,22 @@ body div {
     transition: 4s transform ease;
 }
 
+#show-password {
+    height: 4.5em;
+    width: 4.5em;
+    position: absolute;
+    top: 0.5em;
+    right: 0.2em;
+}
+
+#show-password i {
+    font-size: 2.3em;
+}
+
+#password-box {
+    position: relative;
+}
+
 @media screen and (max-width: 1000px) {
     #login-box {
         width: 90%;

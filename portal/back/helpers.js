@@ -238,7 +238,11 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 	let success = true;
 	let errorMsg = '';
 	for (let i of inputs) {
-
+		if (i.input === null) {
+			success = false;
+			errorMsg = `${i.name} is null`;
+			break;
+		}
         if (i.requirements.dataType === 'date') {
             if (!(i.input instanceof Date)) {
                 success = false;
@@ -384,7 +388,7 @@ const handleIPBan = async (pathname, request, env) => {
     }
 }
 
-const updateLastLogin = async (pathname, request, env, enteredUsername, sessionToken) => {
+const updateLastLogin = async (pathname, request, env, enteredUsername, sessionToken, rememberMe) => {
 	const currentDate = (new Date()).toISOString();
 	const statement = 'UPDATE users SET last_login = ? WHERE username = ?';
 
@@ -394,12 +398,14 @@ const updateLastLogin = async (pathname, request, env, enteredUsername, sessionT
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-        // delete session token
 		return await buildResponse('There was an unexpected error.', 500, normalHeader);
 	}
 
     const response = await buildResponse('Logging in...', 200, normalHeader);
-    response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=86400; Path=/; SameSite=None; Secure;`);
+	let time;
+	if (rememberMe) time = 604800;
+	else time = 86400;
+    response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=${time}; Path=/; SameSite=None; Secure;`);
 
 	return response;
 }
@@ -591,7 +597,7 @@ const checkIfActive = async (username, env, pathname, request) => {
 	}
 }
 
-const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, request) => {
+const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, request, rememberMe) => {
 	const userID = await fetchUserDataFromUsername(request, pathname, env, enteredUsername);
     if (!userID.success) {
         return {
@@ -601,7 +607,8 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
     }
 
 	const date = new Date();
-	date.setDate(date.getDate() + 1);
+	if (rememberMe) date.setDate(date.getDate() + 7);
+	else date.setDate(date.getDate() + 1);
 	const expiry = date.toISOString();
 
 	const tokenSalt = Buffer.from(env.sessionTokenSalt, 'hex');

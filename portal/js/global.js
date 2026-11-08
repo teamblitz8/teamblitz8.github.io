@@ -38,7 +38,7 @@ const fetchpfpurl = async (username) => {
         return false;
     }
 }
-
+/*
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/account', {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('#main-error').style.display = 'inline-block';
         console.error(error);
     }
-});
+});*/
 
 window.addEventListener('load', async () => {
     const menu = document.querySelector('#profile-menu');

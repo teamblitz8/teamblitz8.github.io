@@ -48,6 +48,7 @@ export default {
 
 				const enteredUsername = parseRequest.json.username;
 				const enteredPassword = parseRequest.json.password;
+				const rememberMe = parseRequest.json.rememberMe;
 				const inputs = [{
 					name: 'username',
 					input: enteredUsername,
@@ -63,6 +64,12 @@ export default {
 						dataType: 'string',
 						minLength: 3,
 						maxLength: 128
+					}
+				}, {
+					name: 'rememberMe',
+					input: rememberMe,
+					requirements: {
+						dataType: 'boolean'
 					}
 				}];
 
@@ -81,8 +88,8 @@ export default {
 					if (active.allow) {
 						const sessionToken = crypto.randomUUID();
 
-						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, url.pathname, request);
-						if (attempt.success) return await updateLastLogin(url.pathname, request, env, enteredUsername, sessionToken);
+						const attempt = await addNewSessionToken(sessionToken, env, enteredUsername, url.pathname, request, rememberMe);
+						if (attempt.success) return await updateLastLogin(url.pathname, request, env, enteredUsername, sessionToken, rememberMe);
 						else return attempt.response;
 					}
 					else return active.response;

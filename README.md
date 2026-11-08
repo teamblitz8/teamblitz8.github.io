@@ -82,9 +82,9 @@ The portal is strictly for internal team use only. If you would like to see a de
 - fix the messy code on frontend (improve how errors are shown etc)
 - Make helper functions show up the data types of each argument on vsc (the weird comment thing)
 - replace any .all() with .first()
-- Add remember me functionality
 - Prompt first-time users to change password upon login.
 - check that the carid belongs to the authenticated user when uploading files (to avoid overwriting by accident)
+- Delete just-generated session token upon updatelastlogin failure
 - Complete input validation for files, by analysing the actual binary contents
 - Downloads file names need to be .f3d or .f3z based on file type
 - Complete the My Designs and My Account pages

@@ -6,7 +6,7 @@
 // decrease number of helpers e.g. fetchuserdata can do everything
 
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID } = require('../helpers.js');
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata } = require('../helpers.js');
 
 const deleteSessionToken = async (sessionToken, env) => {
 	const hasher = require('../hasher.js');
@@ -171,35 +171,6 @@ const pullCarPlanes = async (iterationNumber, env) => {
 	}
 }
 
-const identifyMaxIteration = async (request, pathname, env) => {
-	const statement = 'SELECT max(iteration) as max_iteration FROM cars';
-	let selection;
-	try {
-		selection = await env.blitz.prepare(statement).first();
-	}
-	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-		return {
-			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
-		}
-	}
-
-	if (selection === null) {
-		await log('warn', pathname, request, `Maximum iteration could not be found when executing the statement: ${statement}; expected an integer, received null`);
-		return {
-			success: false,
-			response: await buildResponse('There was an unexpected error', 500, normalHeader)
-		}
-	}
-	else {
-		return {
-			success: true,
-			response: selection['max_iteration']
-		}
-	}
-}
-
 export default {
 	async fetch(request, env, ctx) {
 		const url = new URL(request.url);
@@ -332,8 +303,12 @@ export default {
 					// breaking change: backend no longer sends username and name, use /api/account for that
 					// breaking change: to call for latest iterations, send 0 in the iteration number parameter
 					// breaking change: backend now just sends the car in json, there is no nested objects now
+					// breaking change: backend now only accepts changelog in a string
+					// breaking change: a null derived car number must be sent as 0
 
-					const iterationNumber = Number(url.searchParams.get('iterationNumber'));
+					const iterationNumberString = url.searchParams.get('iterationNumber');
+					if (iterationNumberString === null) return await buildResponse('There was an unexpected error.', 400, normalHeader);
+					const iterationNumber = Number(iterationNumberString);
 					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
 					if (!maxIteration.success) return maxIteration.response;
 					const iterationInput = {
@@ -369,427 +344,110 @@ export default {
 					const parseRequest = await parseRequestJSON(url.pathname, request, ['carName', 'dateCreated', 'frontalArea', 'dragCoefficient', 'scrutineerer', 'derivedCar', 'changelog', 'addDetails']);
 					if (!parseRequest.success) return parseRequest.response;
 
-					const requestObject = parseRequest.json;
+					let data = parseRequest.json;
+					data.dateCreated = new Date(data.dateCreated);
+					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
+					if (!maxIteration.success) return maxIteration.response;
 
-					if (typeof reqJson.carName !== 'string') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					reqJson.carName = reqJson.carName.trim();
-
-					if (reqJson.carName.length > 50) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.carName.length < 3) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (typeof reqJson.dateCreated !== 'string') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					reqJson.dateCreated = reqJson.dateCreated.trim();
-
-					const dateMade = new Date(reqJson.dateCreated);
-
-					if (`${dateMade}` === 'Invalid Date') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					const upperBound = new Date('2028-01-01');
-					const lowerBound = new Date('2026-10-01');
-
-					if (dateMade > upperBound) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (dateMade < lowerBound) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (typeof reqJson.frontalArea !== 'number') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.frontalArea > 5000) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.frontalArea < 1000) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (typeof reqJson.dragCoefficient !== 'number') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.dragCoefficient > 2) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.dragCoefficient < 0) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (typeof reqJson.scrutineerer !== 'string') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					reqJson.scrutineerer = reqJson.scrutineerer.trim();
-
-					if (!['chen', 'yash', 'pranit', 'josh'].includes(reqJson.scrutineerer)) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (typeof reqJson.derivedCar !== 'number') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (!Array.isArray(reqJson.changelog)) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.changelog.length > 167) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					for (let i of reqJson.changelog) {
-						if (i.trim().length > 1000) {
-							return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
+					const inputs = [{
+						name: 'carName',
+						input: data.carName,
+						requirements: {
+							dataType: 'string',
+							minLength: 3,
+							maxLength: 50,
 						}
-						if (i.trim() === '') {
-							return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
+					}, {
+						name: 'dateCreated',
+						input: data.dateCreated,
+						requirements: {
+							dataType: 'date',
+							minValue: new Date('2026-10-01'),
+							maxValue: new Date('2028-01-01')
 						}
-					}
-
-					if (typeof reqJson.addDetails !== 'string') {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					reqJson.addDetails = reqJson.addDetails.trim();
-
-					if (reqJson.addDetails.length > 1000) {
-						return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-							status: 400,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-
-					if (reqJson.addDetails === '' || reqJson.addDetails === 'null') {
-						reqJson.addDetails = null;
-					}
-
-					let derivedCar;
-					if (reqJson.derivedCar !== 0) {
-						derivedCar = await pullCar(reqJson.derivedCar, env);
-						if (!derivedCar) {
-							return new Response(JSON.stringify({ message: 'Bad request.' }), { 
-								status: 400,
-								headers: {
-									'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-									'Content-Type': 'application/json; charset=UTF-8',
-									'Cache-Control': 'no-store',
-									'X-Content-Type-Options': 'nosniff',
-									'Vary': 'Origin',
-									'Access-Control-Allow-Credentials': 'true'
-								}
-							});
+					}, {
+						name: 'frontalArea',
+						input: data.frontalArea,
+						requirements: {
+							dataType: 'number',
+							minValue: 1000,
+							maxValue: 5000
 						}
+					}, {
+						name: 'dragCoefficient',
+						input: data.dragCoefficient,
+						requirements: {
+							dataType: 'number',
+							minValue: 0,
+							maxValue: 2
+						}
+					}, {
+						name: 'scrutineerer',
+						input: data.scrutineerer,
+						requirements: {
+							dataType: 'string',
+							minLength: 4,
+							maxLength: 6,
+							specificValues: ['chen', 'yash', 'pranit', 'josh']
+						}
+					}, {
+						name: 'changelog',
+						input: data.changelog,
+						requirements: {
+							dataType: 'string',
+							minLength: 10,
+							maxLength: 1000
+						}
+					}, {
+						name: 'addDetails',
+						input: data.addDetails,
+						requirements: {
+							dataType: 'string',
+							minLength: 0,
+							maxLength: 1000,
+							nullAllowed: true
+						}
+					}, {
+						name: 'derivedCar',
+						input: data.derivedCar,
+						requirements: {
+							dataType: 'number',
+							minValue: 0,
+							maxValue: maxIteration,
+							dbCheck: {
+								statement: 'SELECT * FROM cars WHERE iteration = ?',
+								vars: [data.derivedCar],
+								exclusion: 0
+							}
+						}
+					}];
+
+					const inputCheck = await validateInputs(url.pathname, request, inputs, env);
+					if (!inputCheck.success) return inputCheck.response;
+
+					if (data.addDetails === '' || data.addDetails === 'null') data.addDetails = null;
+
+					let derivedCarID = null;
+					if (data.derivedCar !== 0) {
+						const derivedCar = await pullCarMetaDataWithIterationNumber(data.derivedCar, env, url.pathname, request, false);
+						if (!derivedCar.success) return derivedCar.response;
+						else derivedCarID = derivedCar.data.carid;
 					}
-					else {
-						derivedCar = { carid: null }
+
+					const mapScrutineer = {
+						chen: 'cheese',
+						yash: 'yashhasnolife',
+						josh: 'healthyballhair123',
+						pranit: 'deodoranthater67'
 					}
+					const scrutineer = await fetchUserDataFromUsername(request, url.pathname, env, mapScrutineer[data.scrutineerer]);
+					if (!scrutineer.success) return scrutineer.response;
 
 					const carid = crypto.randomUUID();
-
-					try {
-						const formattedScrutineerName = `${reqJson.scrutineerer[0].toUpperCase()}${reqJson.scrutineerer.slice(1).toLowerCase()}`;
-						const scrutineeridQuery = env.blitz.prepare('SELECT userid FROM users WHERE name = ?').bind(formattedScrutineerName);
-						const scrutineerIdQueried = await scrutineeridQuery.run();
-						if (scrutineerIdQueried.results.length === 0) {
-							throw new Error();
-						}
-						const scrutineerid = scrutineerIdQueried.results[0].userid;
-
-						const dragForce = 0.5 * 1.196 * 225 * reqJson.dragCoefficient * reqJson.frontalArea / 1000000;
-						const derivedCarID = derivedCar.carid;
-						const changelog = reqJson.changelog.join('[BRK;]');
-
-						const maxIterationQuery = env.blitz.prepare('SELECT MAX(iteration) as max_iteration FROM cars');
-						const maxIterationProcess = await maxIterationQuery.run();
-						// what if db empty?
-						const maxIteration = maxIterationProcess.results[0]['max_iteration'];
-
-						const query = env.blitz.prepare('INSERT INTO cars (creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(userid, scrutineerid, carid, derivedCarID, reqJson.carName, (maxIteration + 1), dateMade.toISOString(), reqJson.frontalArea, reqJson.dragCoefficient, dragForce, changelog, reqJson.addDetails);
-						await query.run();
-
-						const check = env.blitz.prepare('SELECT carid FROM cars WHERE iteration = ?').bind(maxIteration + 1);
-						const checking = await check.run();
-
-						if (checking.results[0].carid !== carid) {
-							throw new Error();
-						}
-					}
-					catch {
-						return new Response(JSON.stringify({ message: '500 Internal Server Error: Please contact the administrator.' }), { 
-							status: 500,
-							headers: {
-								'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-								'Content-Type': 'application/json; charset=UTF-8',
-								'Cache-Control': 'no-store',
-								'X-Content-Type-Options': 'nosniff',
-								'Vary': 'Origin',
-								'Access-Control-Allow-Credentials': 'true'
-							}
-						});
-					}
-					
-					return new Response(JSON.stringify({ 
-						message: 'Metadata upload successful.',
-						carid: carid
-					}), {
-						status: 200,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
+					const carArray = [userid, scrutineer.response.userid, carid, derivedCarID, data.carName, maxIteration + 1, data.dateCreated, data.frontalArea, data.dragCoefficient, 0.5 * 1.196 * 225 * data.dragCoefficient * data.frontalArea / 1000000, data.changelog, data.addDetails];
+					return await uploadCarMetadata(request, url.pathname, env, carArray).response;
 				}
-				else {
-					return new Response(JSON.stringify({ message: 'Incorrect method.' }), {
-						status: 405,
-						headers: {
-							'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
-							'Content-Type': 'application/json; charset=UTF-8',
-							'Cache-Control': 'no-store',
-							'X-Content-Type-Options': 'nosniff',
-							'Vary': 'Origin',
-							'Access-Control-Allow-Credentials': 'true'
-						}
-					});
-				}
+				else return await buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
 			else if (url.pathname === '/api/dashboard/f3d') {
 				if (request.method !== 'GET' && request.method !== 'POST') {

@@ -139,14 +139,14 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 		}
 
 		if (json === null) {
-			await log('warn', pathname, request, 'Malformed request body received; request body is null.', error);
+			await log('warn', pathname, request, 'Malformed request body received; request body is null.');
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 
 		if (Array.isArray(json)) {
-			await log('warn', pathname, request, 'Malformed request body received; request body is an array.', error);
+			await log('warn', pathname, request, 'Malformed request body received; request body is an array.');
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
@@ -154,7 +154,7 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 		
 		for (let i of requiredFields) {
 			if (!Object.hasOwn(json, i)) {
-				await log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
+				await log('warn', pathname, request, 'Malformed request body received; completely unparsable.');
 				response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 				success = false;
 				throw new Error();
@@ -180,23 +180,37 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 		requirements: {
 			dataType,
 			minLength,
-			maxLength
+			maxLength,
+            minValue,
+            maxValue,
+            specificValues,
+            dbcheck: {
+                statement,
+                vars,
+                exclusion
+            }
 		}
 	}
 	*/
-	success = true;
-	errorMsg = '';
+	let success = true;
+	let errorMsg = '';
 	for (let i of inputs) {
-		if (i.input === null) {
-			success = false;
-			errorMsg = `Input is null; received object ${i}`;
-			break;
-		}
-		if (typeof i.input !== i.requirements.dataType) {
-			success = false;
-			errorMsg = `${i.name} does not match expected data type; expected ${i.requirements.dataType}, received ${typeof i.input}`;
-			break;
-		}
+
+        if (i.requirements.dataType === 'date') {
+            if (!(i.input instanceof Date)) {
+                success = false;
+                errorMsg = `${i.name} does not match expected data type; expected ${i.requirements.dataType}, received ${typeof i.input}`;
+                break;
+            }
+        }
+        else {
+            if (typeof i.input !== i.requirements.dataType) {
+                success = false;
+                errorMsg = `${i.name} does not match expected data type; expected ${i.requirements.dataType}, received ${typeof i.input}`;
+                break;
+            }
+        }
+
         if (i.requirements.dataType === 'number') {
             if (!Number.isFinite(i.input)) {
                 success = false;
@@ -209,11 +223,53 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
                 break;
             }
         }
-        if (i.requirements.maxLength && i.requirements.minLength) {
+        else if (i.requirements.dataType === 'string') {
             if ((i.input.trim().length > i.requirements.maxLength) || (i.input.trim().length < i.requirements.minLength)) {
                 success = false;
                 errorMsg = `${i.name} does not match expected length; expected at least ${i.requirements.minLength} and at most ${i.requirements.maxLength}, received ${i.input.length}`;
                 break;
+            }
+            if (i.requirements.specificValues) {
+                if (!i.requirements.specificValues.includes(i.input.trim())) {
+                    success = false;
+                    errorMsg = `${i.name} does not match expected values; expected one of ${i.requirements.specificValues}, received ${i.input}`;
+                }
+            }
+        }
+        else if (i.requirements.dataType === 'date') {
+            if (Number.isNaN(i.input.getTime())) {
+                success = false;
+                errorMsg = `${i.name} is not a valid date; received ${i.input}`;
+                break;
+            }
+            if ((i.input > i.requirements.maxValue) || (i.input < i.requirements.minValue)) {
+                success = false;
+                errorMsg = `${i.name} does not match expected value; expected at least ${i.requirements.minValue} and at most ${i.requirements.maxValue}, received ${i.input}`;
+                break;
+            }
+        }
+
+        if (i.requirements.dbCheck) {
+            if (i.input !== i.requirements.dbCheck.exclusion) {
+                let results;
+
+                try {
+                    const selection = env.blitz.prepare(i.requirements.dbCheck.statement).bind(...i.requirements.vars);
+                    results = await selection.all();
+                }
+                catch (error) {
+                    await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${i.requirements.dbCheck.statement}`, error);
+                    return {
+                        success: false,
+                        response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                    }
+                }
+                
+                if (results.results.length === 0) {
+                    success = false;
+                    errorMsg = `Derived car not found for iteration ${i.input}`;
+                    break;
+                }
             }
         }
 	}
@@ -444,6 +500,14 @@ const checkIfActive = async (username, env, pathname, request) => {
 		}
 	}
 
+    if (result.results.length === 0) {
+        await log('warn', pathname, request, `D1 query returned no data when attempting to fetch active data for user ${username}; statement: ${statement}`);
+        return {
+            allow: false,
+            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+        }
+    }
+
 	if (!Object.hasOwn(result.results[0], 'active')) {
 		await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch active data for user ${username}; statement: ${statement}`);
         return {
@@ -469,7 +533,7 @@ const checkIfActive = async (username, env, pathname, request) => {
 
 const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, request) => {
 	const userID = await fetchUserDataFromUsername(request, pathname, env, enteredUsername);
-    if (!userID) {
+    if (!userID.success) {
         return {
             allow: false,
             response: userID.response
@@ -769,7 +833,7 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 		if (data.results.length === 0) {
 			await log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
 			success = false;
-			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
 			throw new Error();
 		}
 
@@ -905,6 +969,55 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 	}
 }
 
+const identifyMaxIteration = async (request, pathname, env) => {
+	const statement = 'SELECT max(iteration) as max_iteration FROM cars';
+	let selection;
+	try {
+		selection = await env.blitz.prepare(statement).first();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	if (selection === null) {
+		await log('warn', pathname, request, `Maximum iteration could not be found when executing the statement: ${statement}; expected an integer, received null`);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error', 500, normalHeader)
+		}
+	}
+	else {
+		return {
+			success: true,
+			response: selection['max_iteration']
+		}
+	}
+}
+
+const uploadCarMetadata = async (request, pathname, env, carArray) => {
+	const statement = 'INSERT INTO cars (creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+	
+	try {
+		const query = env.blitz.prepare(statement).bind(...carArray);
+		await query.run();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+	return {
+		success: true,
+		response: await buildResponse('Upload successful.', 200, normalHeader, { carid: carArray[2] })
+	}
+}
+
 module.exports = {
     convertBufferToString,
     hash,
@@ -929,5 +1042,7 @@ module.exports = {
     fetchFromR2,
     fetchUserDataFromUsername,
     pullCarMetaDataWithIterationNumber,
-    pullCarMetaDataWithCarID
+    pullCarMetaDataWithCarID,
+    uploadCarMetadata,
+    identifyMaxIteration
 };

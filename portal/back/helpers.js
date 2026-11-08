@@ -90,7 +90,7 @@ const log = async (type, pathname, request, message, stack) => {
 	}
 }
 
-const checkRequest = async (pathname, request, expectedMethods, expectedContentHeader) => {
+const checkRequest = async (pathname, request, expectedMethods, expectedContentHeaders) => {
 	let response;
 	let success = true;
 
@@ -102,7 +102,7 @@ const checkRequest = async (pathname, request, expectedMethods, expectedContentH
             throw new Error();
         }
 
-        if (expectedContentHeader) {
+        if (expectedContentHeaders) {
             const requestContentHeader = request.headers.get('Content-Type');
             if (requestContentHeader === null) {
                 await log('warn', pathname, request, 'No content header received.');
@@ -112,8 +112,8 @@ const checkRequest = async (pathname, request, expectedMethods, expectedContentH
             }
 
             const requestContentHeaders = requestContentHeader.split(';');
-            if (requestContentHeaders[0].toLowerCase() !== expectedContentHeader.toLowerCase()) {
-                await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeader}, received ${requestContentHeaders}`);
+            if (!expectedContentHeaders.includes(requestContentHeaders[0].toLowerCase())) {
+                await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeaders}, received ${requestContentHeaders}`);
                 response = await buildResponse('There was an unexpected error.', 415, normalHeader);
                 success = false;
                 throw new Error();
@@ -179,6 +179,33 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 	}
 }
 
+const parseRequestBlob = async (pathname, request, maxSize) => {
+    let blob;
+    try {
+        blob = await request.blob();
+    }
+    catch (error) {
+        await log('error', pathname, request, 'Failed to perform blob() method on request', error);
+        return {
+            success: false,
+            response: await buildResponse('There was an unexpected error.', 400, normalHeader)
+        }
+    }
+
+    if ((blob.size === 0) || (blob.size > maxSize)) {
+        await log('info', pathname, request, `Attempt to upload file with size ${blob.size} bytes blocked; exceeded maximum limit of ${maxSize} bytes`);
+        return {
+            success: false,
+            response: await buildResponse(`File uploaded exceeds maximum size of `, 400, normalHeader)
+        }
+    }
+    
+    return {
+        success: true,
+        blob: blob
+    }
+}
+
 const validateInputs = async (pathname, request, inputs, env, delay) => {
 	/*
 	i = {
@@ -190,6 +217,7 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 			maxLength,
             minValue,
             maxValue,
+            integer,
             specificValues,
             dbcheck: {
                 statement,
@@ -228,6 +256,13 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
                 success = false;
                 errorMsg = `${i.name} does not match expected value; expected at least ${i.requirements.minValue} and at most ${i.requirements.maxValue}, received ${i.input}`;
                 break;
+            }
+            if (i.requirements.integer) {
+                if (!Number.isInteger(i.input)) {
+                    success = false;
+                    errorMsg = `${i.name} is not an integer; received ${i.input}`;
+                    break;
+                }
             }
         }
         else if (i.requirements.dataType === 'string') {
@@ -303,33 +338,40 @@ const handleIPBan = async (pathname, request, env) => {
 	let allow = true;
 	let response;
 
-	const ip = request.headers.get('cf-connecting-ip');
-	if (!ip) {
-		allow = false;
-		await log('warn', pathname, request, 'No IP address found');
-		response = await buildResponse('There was an unexpected error.', 403, normalHeader);
-	}
+    try {
+        const ip = request.headers.get('cf-connecting-ip');
+        if (!ip) {
+            allow = false;
+            await log('warn', pathname, request, 'No IP address found');
+            response = await buildResponse('There was an unexpected error.', 403, normalHeader);
+            throw new Error();
+        }
 
-	const ipBanned = await checkIPBanned(pathname, request, ip, env);
-	if (!ipBanned.success) {
-		allow = false;
-		response = await buildResponse('There was an unexpected error.', 500, normalHeader);
-	}
-	if (ipBanned.banned) {
-		allow = false;
-		response = await buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
-	}
+        const ipBanned = await checkIPBanned(pathname, request, ip, env);
+        if (!ipBanned.success) {
+            allow = false;
+            response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+            throw new Error();
+        }
+        if (ipBanned.banned) {
+            allow = false;
+            response = await buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
+            throw new Error();
+        }
 
-	const { success } = await env.ratelimiter.limit({ key: ip });
-	if (!success) {
-		allow = false;
-		response = await banIP(pathname, request, ip, env);
-	}
-
-	return {
-		allow: allow,
-		response: response
-	}
+        const { success } = await env.ratelimiter.limit({ key: ip });
+        if (!success) {
+            allow = false;
+            response = await banIP(pathname, request, ip, env);
+            throw new Error();
+        }
+    }
+    catch {
+        return {
+            allow: allow,
+            response: response
+        }
+    }
 }
 
 const updateLastLogin = async (pathname, request, env, enteredUsername, sessionToken) => {
@@ -342,6 +384,7 @@ const updateLastLogin = async (pathname, request, env, enteredUsername, sessionT
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+        // delete session token
 		return await buildResponse('There was an unexpected error.', 500, normalHeader);
 	}
 
@@ -660,15 +703,19 @@ const checkSession = async (request, pathname, env) => {
     }
 
     const userid = await checkSessionToken(sessionToken, env, pathname, request);
+    // clear the session token on the browser too
     if (!userid.allow) {
+        const response = userid.response;
+        response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
         return {
             allow: false,
-            response: userid.response
+            response: response
         }
     }
     return {
         allow: true,
-        userid: userid.userid
+        userid: userid.userid,
+        sessionToken: sessionToken
     }
 }
 
@@ -953,7 +1000,7 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 		data.changelog = data.changelog.split('[BRK;]');
 
 		if ((data['derived_carid'] !== null) && (findDerivations)) {
-			const derivedCar = pullCarMetaDataWithCarID(data['derived_carid'], env, pathname, request, false);
+			const derivedCar = await pullCarMetaDataWithCarID(data['derived_carid'], env, pathname, request, false);
 			if (!derivedCar.success) {
 				await log('warn', pathname, request, `Fetching car metadata for derived car id ${data['derived_carid']} failed; see earlier error messages for more information`);
 				success = false;
@@ -1025,7 +1072,7 @@ const uploadCarMetadata = async (request, pathname, env, carArray) => {
 	}
 }
 
-const pullCarFile = async (iterationNumber, env, pathname, request, type) => {
+const pullCarFile = async (iterationNumber, env, pathname, request) => {
 	const carid = await pullCarMetaDataWithIterationNumber(iterationNumber, env, pathname, request, false);
 	if (!carid.success) {
 		return {
@@ -1036,7 +1083,7 @@ const pullCarFile = async (iterationNumber, env, pathname, request, type) => {
 	
 	let potentialFiles;
 	try {
-		potentialFiles = await env.blitzr2.list({ prefix: `assets/${type}/${carid}` });
+		potentialFiles = await env.blitzr2.list({ prefix: `assets/${pathname.split('/').at(-1)}/${carid.data.carid}` });
 	}
 	catch (error) {
 		await log('error', pathname, request, `R2 query failed when attempting to fetch list of car model files for iteration ${iterationNumber}`, error);
@@ -1054,18 +1101,90 @@ const pullCarFile = async (iterationNumber, env, pathname, request, type) => {
 		}
 	}
 
-	const fetch = await fetchFromR2(request, pathname, env, potentialFiles.objects[0].key, 'application/octet-stream');
+    const fileType = potentialFiles.objects[0].key.split('.')[1];
+    let header;
+    switch (fileType) {
+        case 'png':
+            header = 'image/png';
+            break;
+        case 'glb':
+            header = 'model/gltf-binary';
+            break;
+        default:
+            header = 'application/octet-stream';
+    }
+
+	const fetch = await fetchFromR2(request, pathname, env, potentialFiles.objects[0].key, header);
 	if (!fetch.success) {
 		return {
 			success: false,
-			response: fetch.response
+			response: fetch.response,
 		}
 	}
 	else {
 		return {
 			success: true,
-			response: fetch.response
+			response: fetch.response,
 		}
+	}
+}
+
+const uploadCarFile = async (carid, env, pathname, request, type, file) => {
+    try {
+        const object = await env.blitzr2.put(`assets/${pathname.split('/').at(-1)}/${carid}.${type.toLowerCase()}`, file);
+        if (object === null) throw new Error('There was no error stack provided; object returned was null - the file already exists.');
+        return await buildResponse('File upload successful.', 200, normalHeader, { carid: carid });
+    }
+    catch (error) {
+        await log('error', pathname, request, `R2 query failed when attempting to upload car file of type ${type} with car id ${carid}`, error);
+        return await buildResponse('There was an unexpected error.', 500, normalHeader);
+    }
+}
+
+const deleteSessionToken = async (sessionToken, env, pathname, request) => {
+	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
+	const hashed = hash(sessionToken, theSalt).hash;
+
+	const statement = 'DELETE FROM sessiontokens WHERE session_token_hash = ?';
+	try {
+		const query = env.blitz.prepare(statement).bind(hashed);
+		await query.run();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	const response = await buildResponse('Logged out successfully.', 200, normalHeader);
+    response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
+	return {
+		success: true,
+		response: response
+	}
+}
+
+const deleteAllSessionTokens = async (userid, env, pathname, request, sessionToken) => {
+	const statement = 'DELETE FROM sessiontokens WHERE userid = ?';
+	try {
+		const query = env.blitz.prepare(statement).bind(userid);
+		await query.run();
+	}
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	const response = await buildResponse('Logged out of all devices successfully.', 200, normalHeader);
+    response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
+	return {
+		success: true,
+		response: response
 	}
 }
 
@@ -1096,5 +1215,9 @@ module.exports = {
     pullCarMetaDataWithCarID,
     uploadCarMetadata,
     identifyMaxIteration,
-    pullCarFile
+    pullCarFile,
+    parseRequestBlob,
+    uploadCarFile,
+    deleteSessionToken,
+    deleteAllSessionTokens
 };

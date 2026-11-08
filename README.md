@@ -82,15 +82,16 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Complete the contact form on the main site
 - Transfer the site from being hosted on GitHub Pages to Cloudflare on custom domain.
 - Add a filter, sort by bar on the dashboard
-- Fix up the spaghetti code on the backend
 - Prompt first-time users to change password upon login.
 - Reduce CPU time of the worker
-- Add rate-limiting across all API endpoints on the backend
 - Add remember me functionality
-- Improve how errors are handled on both ends
 - Complete input validation for files, by analysing the actual binary contents
 - Downloads file names need to be .f3d or .f3z based on file type
 - Make a leaderboard!
+- Make helper functions show up the data types of each argument on vsc (the weird comment thing)
+- replace any .all() with .first()
+- decrease number of helpers e.g. fetchuserdata can do everything
+- check that the carid belongs to the authenticated user
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

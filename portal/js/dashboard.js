@@ -102,10 +102,12 @@ const unfurl = async (iteration) => {
     const button = document.querySelector(`.i${iteration}`).parentNode.querySelector('.buttons .button button');
 
     if (button.textContent === ' See more details') {
-        button.innerText = '<i class="fa-solid fa-caret-up"></i>  See fewer details';
+        button.innerText = 'See fewer details';
+        button.querySelector('i').className = 'fa-solid fa-caret-up';
     }
     else if (button.textContent === ' See fewer details') {
-        button.innerText = '<i class="fa-solid fa-caret-down"></i>  See more details';
+        button.innerText = 'See more details';
+        button.querySelector('i').className = 'fa-solid fa-caret-down';
     }
 }
 
@@ -257,10 +259,10 @@ const loadMore = async () => {
             document.querySelector('#loadMore button').style.display = 'none';
         }
 
-        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.scrutineerName}</p></div></div><p>Frontal Area: ${data['frontal_area']}mm²</p><p>Drag Coefficient: ${data['drag_coefficient']}</p><p class="drag">Drag: ${data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.model.url}" download="${data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
+        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${data['car_name']} - Iteration #${data.iteration}</h3><div class="creator"><img src="${await fetchpfpurl(data.data.creatorUsername)}" class="portrait"><div class="person"><h3>${data.data.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${(new Date(data.data['date_created'])).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${data.data.scrutineerName}</p></div></div><p>Frontal Area: ${data.data['frontal_area']}mm²</p><p>Drag Coefficient: ${data.data['drag_coefficient']}</p><p class="drag">Drag: ${data.data['drag_force']}N</p><div class="buttons"><div class="download"><a href="${data.data.model.url}" download="${data.data['car_name']}.f3z"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${data.data.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${data.data.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${data.data.iso.url}"></div><div class="planes"><h3>Planes</h3><img src="${data.data.planes.url}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
         
-        document.querySelector(`.ii${data.iteration}`).style.height = '100%';
-        document.querySelector(`.ii${data.iteration}`).style.height = `${document.querySelector(`.ii${data.iteration}`).offsetHeight}px`;
+        document.querySelector(`.ii${data.data.iteration}`).style.height = '100%';
+        document.querySelector(`.ii${data.data.iteration}`).style.height = `${document.querySelector(`.ii${data.data.iteration}`).offsetHeight}px`;
         document.querySelector('#loadMore button').innerText = ' Load more';
     }
     catch (error) {

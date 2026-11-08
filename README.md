@@ -78,21 +78,22 @@ The portal can be accessed at https://teamblitz.pages.dev/portal.
 
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
-## To-do
-- Complete the contact form on the main site
-- Transfer the site from being hosted on GitHub Pages to Cloudflare on custom domain.
-- Add a filter, sort by bar on the dashboard
-- Prompt first-time users to change password upon login.
-- Reduce CPU time of the worker
-- Add remember me functionality
-- Complete input validation for files, by analysing the actual binary contents
-- Downloads file names need to be .f3d or .f3z based on file type
-- Make a leaderboard!
+## To-do (in order of priority)
+- fix the messy code on frontend (improve how errors are shown etc)
 - Make helper functions show up the data types of each argument on vsc (the weird comment thing)
 - replace any .all() with .first()
+- Add remember me functionality
+- Prompt first-time users to change password upon login.
+- check that the carid belongs to the authenticated user when uploading files (to avoid overwriting by accident)
+- Complete input validation for files, by analysing the actual binary contents
+- Downloads file names need to be .f3d or .f3z based on file type
+- Complete the My Designs and My Account pages
+- Make a leaderboard!
+- Add a filter, sort by bar on the dashboard
 - decrease number of helpers e.g. fetchuserdata can do everything
-- check that the carid belongs to the authenticated user
-- fix the messy code on frontend
+- Reduce CPU time of the worker
+- Complete the contact form on the main site
+- Transfer the site from being hosted on GitHub Pages to Cloudflare on custom domain.
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

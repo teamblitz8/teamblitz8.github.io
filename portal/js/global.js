@@ -1,119 +1,64 @@
-const fetchpfpurl = async (username) => {
-    try {
-        const endpoint = new URL('https://back.teamblitz.workers.dev/api/profile');
-        endpoint.search = new URLSearchParams({ username: username }).toString();
+const fetchProfile = async (username) => {
+    const endpoint = new URL('https://back.teamblitz.workers.dev/api/profile');
+    endpoint.search = new URLSearchParams({ username: username }).toString();
 
+    try {
         const response = await fetch(endpoint, {
             method: 'GET',
             credentials: 'include'
         });
 
-        if (!response.ok) {
-            const data = await response.json();
-            if (!data) {
-                throw new Error('502 Bad Gateway');
-            }
-            if (typeof data !== 'object') {
-                throw new Error('Server responded with invalid data');
-            }
-            if (!Object.hasOwn(data, 'message')) {
-                throw new Error('Server responded with invalid data');
-            }
-
-            throw new Error(data.message);
-        }
-
-        let data;
-        try {
-            data = await response.blob();
-        }
-        catch {
-            throw new Error('failed to blob');
-        }
-
-        return URL.createObjectURL(data);
+        if (response.ok) return await parseBlob(response);
+        else return showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
     }
     catch (error) {
-        console.log(error);
-        return false;
+        console.error(error);
+        await showError(error, false, false);
     }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (window.location.href.startsWith('https://teamblitz.pages.dev/portal/login')) return;
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/account', {
             method: 'GET',
             credentials: 'include'
         });
+
         let data;
-        try {
-            data = await response.json();
-        }
-        catch {
-            throw new Error('There was an error parsing the JSON. Please contact the administrator.');
-        }
 
         if (response.ok) {
-            const pfpurl = await fetchpfpurl(data.username);
-            const menu = document.querySelector('#profile p');
-            menu.textContent = data.username;
+            data = await parseJSON(response, ['username', 'name']);
+            if (!data) showError('Failed to parse JSON', response, false);
 
-            const greeting = document.querySelector('#greeting');
-            greeting.textContent = `Hello, ${data.name}`;
-            document.getElementById('logged-username').innerText = `Logged in as ${data.name}`;
-
-            document.querySelector('#profile img').src = pfpurl;
+            const profileURL = await fetchProfile(data.username);
+            document.querySelector('#profile p').innerText = data.username;
+            document.querySelector('#profile img').src = profileURL;
+            await waitForUsername();
         }
-        else {
-            if (!data) {
-                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
-            }
-            if (typeof data !== 'object') {
-                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
-            }
-            if (!Object.hasOwn(data, 'message')) {
-                throw new Error('There was an error parsing the JSON. Please contact the administrator.');
-            }
-            if (data.message === 'Unauthorised') {
-                document.querySelector('#main-error').innerText = 'You must be logged in to see this page';
-                document.querySelector('#main-error').style.display = 'inline-block';
-                return setTimeout(() => {
-                    window.location.replace('https://teamblitz.pages.dev/portal/login');
-                }, 1000);
-            }
-
-            throw new Error(data.message);
-        }
+        else showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
     }
     catch (error) {
-        document.querySelector('#main-error').innerText = error.message;
-        document.querySelector('#main-error').style.display = 'inline-block';
         console.error(error);
+        await showError(error, false, false);
     }
 });
 
-window.addEventListener('load', async () => {
+const wait = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+const waitForUsername = async () => {
     const menu = document.querySelector('#profile-menu');
     const profile = document.querySelector('#profile');
     const username = document.querySelector('#profile p');
     const nav = document.querySelector('#nav');
 
-    const wait = (milliseconds) =>
-        new Promise(resolve => setTimeout(resolve, milliseconds));
+    while (username.textContent.trim() === '') await wait(100);
 
-    const waitForUsername = async () => {
-        while (username.textContent.trim() === '') {
-            await wait(100);
-        }
+    nav.style.display = 'flex';
+    menu.style.width = `${profile.offsetWidth}px`;
+}
 
-        nav.style.display = 'flex';
-        menu.style.width = `${profile.offsetWidth}px`;
-    };
-
-    waitForUsername();
-});
-
-const showPassword = async (field) => {
+const showPassword = (field) => {
     const element = document.getElementById(field);
     const div = element.parentNode;
     const i = div.querySelector('i');
@@ -135,19 +80,16 @@ const logout = async () => {
             credentials: 'include'
         });
 
-        if (response.ok) {
-            window.location.replace('https://teamblitz.uk');
-        }
-        else {
-            throw new Error();
-        }
+        if (response.ok) window.location.replace('https://teamblitz.pages.dev');
+        else showError(undefined, response, false);
     }
     catch (error) {
         console.error(error);
+        await showError(error, false, false);
     }
 }
 
-const unroll = async () => {
+const unroll = () => {
     document.getElementById("nav").classList.toggle("opened");
 
     const button = document.querySelector('.fah');
@@ -157,5 +99,109 @@ const unroll = async () => {
     }
     else {
         button.className = 'fa-solid fah fa-chevron-down'
+    }
+}
+
+const showError = async (error, response, redirect, url, statusCondition) => {
+    const err = document.querySelector('.error');
+    let msg;
+    if (response === false) msg = error.message;
+    else {
+        msg = await parseJSON(response, ['message']);
+        if (!msg) msg = 'There was an unexpected error.';
+        else msg = msg.message;
+        console.error(`${response.status}: ${response.message}`);
+    }
+
+    err.innerText = msg;
+    err.classList.toggle('visible');
+
+    if (redirect && (response.status === statusCondition)) window.location.replace(url);
+
+    return false;
+}
+
+const sanitiseObject = (object) => {
+    if (object === 'null') return null;
+    if (object === 'undefined') return undefined;
+    if (typeof object === 'boolean') {
+        if (object) return true;
+        else return false;
+    }
+    if (typeof object === 'string' || typeof object === 'number') return DOMPurify.sanitize(object);
+    if (Array.isArray(object)) {
+        const arr = [];
+        for (let i of object) {
+            arr.push(sanitiseObject(i));
+        }
+        return arr;
+    }
+    const cleanObject = {};
+
+    for (let [key, value] of Object.entries(object)) {
+        const newKey = sanitiseObject(key);
+        const newValue = sanitiseObject(value);
+
+        cleanObject[newKey] = newValue;
+    }
+
+    return cleanObject;
+}
+
+const parseJSON = async (response, requiredFields) => {
+    let text;
+    let value;
+
+    try {
+        if (response.headers.get('Content-Type') === null) throw new Error();
+        if (!response.headers.get('Content-Type').startsWith('application/json')) throw new Error();
+        if (Number(response.headers.get('Content-Length')) > 25000000) throw new Error();
+        text = await response.json();
+        if (text === null) throw new Error();
+        if (typeof text !== object) throw new Error();
+        if (Array.isArray(text)) throw new Error();
+        for (let i of requiredFields) if (!Object.hasOwn(text, i)) throw new Error();
+        Object.keys(text).forEach(property => {
+            if (!requiredFields.includes(property)) delete text[property];
+            if (text[property] === null) throw new Error();
+            if (typeof text[property] === 'number') {
+                if (text[property] > 1000000 || text[property] < 0) throw new Error();
+            }
+            else if (typeof text[property] === 'string') {
+                if (text[property].length > 10000 || text[property].length === 0) throw new Error();
+            }
+            else if (Array.isArray(text[property])) {
+                if (text[property].length > 100) throw new Error();
+                else {
+                    for (let i of text[property]) {
+                        if (typeof i === 'number') {
+                            if (i > 1000000) throw new Error();
+                        }
+                        else if (typeof i === 'string') {
+                            if (i.length > 10000 || text[property].length === 0) throw new Error();
+                        }
+                        else if (Array.isArray(i)) throw new Error();
+                    }
+                }
+            }
+        });
+        value = await sanitiseObject(text);
+    }
+    catch {
+        return false;
+    };
+
+    return value;
+}
+
+const parseBlob = async (response) => {
+    let blob;
+    try {
+        blob = await response.blob();
+        return URL.createObjectURL(blob);
+    }
+    catch (error) {
+        await showError(error, false);
+        return false;
     }
 }

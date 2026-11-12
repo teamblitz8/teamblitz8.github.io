@@ -102,10 +102,10 @@ const unroll = () => {
     }
 }
 
-const showError = async (error, response, redirect, url, statusCondition) => {
+const showError = async (error, response, redirect, url, statusCondition, success) => {
     const err = document.querySelector('.error');
     let msg;
-    if (response === false) msg = error.message;
+    if (response === false) msg = typeof error === 'string' ? error : error.message;
     else {
         msg = await parseJSON(response, ['message']);
         if (!msg) msg = 'There was an unexpected error.';
@@ -115,8 +115,9 @@ const showError = async (error, response, redirect, url, statusCondition) => {
 
     err.innerText = msg;
     err.classList.toggle('visible');
+    if (success) err.classList.toggle('success');
 
-    if (redirect && (response.status === statusCondition)) window.location.replace(url);
+    if (redirect && response && (response.status === statusCondition)) window.location.replace(url);
 
     return false;
 }
@@ -158,7 +159,7 @@ const parseJSON = async (response, requiredFields) => {
         if (Number(response.headers.get('Content-Length')) > 25000000) throw new Error();
         text = await response.json();
         if (text === null) throw new Error();
-        if (typeof text !== object) throw new Error();
+        if (typeof text !== 'object') throw new Error();
         if (Array.isArray(text)) throw new Error();
         for (let i of requiredFields) if (!Object.hasOwn(text, i)) throw new Error();
         Object.keys(text).forEach(property => {

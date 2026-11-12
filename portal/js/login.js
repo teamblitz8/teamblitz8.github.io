@@ -6,35 +6,19 @@ const rememberMe = document.querySelector('#forever');
 const submit = document.querySelector('#submit');
 
 form.addEventListener('submit', async (e) => {
-    let errorPresent = false;
     errorText.className = 'error';
     e.preventDefault();
-    let selected = false;
-
-    if (rememberMe.value === 'remember-me') selected = true;
+    const selected = rememberMe.checked;
 
     try {
-        if (!username.value || !password.value) {
-            errorText.textContent = 'You must provide both a username and password.';
-            errorPresent = true;
-            throw new Error();
-        }
-
-        if (username.value.length > 25 || password.value.length > 128) {
-            errorText.textContent = 'Invalid username or password.';
-            errorPresent = true;
-            throw new Error();
-        }
-
+        if (!username.value || !password.value) throw new Error('You must provide both a username and password.');
+        if (username.value.length > 25 || password.value.length > 128) throw new Error('Invalid username or password.');
         throw new Error();
     }
-    catch {
-        if (errorPresent) {
-            errorText.className = 'error visible';
-        }
+    catch (error) {
+        if (error.message) showError(error, false);
         else {
             submit.disabled = true;
-            let errorMessage = 'There was a network issue. Please try again.';
             try {
                 const response = await fetch('https://back.teamblitz.workers.dev/api/auth', {
                     method: 'POST',
@@ -45,28 +29,15 @@ form.addEventListener('submit', async (e) => {
                     credentials: 'include'
                 });
 
-                if (response.ok) {
-                    errorText.textContent = 'Logging in..';
-                    errorText.className = 'error visible success';
-                    setTimeout(() => {
-                        window.location.replace('https://teamblitz.pages.dev/portal/');
-                    }, 1000);
-                }
+                if (response.ok) await showError('Logging in..', false, true, 'https://teamblitz.pages.dev/portal/', 200, true);
                 else {
-                    try {
-                        const data = await response.json();
-                        errorMessage = data.message;
-                    }
-                    catch (error) {
-                        console.error(error);
-                    }
-                    console.error(response.status);
-                    throw new Error();
+                    await showError(undefined, response);
+                    submit.disabled = false;
                 }
             }
-            catch {
-                errorText.textContent = errorMessage;
-                errorText.className = 'error visible';
+            catch (error) {
+                console.error(error);
+                showError(error, false, false);
                 submit.disabled = false;
             }
         }

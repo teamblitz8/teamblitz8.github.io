@@ -601,10 +601,18 @@ export default {
 			console.log('Performed automatic session token cleanup.');
 		}
 		catch (error) {
+			const errorStack = error instanceof Error
+				? {
+					name: error.name,
+					message: error.message,
+					stack: error.stack
+				}
+				: error;
+
 			console.error({
 				timestamp: new Date().toISOString(),
 				message: 'Automatic session token cleanup failed.',
-				errorStack: error
+				errorStack: errorStack
 			});
 		}
 	}

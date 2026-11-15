@@ -105,7 +105,11 @@ const unroll = () => {
 const showError = async (error, response, redirect, url, statusCondition, success) => {
     const err = document.querySelectorAll('.error');
     let msg;
-    if (response === false) msg = typeof error === 'string' ? error : error.message;
+    if (response === false) {
+        msg = typeof error === 'string' ? error : error.message;
+        console.error(`${msg}`);
+        msg = 'There was an unexpected error.'
+    }
     else {
         msg = await parseJSON(response, ['message']);
         if (!msg) msg = 'There was an unexpected error.';

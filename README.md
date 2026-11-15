@@ -79,7 +79,6 @@ The portal is strictly for internal team use only. If you would like to see a de
 
 ## To-do (in order of priority)
 - Make helper functions show up the data types of each argument on vsc (the weird comment thing)
-- Delete just-generated session token upon updatelastlogin failure
 - Complete input validation for files, by analysing the actual binary contents
 - Downloads file names need to be .f3d or .f3z based on file type
 - Complete the My Designs and My Account pages

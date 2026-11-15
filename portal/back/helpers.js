@@ -495,6 +495,11 @@ const updateLastLogin = async (pathname, request, env, enteredUsername, sessionT
 		await query.run();
 	}
 	catch (error) {
+		const deletion = deleteSessionToken(sessionToken, env, pathname, request);
+		if (!deletion.success) {
+			response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
+		}
+
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return await buildResponse('There was an unexpected error.', 500, normalHeader);
 	}

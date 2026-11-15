@@ -42,7 +42,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.querySelector('#profile img').src = profileURL;
             await waitForUsername();
         }
-        else await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+        else {
+            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+            if (!window.location.href.startsWith('https://teamblitz.pages.dev/portal/account')) {
+                const url = 'https://teamblitz.pages.dev/portal/account';
+                url.search = new URLSearchParams({ redirect: true });
+                await showError(undefined, response, true, url, 403);
+            }
+        }
     }
     catch (error) {
         console.error(error);
@@ -365,6 +372,7 @@ const processFullCar = async (iterationNumber) => {
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
         document.getElementById('loadMore').innerHTML = '<button onclick="loadMore()"><i class="fa-solid fa-chevron-down"></i> Load more</button>';
+        document.getElementById('loadMore').style.display = 'flex';
 
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '100%');
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);

@@ -127,3 +127,8 @@ form.addEventListener('submit', async (e) => {
         }
     }
 });
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('redirect') === true) showError('Your password has expired; please change it.', false);
+});

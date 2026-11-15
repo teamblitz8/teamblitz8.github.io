@@ -94,6 +94,8 @@ export default {
 				const userid = sessionCheck.userid;
 				const dataFetch = await fetchUserDataFromUserID(request, url.pathname, env, userid);
 				if (!dataFetch.success) return dataFetch.response;
+
+				if (dataFetch.response['force_password_change'] === 1) return await buildResponse('Your password has expired. Please change your password.', 403, normalHeader);
 				else return await buildResponse('Fetching user data..', 200, normalHeader, dataFetch.response);
 			}
 

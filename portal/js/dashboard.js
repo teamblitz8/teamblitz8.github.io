@@ -50,6 +50,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     hideError();
+
+    const greeting = document.querySelector('#greeting');
+    greeting.innerText = `Hello, ${name}`;
 });
 
 form.addEventListener('submit', async (e) => {

@@ -1,3 +1,6 @@
+let username;
+let name;
+
 const fetchProfile = async (username) => {
     const endpoint = new URL('https://back.teamblitz.workers.dev/api/profile');
     endpoint.search = new URLSearchParams({ username: username }).toString();
@@ -31,8 +34,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             data = await parseJSON(response, ['username', 'name']);
             if (!data) return await showError('There was an unexpected error.', response, false);
 
-            const profileURL = await fetchProfile(data.username);
-            document.querySelector('#profile p').innerText = data.username;
+            username = data.username;
+            name = data.name;
+
+            const profileURL = await fetchProfile(username);
+            document.querySelector('#profile p').innerText = username;
             document.querySelector('#profile img').src = profileURL;
             await waitForUsername();
         }

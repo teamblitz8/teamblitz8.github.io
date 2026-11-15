@@ -247,7 +247,7 @@ const getData = async (type, iterationNumber) => {
         }
         else {
             let data;
-            if (type === 'text') data = await parseJSON(response, []);
+            if (type === 'text') data = await parseJSON(response, ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes', 'creatorName', 'creatorUsername', 'scrutineerName']);
             else if (['f3d', 'previews', 'iso', 'planes'].includes(type)) data = await parseBlob(response);
 
             if (!data) {

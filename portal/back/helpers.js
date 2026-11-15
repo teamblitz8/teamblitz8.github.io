@@ -53,9 +53,7 @@ const compare = (a, b) => {
 		crypto.subtle.timingSafeEqual(bufferA, bufferA);
 		return false;
 	}
-	else {
-		return crypto.subtle.timingSafeEqual(bufferA, bufferB);
-	}
+	else return crypto.subtle.timingSafeEqual(bufferA, bufferB);
 }
 
 /**
@@ -68,7 +66,7 @@ const compare = (a, b) => {
  * @param {string | undefined} disposition The value of the Content-Disposition header to be sent, if a blob is to be sent.
  * @returns {Response} A Response object with the required parameters built.
  */
-const buildResponse = async (message, status, contentType, object, blob, disposition) => {
+const buildResponse = (message, status, contentType, object, blob, disposition) => {
     let finalObject = {...{ message: `${message} Timestamp: ${new Date().toISOString()}` }, ...object}
     if (object === 'BLOB') finalObject = blob;
     else finalObject = JSON.stringify(finalObject);
@@ -144,14 +142,14 @@ const log = (type, pathname, request, message, stack) => {
  * @param {Array<string>} expectedContentHeaders An Array of the expected values of the Content-Type header on the request.
  * @returns {Promise<{ success: boolean, response: Response | undefined }>}
  */
-const checkRequest = async (pathname, request, expectedMethods, expectedContentHeaders) => {
+const checkRequest = (pathname, request, expectedMethods, expectedContentHeaders) => {
 	let response;
 	let success = true;
 
     try {
         if (!expectedMethods.includes(request.method)) {
-            await log('warn', pathname, request, `Incorrect request method; expected ${expectedMethods}, received ${request.method}`);
-            response = await buildResponse('There was an unexpected error.', 405, normalHeader);
+            log('warn', pathname, request, `Incorrect request method; expected ${expectedMethods}, received ${request.method}`);
+            response = buildResponse('There was an unexpected error.', 405, normalHeader);
             success = false;
             throw new Error();
         }
@@ -159,16 +157,16 @@ const checkRequest = async (pathname, request, expectedMethods, expectedContentH
         if (expectedContentHeaders) {
             const requestContentHeader = request.headers.get('Content-Type');
             if (requestContentHeader === null) {
-                await log('warn', pathname, request, 'No content header received.');
-                response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+                log('warn', pathname, request, 'No content header received.');
+                response = buildResponse('There was an unexpected error.', 415, normalHeader);
                 success = false;
                 throw new Error();
             }
 
             const requestContentHeaders = requestContentHeader.split(';');
             if (!expectedContentHeaders.includes(requestContentHeaders[0].toLowerCase())) {
-                await log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeaders}, received ${requestContentHeaders}`);
-                response = await buildResponse('There was an unexpected error.', 415, normalHeader);
+                log('warn', pathname, request, `Required content header not found; expected ${expectedContentHeaders}, received ${requestContentHeaders}`);
+                response = buildResponse('There was an unexpected error.', 415, normalHeader);
                 success = false;
                 throw new Error();
             }
@@ -200,30 +198,30 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 			json = await request.json();
 		}
 		catch (error) {
-			await log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
-			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+			log('warn', pathname, request, 'Malformed request body received; completely unparsable.', error);
+			response = buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 
 		if (json === null) {
-			await log('warn', pathname, request, 'Malformed request body received; request body is null.');
-			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+			log('warn', pathname, request, 'Malformed request body received; request body is null.');
+			response = buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 
 		if (Array.isArray(json)) {
-			await log('warn', pathname, request, 'Malformed request body received; request body is an array.');
-			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+			log('warn', pathname, request, 'Malformed request body received; request body is an array.');
+			response = buildResponse('There was an unexpected error.', 400, normalHeader);
 			success = false;
 			throw new Error();
 		}
 		
 		for (let i of requiredFields) {
 			if (!Object.hasOwn(json, i)) {
-				await log('warn', pathname, request, 'Malformed request body received; completely unparsable.');
-				response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+				log('warn', pathname, request, 'Malformed request body received; completely unparsable.');
+				response = buildResponse('There was an unexpected error.', 400, normalHeader);
 				success = false;
 				throw new Error();
 			}
@@ -253,18 +251,18 @@ const parseRequestBlob = async (pathname, request, maxSize) => {
         blob = await request.blob();
     }
     catch (error) {
-        await log('error', pathname, request, 'Failed to perform blob() method on request', error);
+        log('error', pathname, request, 'Failed to perform blob() method on request', error);
         return {
             success: false,
-            response: await buildResponse('There was an unexpected error.', 400, normalHeader)
+            response: buildResponse('There was an unexpected error.', 400, normalHeader)
         }
     }
 
     if ((blob.size === 0) || (blob.size > maxSize)) {
-        await log('info', pathname, request, `Attempt to upload file with size ${blob.size} bytes blocked; exceeded maximum limit of ${maxSize} bytes`);
+        log('info', pathname, request, `Attempt to upload file with size ${blob.size} bytes blocked; exceeded maximum limit of ${maxSize} bytes`);
         return {
             success: false,
-            response: await buildResponse(`File uploaded exceeds maximum size of `, 400, normalHeader)
+            response: buildResponse(`File uploaded exceeds maximum size of `, 400, normalHeader)
         }
     }
     
@@ -313,26 +311,6 @@ const parseRequestBlob = async (pathname, request, maxSize) => {
  * @returns {{ success: boolean, response: Response | undefined }}
  */
 const validateInputs = async (pathname, request, inputs, env, delay) => {
-	/*
-	i = {
-        name
-		input
-		requirements: {
-			dataType,
-			minLength,
-			maxLength,
-            minValue,
-            maxValue,
-            integer,
-            specificValues,
-            dbcheck: {
-                statement,
-                vars,
-                exclusion
-            }
-		}
-	}
-	*/
 	let success = true;
 	let errorMsg = '';
 	for (let i of inputs) {
@@ -410,10 +388,10 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
                     results = await selection.first();
                 }
                 catch (error) {
-                    await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${i.requirements.dbCheck.statement}`, error);
+                    log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${i.requirements.dbCheck.statement}`, error);
                     return {
                         success: false,
-                        response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                        response: buildResponse('There was an unexpected error.', 500, normalHeader)
                     }
                 }
                 
@@ -428,10 +406,10 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 
 	if (!success) {
 		if (delay) {
-			await checkUsername('67', env);
+			checkUsername('67', env);
 		}
-		await log('warn', pathname, request, errorMsg);
-		const response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+		log('warn', pathname, request, errorMsg);
+		const response = buildResponse('There was an unexpected error.', 400, normalHeader);
 		return {
 			success: false,
 			response: response
@@ -444,6 +422,13 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 	}
 }
 
+/**
+ * Checks if the IP of the request is banned, and adds the IP to the banlist if it exceeds a rate limit.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {Env} env
+ * @returns {{ allow: boolean, response: Response | undefined }}
+ */
 const handleIPBan = async (pathname, request, env) => {
 	let allow = true;
 	let response;
@@ -452,20 +437,20 @@ const handleIPBan = async (pathname, request, env) => {
         const ip = request.headers.get('cf-connecting-ip');
         if (!ip) {
             allow = false;
-            await log('warn', pathname, request, 'No IP address found');
-            response = await buildResponse('There was an unexpected error.', 403, normalHeader);
+            log('warn', pathname, request, 'No IP address found');
+            response = buildResponse('There was an unexpected error.', 403, normalHeader);
             throw new Error();
         }
 
         const ipBanned = await checkIPBanned(pathname, request, ip, env);
         if (!ipBanned.success) {
             allow = false;
-            response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+            response = buildResponse('There was an unexpected error.', 500, normalHeader);
             throw new Error();
         }
         if (ipBanned.banned) {
             allow = false;
-            response = await buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
+            response = buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
             throw new Error();
         }
 
@@ -486,6 +471,15 @@ const handleIPBan = async (pathname, request, env) => {
     }
 }
 
+/**
+ * Updates the last_login field of the user's record in the database.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {Env} env
+ * @param {string} enteredUsername The username of the user who has just logged in.
+ * @param {boolean} rememberMe Whether the user has opted to stay logged in for longer.
+ * @returns {Response}
+ */
 const updateLastLogin = async (pathname, request, env, enteredUsername, sessionToken, rememberMe) => {
 	const currentDate = (new Date()).toISOString();
 	const statement = 'UPDATE users SET last_login = ? WHERE username = ?';
@@ -500,11 +494,11 @@ const updateLastLogin = async (pathname, request, env, enteredUsername, sessionT
 			response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
 		}
 
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-		return await buildResponse('There was an unexpected error.', 500, normalHeader);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return buildResponse('There was an unexpected error.', 500, normalHeader);
 	}
 
-    const response = await buildResponse('Logging in...', 200, normalHeader);
+    const response = buildResponse('Logging in...', 200, normalHeader);
 	let time;
 	if (rememberMe) time = 604800;
 	else time = 86400;
@@ -513,6 +507,14 @@ const updateLastLogin = async (pathname, request, env, enteredUsername, sessionT
 	return response;
 }
 
+/**
+ * Checks the ipbans table in the database for the IP passed into the function.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} ip The IP address of the user.
+ * @param {Env} env
+ * @returns {{ success: boolean, banned: boolean | undefined }}
+ */
 const checkIPBanned = async (pathname, request, ip, env) => {
 	let result;
     const statement = 'SELECT ip FROM ipbans';
@@ -521,7 +523,7 @@ const checkIPBanned = async (pathname, request, ip, env) => {
 		result = await query.all();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			success: false
 		}
@@ -530,13 +532,13 @@ const checkIPBanned = async (pathname, request, ip, env) => {
 	const banList = result.results;
 	for (let i of banList) {
         if (!Object.hasOwn(i, 'ip')) {
-            await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch ip from ip ban records; statement: ${statement}`);
+            log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch ip from ip ban records; statement: ${statement}`);
             return {
                 success: false
             }
         }
 		if (i.ip === ip) {
-			await log('warn', pathname, request, 'Attempt from a banned IP address was blocked');
+			log('warn', pathname, request, 'Attempt from a banned IP address was blocked');
 			return {
 				success: true,
 				banned: true
@@ -549,6 +551,14 @@ const checkIPBanned = async (pathname, request, ip, env) => {
 	}
 }
 
+/**
+ * Bans an IP address by adding them to the ipbans table in the database.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} ip The IP address of the user.
+ * @param {Env} env
+ * @returns {Response}
+ */
 const banIP = async (pathname, request, ip, env) => {
 	const currentDate = new Date().toISOString();
 
@@ -556,15 +566,23 @@ const banIP = async (pathname, request, ip, env) => {
 		const statement = 'INSERT INTO ipbans (ip, date_banned) VALUES (?, ?);'
 		const insertion = env.blitz.prepare(statement).bind(ip, currentDate);
 		await insertion.run();
-		await log('info', pathname, request, `Successfully banned IP: ${ip}`);
-		return await buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
+		log('info', pathname, request, `Successfully banned IP: ${ip}`);
+		return buildResponse('You have been blocked from making further attempts.', 429, normalHeader);
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-		return await buildResponse('There was an unexpected error.', 500, normalHeader);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return buildResponse('There was an unexpected error.', 500, normalHeader);
 	}
 }
 
+/**
+ * Checks if a user exists by their username.
+ * @param {string} username The user's username.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{ allow: boolean, response: Response | undefined }}
+ */
 const checkUsername = async (username, env, pathname, request) => {
 	let result;
 	const statement = 'SELECT username FROM users WHERE username = ?';
@@ -574,19 +592,19 @@ const checkUsername = async (username, env, pathname, request) => {
 		result = await query.first();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			allow: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
 	if (!result) {
 		const fakeHash = hash('676767676767').hash;
-		await compare(fakeHash, fakeHash);
+		compare(fakeHash, fakeHash);
 		return {
 			allow: false,
-			response: await buildResponse('Invalid username or password', 401, normalHeader)
+			response: buildResponse('Invalid username or password', 401, normalHeader)
 		}
 	}
 	else {
@@ -596,6 +614,15 @@ const checkUsername = async (username, env, pathname, request) => {
 	}
 }
 
+/**
+ * Checks if the entered password matches the password on file for that user, performing intermediary hashing.
+ * @param {string} username The user's username.
+ * @param {string} enteredPassword The password to be checked against the database record.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{ allow: boolean, response: Response | undefined }}
+ */
 const authenticate = async (username, enteredPassword, env, pathname, request) => {
 	const statement = 'SELECT password_hash, password_salt FROM users WHERE username = ?';
 	let result;
@@ -605,18 +632,18 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 		result = await query.first();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			allow: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
     if (!result) {
-        await log('warn', pathname, request, `No results were found during password fetch when executing the statement: ${statement}`, error);
+        log('warn', pathname, request, `No results were found during password fetch when executing the statement: ${statement}`, error);
 		return {
 			allow: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
     }
 
@@ -624,10 +651,10 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 
     for (let i of expectedFields) {
 		if (!Object.hasOwn(result, i)) {
-			await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch password data for user ${username}; statement: ${statement}`);
+			log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch password data for user ${username}; statement: ${statement}`);
             return {
                 allow: false,
-                response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                response: buildResponse('There was an unexpected error.', 500, normalHeader)
             }
 		}
 	}
@@ -646,7 +673,7 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 	else {
 		return {
 			allow: false,
-			response: await buildResponse('Invalid username or password', 401, normalHeader)
+			response: buildResponse('Invalid username or password', 401, normalHeader)
 		}
 	}
 }
@@ -660,26 +687,26 @@ const checkIfActive = async (username, env, pathname, request) => {
 		result = await query.first();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			allow: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
     if (!result) {
-        await log('warn', pathname, request, `D1 query returned no data when attempting to fetch active data for user ${username}; statement: ${statement}`);
+        log('warn', pathname, request, `D1 query returned no data when attempting to fetch active data for user ${username}; statement: ${statement}`);
         return {
             allow: false,
-            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            response: buildResponse('There was an unexpected error.', 500, normalHeader)
         }
     }
 
 	if (!Object.hasOwn(result, 'active')) {
-		await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch active data for user ${username}; statement: ${statement}`);
+		log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch active data for user ${username}; statement: ${statement}`);
         return {
             allow: false,
-            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            response: buildResponse('There was an unexpected error.', 500, normalHeader)
         }
 	}
 
@@ -691,7 +718,7 @@ const checkIfActive = async (username, env, pathname, request) => {
 	else {
 		return {
 			allow: false,
-			response: await buildResponse('Your account has been disabled.', 403, normalHeader)
+			response: buildResponse('Your account has been disabled.', 403, normalHeader)
 		}
 	}
 }
@@ -720,14 +747,14 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 		await insertion.run();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${insertionStatement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${insertionStatement}`, error);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
-	await log('info', pathname, request, 'Session token successfully generated');
+	log('info', pathname, request, 'Session token successfully generated');
 	return {
 		success: true
 	}
@@ -742,17 +769,17 @@ const updatePassword = async (userid, env, newPassword, pathname, request) => {
 		await query.run();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
-	await log('info', pathname, request, `Password successfully updated for user ${userid}`);
+	log('info', pathname, request, `Password successfully updated for user ${userid}`);
 	return {
 		success: true,
-		response: await buildResponse('Successfully changed password.', 200, normalHeader)
+		response: buildResponse('Successfully changed password.', 200, normalHeader)
 	}
 }
 
@@ -768,33 +795,33 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
 		results = await query.first();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			allow: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
 	if (!results) {
 		return {
 			allow: false,
-			response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+			response: buildResponse('You must be logged in to view this page.', 401, normalHeader)
 		}
 	}
 	else {
         if (!Object.hasOwn(results, 'session_token_hash')) {
-            await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
+            log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
             return {
                 allow: false,
-                response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                response: buildResponse('There was an unexpected error.', 500, normalHeader)
             }
         }
 		if (compare(attemptedHash, results['session_token_hash'])) {
             if (!Object.hasOwn(results, 'userid')) {
-                await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
+                log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
                 return {
                     allow: false,
-                    response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                    response: buildResponse('There was an unexpected error.', 500, normalHeader)
                 }
             }
             else {
@@ -807,7 +834,7 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
 		else {
 			return {
 				allow: false,
-				response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+				response: buildResponse('You must be logged in to view this page.', 401, normalHeader)
 			}
 		}
 	}
@@ -837,7 +864,7 @@ const checkSession = async (request, pathname, env) => {
     if (!sessionToken) {
         return {
             allow: false,
-            response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
+            response: buildResponse('You must be logged in to view this page.', 401, normalHeader)
         }
     }
 
@@ -867,28 +894,28 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 		results = await selection.first();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
             success: false,
-            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            response: buildResponse('There was an unexpected error.', 500, normalHeader)
         }
 	}
 	
 	if (!results) {
-		await log('warn', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
+		log('warn', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
 		return {
             success: false,
-            response: await buildResponse('User not found.', 404, normalHeader)
+            response: buildResponse('User not found.', 404, normalHeader)
         }
 	}
 	else {
         const expectedFields = ['name', 'username', 'last_login', 'iterations'];
         for (let i of expectedFields) {
 			if (!Object.hasOwn(results, i)) {
-				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for user id ${userid}; statement: ${statement}`);
+				log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for user id ${userid}; statement: ${statement}`);
                 return {
                     success: false,
-                    response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                    response: buildResponse('There was an unexpected error.', 500, normalHeader)
                 }
 			}
 		}
@@ -913,28 +940,28 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
         results = await selection.first();
     }
     catch (error) {
-        await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+        log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
         return {
             success: false,
-            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            response: buildResponse('There was an unexpected error.', 500, normalHeader)
         }
     }
     
     if (!results) {
-        await log('warn', pathname, request, `User record not found for username ${username}; expected name, userid, last_login, iterations, received none`);
+        log('warn', pathname, request, `User record not found for username ${username}; expected name, userid, last_login, iterations, received none`);
         return {
             success: false,
-            response: await buildResponse('User not found.', 404, normalHeader)
+            response: buildResponse('User not found.', 404, normalHeader)
         }
     }
     else {
         const expectedFields = ['name', 'userid', 'last_login', 'iterations'];
         for (let i of expectedFields) {
 			if (!Object.hasOwn(results, i)) {
-				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for username ${username}; statement: ${statement}`);
+				log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for username ${username}; statement: ${statement}`);
                 return {
                     success: false,
-                    response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                    response: buildResponse('There was an unexpected error.', 500, normalHeader)
                 }
 			}
 		}
@@ -957,15 +984,15 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader, disp
         file = await env.blitzr2.get(filepath);
     }
     catch (error) {
-        await log('error', pathname, request, `R2 query failed when attempting to fetch file at: ${filepath}`, error);
+        log('error', pathname, request, `R2 query failed when attempting to fetch file at: ${filepath}`, error);
         return {
             success: false,
-            response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+            response: buildResponse('There was an unexpected error.', 500, normalHeader)
         }
     }
 
     if (file === null) {
-        await log('warn', pathname, request, `File not found at path: ${filepath}; sending placeholder image`);
+        log('warn', pathname, request, `File not found at path: ${filepath}; sending placeholder image`);
 
         const placeholderFetch = await fetchFromR2(request, pathname, env, `assets/profiles/placeholder.jpg`, 'image/jpeg');
         if (!placeholderFetch.success) {
@@ -988,16 +1015,16 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader, disp
             finalPayload = await file.blob();
         }
         catch (error) {
-            await log('error', pathname, request, `Failed to perform blob() method on file at: ${filepath}`, error);
+            log('error', pathname, request, `Failed to perform blob() method on file at: ${filepath}`, error);
             return {
                 success: false,
-                response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+                response: buildResponse('There was an unexpected error.', 500, normalHeader)
             }
         }
 
         return {
             success: true,
-            response: await buildResponse('File successfully fetched', 200, contentHeader, 'BLOB', finalPayload, `inline; filename=${disposition}`)
+            response: buildResponse('File successfully fetched', 200, contentHeader, 'BLOB', finalPayload, `inline; filename=${disposition}`)
         }
     }
 }
@@ -1015,23 +1042,23 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 			data = await query.first();
 		}
 		catch (error) {
-			await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
+			log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
 			success = false;
-			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			response = buildResponse('There was an unexpected error.', 500, normalHeader);
 			throw new Error();
 		}
 
 		if (!data) {
-			await log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
+			log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
 			success = false;
-			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
+			response = buildResponse('There was an unexpected error.', 400, normalHeader);
 			throw new Error();
 		}
 
 		for (let i of expectedCarFields) {
 			if (!Object.hasOwn(data, i)) {
-				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
-				response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+				log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
+				response = buildResponse('There was an unexpected error.', 500, normalHeader);
 				success = false;
 				throw new Error();
 			}

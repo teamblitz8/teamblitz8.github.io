@@ -585,7 +585,8 @@ export default {
 				const authentication = await authenticate(userData.response.username, currentPassword, env, url.pathname, request);
 				if (authentication.allow) {
 					const passwordChange = await updatePassword(userid, env, newPassword, url.pathname, request);
-					return passwordChange.response;
+					if (!passwordChange.success) return passwordChange.response;
+					else return await deleteAllSessionTokens(userid, env, url.pathname, request, sessionCheck.sessionToken);
 				}
 				else return authentication.response;
 			}

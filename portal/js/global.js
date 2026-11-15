@@ -245,7 +245,6 @@ const getData = async (type, iterationNumber) => {
         }
         else {
             let data;
-            if (type === 'text') data = await parseJSON(response, []);
             else if (['f3d', 'previews', 'iso', 'planes'].includes(type)) data = await parseBlob(response);
 
             if (!data) {
@@ -328,7 +327,7 @@ const processFullCar = async (iterationNumber) => {
         nextIteration = Number(car.iteration) - 1;
 
         let changelog = '';
-        for (let i of car.changelog) {
+        for (let i of car.changelog.split('[BRK;]')) {
             changelog += `<li>${i}</li>`;
         }
 

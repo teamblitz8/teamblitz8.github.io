@@ -133,6 +133,8 @@ const hideError = () => {
 const sanitiseObject = (object) => {
     if (object === 'null') return null;
     if (object === 'undefined') return undefined;
+    if (object === null) return null;
+    if (object === undefined) return undefined;
     if (typeof object === 'boolean') {
         if (object) return true;
         else return false;
@@ -166,7 +168,6 @@ const parseJSON = async (response, requiredFields) => {
         if (!response.headers.get('Content-Type').startsWith('application/json')) throw new Error();
         if (Number(response.headers.get('Content-Length')) > 25000000) throw new Error();
         text = await response.json();
-        console.log(text);
         if (text === null) throw new Error();
         if (typeof text !== 'object') throw new Error();
         if (Array.isArray(text)) throw new Error();

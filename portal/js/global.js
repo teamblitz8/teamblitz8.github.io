@@ -324,6 +324,7 @@ const processFullCar = async (iterationNumber) => {
 
     try {
         const car = await getData('fullworks', iterationNumber);
+        console.log(car);
         const devContainer = document.querySelector('#development-container');
         nextIteration = Number(car.iteration) - 1;
 

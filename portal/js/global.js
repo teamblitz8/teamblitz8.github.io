@@ -223,6 +223,8 @@ const getData = async (type, iterationNumber) => {
             const iso = await getData('iso', iterationNumber);
             const planes = await getData('planes', iterationNumber);
 
+            console.log(meta);
+
             return { ...meta.data, model: model, preview: preview, iso: iso, planes: planes };
         }
         catch (error) {
@@ -329,7 +331,7 @@ const processFullCar = async (iterationNumber) => {
         nextIteration = Number(car.iteration) - 1;
 
         let changelog = '';
-        for (let i of car.changelog.split('[BRK;]')) {
+        for (let i of car.changelog) {
             changelog += `<li>${i}</li>`;
         }
 

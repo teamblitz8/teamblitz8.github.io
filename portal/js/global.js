@@ -358,7 +358,7 @@ const processFullCar = async (iterationNumber) => {
 
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
-        document.getElementById('#loadMore').innerHTML = '<i class="fa-solid fa-chevron-down"></i> Load more';
+        document.getElementById('loadMore').innerHTML = '<i class="fa-solid fa-chevron-down"></i> Load more';
 
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '100%');
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);

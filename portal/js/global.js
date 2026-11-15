@@ -358,11 +358,10 @@ const processFullCar = async (iterationNumber) => {
 
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
+        document.getElementById('#loadMore').innerHTML = '<i class="fa-solid fa-chevron-down"></i> Load more';
 
-        document.querySelector('.model-viewer').style.height = '100%';
-        document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
-
-        if (nextIteration !== 0) document.querySelector('#loadMore button').style.display = 'flex';
+        document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '100%');
+        document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);
     }
     catch (error) {
         await showError(error, false);

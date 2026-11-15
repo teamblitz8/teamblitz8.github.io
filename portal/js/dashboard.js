@@ -19,7 +19,14 @@ const unfurl = async (iteration) => {
 
 const showPopup = () => document.querySelector('.popup-shroud').classList.toggle('popup-open');
 
-const loadMore = async () => processFullCar(nextIteration);
+const loadMore = async () => {
+    const button = document.querySelector('loadMore');
+
+    button.innerHTML = 'Fetching next car..'
+    await processFullCar(nextIteration);
+
+    if (nextIteration === 0) button.style.display = 'none';
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
     const carModel = document.querySelector('#car-model');
@@ -41,6 +48,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (value.files.length !== 0) document.getElementById(`${key}-button`).innerText = `File selected: ${value.files[0].name}, ${value.files[0].size} bytes`;
         })
     }
+
+    hideError();
 });
 
 form.addEventListener('submit', async (e) => {

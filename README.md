@@ -79,7 +79,6 @@ The portal is strictly for internal team use only. If you would like to see a de
 
 ## To-do (in order of priority)
 - Make helper functions show up the data types of each argument on vsc (the weird comment thing)
-- replace any .all() with .first()
 - Prompt first-time users to change password upon login.
 - check that the carid belongs to the authenticated user when uploading files (to avoid overwriting by accident)
 - Delete just-generated session token upon updatelastlogin failure

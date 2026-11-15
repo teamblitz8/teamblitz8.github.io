@@ -4,19 +4,26 @@
 const normalHeader = 'application/json; charset=UTF-8';
 const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens } = require('../helpers.js');
 
-const updatePassword = async (userid, env, newPassword) => {
+const updatePassword = async (userid, env, newPassword, pathname, request) => {
 	const hashAndSalt = hash(newPassword);
-	const query = env.blitz.prepare('UPDATE users SET password_hash = ?, password_salt = ? WHERE userid = ?').bind(hashAndSalt.hash, hashAndSalt.salt, userid);
-	await query.run();
+	const statement = 'UPDATE users SET password_hash = ?, password_salt = ?, force_password_change = ? WHERE userid = ?';
 
-	const check = env.blitz.prepare('SELECT password_hash, password_salt FROM users WHERE userid = ?').bind(userid);
-	const result = await check.run();
-
-	if ((result.results[0]['password_hash'] !== hashAndSalt.hash) || (result.results[0]['password_salt'] !== hashAndSalt.salt)) {
-		return false;
+	try {
+		const query = env.blitz.prepare(statement).bind(hashAndSalt.hash, hashAndSalt.salt, 0, userid);
+		await query.run();
 	}
-	else {
-		return true;
+	catch (error) {
+		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	await log('info', pathname, request, `Password successfully updated for user ${userid}`);
+	return {
+		success: true,
+		response: await buildResponse('Successfully changed password.', 200, normalHeader)
 	}
 }
 
@@ -551,6 +558,55 @@ export default {
 					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
 				}
 				else return await buildResponse('There was an unexpected error.', 405, normalHeader);
+			}
+
+			else if (url.pathname === '/api/change-password') {
+				const requestCheck = await checkRequest(url.pathname, request, ['POST'], ['application/json']);
+				if (!requestCheck.success) return requestCheck.response;
+
+				const handleIP = await handleIPBan(url.pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
+
+				const sessionCheck = await checkSession(request, url.pathname, env);
+				if (!sessionCheck.allow) return sessionCheck.response;
+
+				const parseRequest = await parseRequestJSON(url.pathname, request, ['currentPassword', 'newPassword']);
+				if (!parseRequest.success) return parseRequest.response;
+
+				const currentPassword = parseRequest.json.currentPassword;
+				const newPassword = parseRequest.json.newPassword;
+
+				const inputs = [{
+					name: 'currentPassword',
+					input: currentPassword,
+					requirements: {
+						dataType: 'string',
+						minLength: 3,
+						maxLength: 128
+					}
+				}, {
+					name: 'newPassword',
+					input: newPassword,
+					requirements: {
+						dataType: 'string',
+						minLength: 3,
+						maxLength: 128
+					}
+				}];
+
+				const inputCheck = await validateInputs(url.pathname, request, inputs, env, true);
+				if (!inputCheck.success) return inputCheck.response;
+
+				const userid = sessionCheck.userid;
+				const userData = await fetchUserDataFromUserID(request, url.pathname, env, userid);
+				if (!userData.success) return userData.response;
+
+				const authentication = await authenticate(userData.response.username, currentPassword, env, url.pathname, request);
+				if (authentication.allow) {
+					const passwordChange = await updatePassword(userid, env, newPassword, url.pathname, request);
+					return passwordChange.response;
+				}
+				else return authentication.response;
 			}
 
 			else if (url.pathname === '/api/clear-all-sessions') {

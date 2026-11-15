@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
     password_salt TEXT NOT NULL,
     last_login TEXT,
     active INTEGER NOT NULL,
-    iterations INTEGER
+    iterations INTEGER,
+    force_password_change INTEGER NOT NULL
 );
 CREATE TABLE IF NOT EXISTS cars (
     creatorid TEXT NOT NULL,

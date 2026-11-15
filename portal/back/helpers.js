@@ -54,7 +54,8 @@ const buildResponse = async (message, status, contentType, object, blob, disposi
             'Cache-Control': 'no-store',
             'X-Content-Type-Options': 'nosniff',
             'Vary': 'Origin',
-            'Access-Control-Allow-Credentials': 'true'
+            'Access-Control-Allow-Credentials': 'true',
+			'Access-Control-Expose-Headers': 'Content-Disposition'
         },
         status: status
     });

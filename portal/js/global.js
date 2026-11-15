@@ -230,8 +230,6 @@ const getData = async (type, iterationNumber) => {
             const iso = await getData('iso', iterationNumber);
             const planes = await getData('planes', iterationNumber);
 
-            console.log(meta);
-
             return { ...meta.data, model: model, preview: preview, iso: iso, planes: planes };
         }
         catch (error) {
@@ -333,7 +331,6 @@ const processFullCar = async (iterationNumber) => {
 
     try {
         const car = await getData('fullworks', iterationNumber);
-        console.log(car);
         const devContainer = document.querySelector('#development-container');
         nextIteration = Number(car.iteration) - 1;
 
@@ -353,7 +350,7 @@ const processFullCar = async (iterationNumber) => {
         let addNotes = '';
         if (car['additional_notes'] !== null) addNotes = `<div class="notes"><h3>Additional notes</h3><p>${car['additional_notes']}</p></div></div></div>`;
 
-        const carModelType = car.model.contentDisposition.split('=')[1];
+        const carModelType = car.model.contentDisposition?.split('=')[1];
         const creatorProfileURL = await fetchProfile(car.creatorUsername);
 
         devContainer.innerHTML += `<div class="car"><div class="details"><h3>${car['car_name']} - Iteration #${car.iteration}</h3><div class="creator"><img src="${creatorProfileURL}" class="portrait"><div class="person"><h3>${car.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${new Date(car['date_created']).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${car.scrutineerName}</p></div></div><p>Frontal Area: ${car['frontal_area']}mm²</p><p>Drag Coefficient: ${car['drag_coefficient']}</p><p class="drag">Drag: ${car['drag_force']}N</p><div class="buttons"><div class="download"><a href="${car.model.data}" download="${car['car_name']}.${carModelType}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${car.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${car.iso.data}"></div><div class="planes"><h3>Planes</h3><img src="${car.planes.data}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;

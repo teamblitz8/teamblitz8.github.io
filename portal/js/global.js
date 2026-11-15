@@ -196,7 +196,12 @@ const parseJSON = async (response, requiredFields) => {
         });
         value = await sanitiseObject(text);
     }
-    catch {
+    catch (error) {
+        console.error('parseJSON failed:', error, {
+            contentType: response.headers.get('Content-Type'),
+            requiredFields,
+            response
+        });
         return false;
     };
 

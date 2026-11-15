@@ -407,7 +407,7 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
 
                 try {
                     const selection = env.blitz.prepare(i.requirements.dbCheck.statement).bind(...i.requirements.vars);
-                    results = await selection.all();
+                    results = await selection.first();
                 }
                 catch (error) {
                     await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${i.requirements.dbCheck.statement}`, error);
@@ -417,7 +417,7 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
                     }
                 }
                 
-                if (results.results.length === 0) {
+                if (!results) {
                     success = false;
                     errorMsg = `Derived car not found for iteration ${i.input}`;
                     break;
@@ -566,7 +566,7 @@ const checkUsername = async (username, env, pathname, request) => {
 
 	try {
 		const query = env.blitz.prepare(statement).bind(username);
-		result = await query.all();
+		result = await query.first();
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
@@ -576,7 +576,7 @@ const checkUsername = async (username, env, pathname, request) => {
 		}
 	}
 
-	if (result.results.length === 0) {
+	if (!result) {
 		const fakeHash = hash('676767676767').hash;
 		await compare(fakeHash, fakeHash);
 		return {
@@ -597,7 +597,7 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 
 	try {
 		const query = env.blitz.prepare(statement).bind(username);
-		result = await query.all();
+		result = await query.first();
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
@@ -607,9 +607,7 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 		}
 	}
 
-	result = result.results;
-
-    if (result.length === 0) {
+    if (!result) {
         await log('warn', pathname, request, `No results were found during password fetch when executing the statement: ${statement}`, error);
 		return {
 			allow: false,
@@ -620,7 +618,7 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
     const expectedFields = ['password_hash', 'password_salt']
 
     for (let i of expectedFields) {
-		if (!Object.hasOwn(result[0], i)) {
+		if (!Object.hasOwn(result, i)) {
 			await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch password data for user ${username}; statement: ${statement}`);
             return {
                 allow: false,
@@ -629,8 +627,8 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 		}
 	}
 	
-	const trueHash = result[0]['password_hash'];
-	const trueSalt = Buffer.from(result[0]['password_salt'], 'hex');
+	const trueHash = result['password_hash'];
+	const trueSalt = Buffer.from(result['password_salt'], 'hex');
 
 	const hashAttempt = hash(enteredPassword, trueSalt).hash;
 	const hashesMatch = compare(trueHash, hashAttempt);
@@ -654,7 +652,7 @@ const checkIfActive = async (username, env, pathname, request) => {
 
 	try {
 		const query = env.blitz.prepare(statement).bind(username);
-		result = await query.all();
+		result = await query.first();
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
@@ -664,7 +662,7 @@ const checkIfActive = async (username, env, pathname, request) => {
 		}
 	}
 
-    if (result.results.length === 0) {
+    if (!result) {
         await log('warn', pathname, request, `D1 query returned no data when attempting to fetch active data for user ${username}; statement: ${statement}`);
         return {
             allow: false,
@@ -672,7 +670,7 @@ const checkIfActive = async (username, env, pathname, request) => {
         }
     }
 
-	if (!Object.hasOwn(result.results[0], 'active')) {
+	if (!Object.hasOwn(result, 'active')) {
 		await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch active data for user ${username}; statement: ${statement}`);
         return {
             allow: false,
@@ -680,9 +678,7 @@ const checkIfActive = async (username, env, pathname, request) => {
         }
 	}
 
-	result = result.results[0].active;
-
-	if (result === 1) {
+	if (result.active === 1) {
 		return {
 			allow: true
 		}
@@ -741,7 +737,7 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
 	let results;
 	try {
 		const query = env.blitz.prepare(statement).bind(attemptedHash, currentDate);
-		results = await query.all();
+		results = await query.first();
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
@@ -751,22 +747,22 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
 		}
 	}
 
-	if (results.results.length === 0) {
+	if (!results) {
 		return {
 			allow: false,
 			response: await buildResponse('You must be logged in to view this page.', 401, normalHeader)
 		}
 	}
 	else {
-        if (!Object.hasOwn(results.results[0], 'session_token_hash')) {
+        if (!Object.hasOwn(results, 'session_token_hash')) {
             await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
             return {
                 allow: false,
                 response: await buildResponse('There was an unexpected error.', 500, normalHeader)
             }
         }
-		if (compare(attemptedHash, results.results[0]['session_token_hash'])) {
-            if (!Object.hasOwn(results.results[0], 'userid')) {
+		if (compare(attemptedHash, results['session_token_hash'])) {
+            if (!Object.hasOwn(results, 'userid')) {
                 await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
                 return {
                     allow: false,
@@ -776,7 +772,7 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
             else {
                 return {
                     allow: true,
-                    userid: results.results[0].userid
+                    userid: results.userid
                 }
             }
 		}
@@ -840,7 +836,7 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 
 	try {
 		const selection = env.blitz.prepare(statement).bind(userid);
-		results = await selection.all();
+		results = await selection.first();
 	}
 	catch (error) {
 		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
@@ -850,7 +846,7 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
         }
 	}
 	
-	if (results.results.length === 0) {
+	if (!results) {
 		await log('warn', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
 		return {
             success: false,
@@ -860,7 +856,7 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 	else {
         const expectedFields = ['name', 'username', 'last_login', 'iterations'];
         for (let i of expectedFields) {
-			if (!Object.hasOwn(results.results[0], i)) {
+			if (!Object.hasOwn(results, i)) {
 				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for user id ${userid}; statement: ${statement}`);
                 return {
                     success: false,
@@ -869,14 +865,13 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 			}
 		}
 
-		let userObject = results.results[0];
-		userObject.lastLogin = userObject['last_login'];
-		delete userObject['last_login'];
-        userObject.userID = userid;
+		results.lastLogin = results['last_login'];
+		delete results['last_login'];
+        results.userID = userid;
 
         return {
             success: true,
-            response: userObject
+            response: results
         }
 	}
 }
@@ -887,7 +882,7 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
 
     try {
         const selection = env.blitz.prepare(statement).bind(username);
-        results = await selection.all();
+        results = await selection.first();
     }
     catch (error) {
         await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
@@ -897,7 +892,7 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
         }
     }
     
-    if (results.results.length === 0) {
+    if (!results) {
         await log('warn', pathname, request, `User record not found for username ${username}; expected name, userid, last_login, iterations, received none`);
         return {
             success: false,
@@ -907,7 +902,7 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
     else {
         const expectedFields = ['name', 'userid', 'last_login', 'iterations'];
         for (let i of expectedFields) {
-			if (!Object.hasOwn(results.results[0], i)) {
+			if (!Object.hasOwn(results, i)) {
 				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for username ${username}; statement: ${statement}`);
                 return {
                     success: false,
@@ -916,14 +911,13 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
 			}
 		}
 
-        let userObject = results.results[0];
-        userObject.lastLogin = userObject['last_login'];
-        delete userObject['last_login'];
-        userObject.username = username;
+        results.lastLogin = results['last_login'];
+        delete results['last_login'];
+        results.username = username;
 
         return {
             success: true,
-            response: userObject
+            response: results
         }
     }
 }
@@ -990,7 +984,7 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 		const expectedCarFields = ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes'];
 		try {
 			const query = env.blitz.prepare(carStatement).bind(iterationNumber);
-			data = await query.all();
+			data = await query.first();
 		}
 		catch (error) {
 			await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
@@ -999,7 +993,7 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 			throw new Error();
 		}
 
-		if (data.results.length === 0) {
+		if (!data) {
 			await log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
 			success = false;
 			response = await buildResponse('There was an unexpected error.', 400, normalHeader);
@@ -1007,15 +1001,13 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 		}
 
 		for (let i of expectedCarFields) {
-			if (!Object.hasOwn(data.results[0], i)) {
+			if (!Object.hasOwn(data, i)) {
 				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for iteration ${iterationNumber}; statement: ${carStatement}`);
 				response = await buildResponse('There was an unexpected error.', 500, normalHeader);
 				success = false;
 				throw new Error();
 			}
 		}
-
-		data = data.results[0];
 
 		const creatorData = await fetchUserDataFromUserID(request, pathname, env, data.creatorid);
 		if (!creatorData.success) {
@@ -1069,7 +1061,7 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 		const expectedCarFields = ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes'];
 		try {
 			const query = env.blitz.prepare(carStatement).bind(carid);
-			data = await query.all();
+			data = await query.first();
 		}
 		catch (error) {
 			await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
@@ -1078,7 +1070,7 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 			throw new Error();
 		}
 
-		if (data.results.length === 0) {
+		if (!data) {
 			await log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
 			success = false;
 			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
@@ -1086,15 +1078,13 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 		}
 
 		for (let i of expectedCarFields) {
-			if (!Object.hasOwn(data.results[0], i)) {
+			if (!Object.hasOwn(data, i)) {
 				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
 				response = await buildResponse('There was an unexpected error.', 500, normalHeader);
 				success = false;
 				throw new Error();
 			}
 		}
-
-		data = data.results[0];
 
 		const creatorData = await fetchUserDataFromUserID(request, pathname, env, data.creatorid);
 		if (!creatorData.success) {

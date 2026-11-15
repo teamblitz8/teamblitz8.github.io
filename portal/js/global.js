@@ -166,6 +166,7 @@ const parseJSON = async (response, requiredFields) => {
         if (!response.headers.get('Content-Type').startsWith('application/json')) throw new Error();
         if (Number(response.headers.get('Content-Length')) > 25000000) throw new Error();
         text = await response.json();
+        console.log(text);
         if (text === null) throw new Error();
         if (typeof text !== 'object') throw new Error();
         if (Array.isArray(text)) throw new Error();

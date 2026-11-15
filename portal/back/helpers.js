@@ -1,10 +1,21 @@
 const crypto = require('node:crypto');
 const normalHeader = 'application/json; charset=UTF-8';
 
+/**
+ * Converts a buffer, such as one generated from a cryptographic hashing algorithm, into a string.
+ * @param {buffer} buffer The buffer to be converted into a string.
+ * @returns {string} The buffer in string format, suitable for committing to an SQL database.
+ */
 const convertBufferToString = (buffer) => {
     return Array.from(new Uint8Array(buffer)).map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
+/**
+ * Hashes a password using a provided salt or randomly generated salt using the HMAC-PBKDF2-SHA512 hashing algorithm.
+ * @param {string} password The password to be hashed.
+ * @param {string} [salt] Optional salt to hash with. If undefined, a randomly generated salt is used.
+ * @returns {{ hash: string, salt: string }} The hashed password and the salt used, in an object.
+ */
 const hash = (password, salt) => {
     const iterations = 100000;
     const digest = 'sha512';
@@ -27,6 +38,12 @@ const hash = (password, salt) => {
     return output;
 }
 
+/**
+ * Compares two buffers in string format, with two buffers being either equal or different taking equal time to defend against timing attacks. 
+ * @param {string} a A buffer.
+ * @param {string} b The buffer you want to compare against the other buffer.
+ * @returns {boolean} A boolean, with `true` indicating they are equal, and `false` indicating they are not equal.
+ */
 const compare = (a, b) => {
 	const encoder = new TextEncoder();
 	const bufferA = encoder.encode(a);
@@ -41,6 +58,16 @@ const compare = (a, b) => {
 	}
 }
 
+/**
+ * Creates a timestamped HTTP response based on the HTTP status, message, and headers needed, with support for both JavaScript objects and binary blobs.
+ * @param {string} message The message to be sent to the client.
+ * @param {number} status The HTTP status code to be sent.
+ * @param {string} contentType The value of the Content-Type header to be sent.
+ * @param {object | string} object The JavaScript object to be sent, or an indication that a blob is to be sent.
+ * @param {blob | undefined} blob The blob to be sent, if applicable.
+ * @param {string | undefined} disposition The value of the Content-Disposition header to be sent, if a blob is to be sent.
+ * @returns {Response} A Response object with the required parameters built.
+ */
 const buildResponse = async (message, status, contentType, object, blob, disposition) => {
     let finalObject = {...{ message: `${message} Timestamp: ${new Date().toISOString()}` }, ...object}
     if (object === 'BLOB') finalObject = blob;
@@ -61,7 +88,16 @@ const buildResponse = async (message, status, contentType, object, blob, disposi
     });
 }
 
-const log = async (type, pathname, request, message, stack) => {
+/**
+ * Logs something to the console, along with helpful information that may help with debugging.
+ * @param {'error' | 'warn' | 'log'} type The log level - either `error`, `warn` or `log`.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} message The message to be sent along with the log.
+ * @param {Error} [stack] The Error object if applicable.
+ * @returns {void}
+ */
+const log = (type, pathname, request, message, stack) => {
     const errorStack = stack instanceof Error
         ? {
             name: stack.name,
@@ -100,6 +136,14 @@ const log = async (type, pathname, request, message, stack) => {
 	}
 }
 
+/**
+ * Checks if the request is of the correct method and contains the correct Content-Type header.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {Array<'GET' | 'POST' | 'PUT' | 'HEAD' | 'OPTIONS' | 'QUERY' | 'DELETE' | 'CONNECT' | 'TRACE' | 'PATCH'>} expectedMethods An Array of the expected methods that are to be received by the endpoint.
+ * @param {Array<string>} expectedContentHeaders An Array of the expected values of the Content-Type header on the request.
+ * @returns {Promise<{ success: boolean, response: Response | undefined }>}
+ */
 const checkRequest = async (pathname, request, expectedMethods, expectedContentHeaders) => {
 	let response;
 	let success = true;
@@ -139,6 +183,13 @@ const checkRequest = async (pathname, request, expectedMethods, expectedContentH
     }
 }
 
+/**
+ * Parses JSON sent by a POST request into a JavaScript object, ensuring it is not malformed and is of expected structure.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {Array<string>} requiredFields An Array of the expected property values within the Object once parsed.
+ * @returns {Promise<{ success: boolean, response: Response | undefined, json: Object | undefined }>}
+ */
 const parseRequestJSON = async (pathname, request, requiredFields) => {
 	let json;
 	let success = true;
@@ -189,6 +240,13 @@ const parseRequestJSON = async (pathname, request, requiredFields) => {
 	}
 }
 
+/**
+ * Parses a Blob sent by a POST or PUT request, ensuring that it does not exceed a maximum size.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {number} maxSize The maximum size (in bytes) of the blob.
+ * @returns {Promise<{ success: Boolean, response: Response | undefined, blob: Blob | undefined }>}
+ */
 const parseRequestBlob = async (pathname, request, maxSize) => {
     let blob;
     try {
@@ -216,6 +274,44 @@ const parseRequestBlob = async (pathname, request, maxSize) => {
     }
 }
 
+/**
+ * A JavaScript object which bundles the parameters required for a database check during input validation.
+ * @typedef {Object} dbCheck
+ * @property {string} statement The SQL statement to be executed on the database.
+ * @property {Array<string>} [vars] The bindings to be made onto the statement, to prevent SQL injection attacks.
+ * @property {string | number | boolean | date} exclusion The specific exception which the input must match exactly where an SQL query is not to be carried out.
+ */
+
+/**
+ * A JavaScript object which lists all requirements the input value must satisfy during input validation.
+ * @typedef {Object} requirements
+ * @property {'string' | 'boolean' | 'number' | 'date'} dataType The expected data type of the input value.
+ * @property {number} [minLength] The minimum length the input must be (strings only).
+ * @property {number} [maxLength] The maximum length the input must be (strings only).
+ * @property {number} [minValue] The minimum value of the input (numbers only).
+ * @property {number} [maxValue] The maximum value of the input (numbers only).
+ * @property {boolean} [integer] Whether the input provided must be an integer (numbers only).
+ * @property {Array<string>} [specificValues] The specific values that the input value must satisfy at least one of.
+ * @property {dbCheck} [dbCheck] If applicable, the details of a database check to be conducted during validation.
+ */
+
+/**
+ * A JavaScript Object which bundles a raw input and the requirements it must satisfy during input validation.
+ * @typedef {Object} inputData
+ * @property {string} name The name of the input (so it can be identified within logs if an error occurs).
+ * @property {string | number | boolean | Date} input The input itself.
+ * @property {requirements} requirements A JavaScript object which lists all requirements the input value must satisfy during input validation.
+ */
+
+/**
+ * Performs input validation on data organised in a JavaScript object.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {Array<inputData>} inputs An Array of inputs and their requirements organised within their own JavaScript objects.
+ * @param {Env} env
+ * @param {boolean} delay Whether or not to delay with a hashing attempt (for defense against timing attacks). If `true` is passed, the function's output is delayed. If `false` is passed, the function runs without delay.
+ * @returns {{ success: boolean, response: Response | undefined }}
+ */
 const validateInputs = async (pathname, request, inputs, env, delay) => {
 	/*
 	i = {

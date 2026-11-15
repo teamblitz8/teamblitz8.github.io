@@ -34,12 +34,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             data = await parseJSON(response, ['username', 'name']);
             if (!data) return await showError('There was an unexpected error.', response, false);
 
-            username = data.username;
-            name = data.name;
+            username = await data.username;
+            name = await data.name;
 
             const profileURL = await fetchProfile(username);
-            document.querySelector('#profile p').innerText = username;
-            document.querySelector('#profile img').src = profileURL;
+            document.querySelector('#profile p').innerText = await username;
+            document.querySelector('#profile img').src = await profileURL;
             await waitForUsername();
         }
         else {
@@ -68,6 +68,8 @@ const waitForUsername = async () => {
     console.log(username.textContent.trim());
 
     while (username.textContent.trim() === '') await wait(100);
+
+    wait(1000);
 
     nav.style.display = 'flex';
     menu.style.width = `${profile.offsetWidth}px`;

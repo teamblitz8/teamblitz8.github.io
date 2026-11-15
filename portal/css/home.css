@@ -369,6 +369,10 @@ textarea {
     width: 80%;
 }
 
+#loadMore button {
+    display: none;
+}
+
 #loadMore button i {
     line-height: 1.5em;
 }

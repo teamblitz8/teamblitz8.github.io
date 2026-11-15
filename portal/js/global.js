@@ -9,7 +9,7 @@ const fetchProfile = async (username) => {
         });
 
         if (response.ok) return await parseBlob(response);
-        else return showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+        else await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
     }
     catch (error) {
         console.error(error);
@@ -29,14 +29,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (response.ok) {
             data = await parseJSON(response, ['username', 'name']);
-            if (!data) showError('Failed to parse JSON', response, false);
+            if (!data) return await showError('There was an unexpected error.', response, false);
 
             const profileURL = await fetchProfile(data.username);
             document.querySelector('#profile p').innerText = data.username;
             document.querySelector('#profile img').src = profileURL;
             await waitForUsername();
         }
-        else showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+        else await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
     }
     catch (error) {
         console.error(error);
@@ -81,7 +81,7 @@ const logout = async () => {
         });
 
         if (response.ok) window.location.replace('https://teamblitz.pages.dev');
-        else showError(undefined, response, false);
+        else await showError(undefined, response, false);
     }
     catch (error) {
         console.error(error);
@@ -103,23 +103,31 @@ const unroll = () => {
 }
 
 const showError = async (error, response, redirect, url, statusCondition, success) => {
-    const err = document.querySelector('.error');
+    const err = document.querySelectorAll('.error');
     let msg;
     if (response === false) msg = typeof error === 'string' ? error : error.message;
     else {
         msg = await parseJSON(response, ['message']);
         if (!msg) msg = 'There was an unexpected error.';
         else msg = msg.message;
-        console.error(`${response.status}: ${response.message}`);
+        console.error(`${response.status}: ${msg}`);
     }
 
-    err.innerText = msg;
-    err.classList.toggle('visible');
-    if (success) err.classList.toggle('success');
+    for (let i of err) {
+        i.innerText = msg;
+        i.classList.add('visible');
+        if (success) i.classList.add('success');
+    }
 
     if (redirect && response && (response.status === statusCondition)) window.location.replace(url);
 
-    return false;
+    return msg;
+}
+
+const hideError = () => {
+    for (let i of document.querySelectorAll('.error')) {
+        i.className = 'error';
+    }
 }
 
 const sanitiseObject = (object) => {
@@ -164,7 +172,7 @@ const parseJSON = async (response, requiredFields) => {
         for (let i of requiredFields) if (!Object.hasOwn(text, i)) throw new Error();
         Object.keys(text).forEach(property => {
             if (!requiredFields.includes(property)) delete text[property];
-            if (text[property] === null) throw new Error();
+            if (text[property] === null && property !== 'derived_carid' && property !== 'additional_notes') throw new Error();
             if (typeof text[property] === 'number') {
                 if (text[property] > 1000000 || text[property] < 0) throw new Error();
             }
@@ -179,7 +187,7 @@ const parseJSON = async (response, requiredFields) => {
                             if (i > 1000000) throw new Error();
                         }
                         else if (typeof i === 'string') {
-                            if (i.length > 10000 || text[property].length === 0) throw new Error();
+                            if (i.length > 10000 || i.length === 0) throw new Error();
                         }
                         else if (Array.isArray(i)) throw new Error();
                     }
@@ -203,6 +211,153 @@ const parseBlob = async (response) => {
     }
     catch (error) {
         await showError(error, false);
-        return false;
+    }
+}
+
+const getData = async (type, iterationNumber) => {
+    if (type === 'fullworks') {
+        try {
+            const meta = await getData('text', iterationNumber);
+            const model = await getData('f3d', iterationNumber);
+            const preview = await getData('previews', iterationNumber);
+            const iso = await getData('iso', iterationNumber);
+            const planes = await getData('planes', iterationNumber);
+
+            return { ...meta.data, model: model, preview: preview, iso: iso, planes: planes };
+        }
+        catch (error) {
+            const msg = await showError(error, false, false);
+            throw new Error(msg); // pauses all remaining fetches if one fails.
+        }
+    }
+    else {
+        const dashboardURL = new URL(`https://back.teamblitz.workers.dev/api/dashboard/${type}`);
+        dashboardURL.search = new URLSearchParams({ iterationNumber: iterationNumber }).toString();
+
+        const response = await fetch(dashboardURL, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            const msg = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+            throw new Error(msg);
+        }
+        else {
+            let data;
+            if (type === 'text') data = await parseJSON(response, ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes', 'creatorName', 'creatorUsername', 'scrutineerName', 'derivedCarName', 'derivedCarIteration']);
+            else if (['f3d', 'previews', 'iso', 'planes'].includes(type)) data = await parseBlob(response);
+
+            if (!data) {
+                const msg = await showError('There was an unexpected error.', false);
+                throw new Error(msg);
+            }
+            else return { data: data, contentType: response.headers.get('Content-Type'), contentDisposition: response.headers.get('Content-Disposition') };
+        }
+    }
+}
+
+const upload = async (type, data, filetype) => {
+    let body;
+    let contentHeader;
+
+    if (type === 'fullworks') {
+        try {
+            await upload('text', data.metadata, 'null');
+            await upload('f3d', data.carModel, filetype.carModel);
+            await upload('iso', data.iso, 'png');
+            await upload('planes', data.planes, 'png');
+            await upload('previews', data.preview, filetype.preview);
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    else if (type === 'text') {
+        body = JSON.stringify(data);
+        contentHeader = 'application/json';
+    }
+    else if (type === 'f3d') {
+        body = data;
+        contentHeader = 'application/octet-stream';
+    }
+    else if (type === 'iso' || type === 'planes') {
+        body = data;
+        contentHeader = 'image/png';
+    }
+    else if (type === 'previews') {
+        body = data;
+        if (data.name.split('.')[1] === 'png') contentHeader = 'image/png';
+        else if (data.name.split('.')[1] === 'glb') contentHeader = 'model/gltf-binary';
+        else throw new Error('Incorrect preview file type; please upload a .glb or .png file.')
+    }
+    else throw new Error('Incorrect upload type.');
+
+    try {
+        const url = new URL(`https://back.teamblitz.workers.dev/api/dashboard/${type}`);
+        url.search = new URLSearchParams({ carid: newCarID, fileType: filetype });
+        const response = await fetch(url, {
+            method: 'POST',
+            body: body,
+            headers: {
+                'Content-Type': contentHeader
+            },
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const data = await parseJSON(response, ['carid']);
+            newCarID = data.carid;
+        }
+        else {
+            const err = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+            throw new Error(err);
+        }
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+const processFullCar = async (iterationNumber) => {
+    await showError('Fetching car data...', false, false, false, false, true);
+
+    try {
+        const car = await getData('fullworks', iterationNumber);
+        const devContainer = document.querySelector('#development-container');
+        nextIteration = Number(car.iteration) - 1;
+
+        let changelog = '';
+        for (let i of car.changelog) {
+            changelog += `<li>${i}</li>`;
+        }
+
+        let preview;
+        if (car.preview.contentType === 'image/png') preview = `<img src="${car.preview.data}" class="model-viewer">`;
+        else if (car.preview.contentType === 'model/gltf-binary') preview = `<model-viewer id="car-model" src="${car.preview.data}" class="model-viewer ii${car.iteration}" camera-controls></model-viewer>`;
+        else preview = `<div class="error">There was an error loading the preview.</div>`;
+
+        let derivation = '';
+        if (car['derived_carid'] !== null) derivation = `<p>This design was derived from iteration #${car.derivedCarIteration}, ${car.derivedCarName}. Changes include:</p>`;
+
+        let addNotes = '';
+        if (car['additional_notes'] !== null) addNotes = `<div class="notes"><h3>Additional notes</h3><p>${car['additional_notes']}</p></div></div></div>`;
+
+        const carModelType = car.model.contentDisposition.split('=')[1];
+        const creatorProfileURL = await fetchProfile(car.creatorUsername);
+
+        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${car['car_name']} - Iteration #${car.iteration}</h3><div class="creator"><img src="${creatorProfileURL}" class="portrait"><div class="person"><h3>${car.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${new Date(car['date_created']).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${car.scrutineerName}</p></div></div><p>Frontal Area: ${car['frontal_area']}mm²</p><p>Drag Coefficient: ${car['drag_coefficient']}</p><p class="drag">Drag: ${car['drag_force']}N</p><div class="buttons"><div class="download"><a href="${car.model.data}" download="${car['car_name']}.${carModelType}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${car.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${car.iso.data}"></div><div class="planes"><h3>Planes</h3><img src="${car.planes.data}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
+        hideError();
+
+        document.getElementById('upload').style.display = 'inline-block';
+        document.getElementById('title').innerText = 'Latest Cars';
+
+        document.querySelector('.model-viewer').style.height = '100%';
+        document.querySelector('.model-viewer').style.height = `${document.querySelector('.model-viewer').offsetHeight}px`;
+
+        if (nextIteration !== 0) document.querySelector('#loadMore button').style.display = 'flex';
+    }
+    catch (error) {
+        await showError(error, false);
     }
 }

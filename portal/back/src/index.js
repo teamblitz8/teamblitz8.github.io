@@ -277,7 +277,7 @@ export default {
 					const inputCheck = await validateInputs(url.pathname, request, inputs, env);
 					if (!inputCheck.success) return inputCheck.response;
 
-					if (data.addDetails === '' || data.addDetails === 'null') data.addDetails = null;
+					if (data.addDetails === '') data.addDetails = null;
 
 					let derivedCarID = null;
 					if (data.derivedCar !== 0) {

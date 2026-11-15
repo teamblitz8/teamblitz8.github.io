@@ -1,14 +1,13 @@
 const form = document.querySelector('form');
-const errorText = document.querySelector('.error');
-const username = document.querySelector('#username');
-const password = document.querySelector('#password');
-const rememberMe = document.querySelector('#forever');
-const submit = document.querySelector('#submit');
 
 form.addEventListener('submit', async (e) => {
-    errorText.className = 'error';
+    hideError();
     e.preventDefault();
-    const selected = rememberMe.checked;
+
+    const username = document.querySelector('#username');
+    const password = document.querySelector('#password');
+    const rememberMe = document.querySelector('#forever').checked;
+    const submit = document.querySelector('#submit');
 
     try {
         if (!username.value || !password.value) throw new Error('You must provide both a username and password.');
@@ -22,7 +21,7 @@ form.addEventListener('submit', async (e) => {
             try {
                 const response = await fetch('https://back.teamblitz.workers.dev/api/auth', {
                     method: 'POST',
-                    body: JSON.stringify({ username: username.value, password: password.value, rememberMe: selected }),
+                    body: JSON.stringify({ username: username.value, password: password.value, rememberMe: rememberMe }),
                     headers: {
                         'Content-Type': 'application/json'
                     },

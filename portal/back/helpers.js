@@ -41,7 +41,7 @@ const compare = (a, b) => {
 	}
 }
 
-const buildResponse = async (message, status, contentType, object, blob) => {
+const buildResponse = async (message, status, contentType, object, blob, disposition) => {
     let finalObject = {...{ message: `${message} Timestamp: ${new Date().toISOString()}` }, ...object}
     if (object === 'BLOB') finalObject = blob;
     else finalObject = JSON.stringify(finalObject);
@@ -50,6 +50,7 @@ const buildResponse = async (message, status, contentType, object, blob) => {
         headers: {
             'Access-Control-Allow-Origin': 'https://teamblitz.pages.dev',
             'Content-Type': contentType,
+			'Content-Disposition': disposition,
             'Cache-Control': 'no-store',
             'X-Content-Type-Options': 'nosniff',
             'Vary': 'Origin',
@@ -830,7 +831,7 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
     }
 }
 
-const fetchFromR2 = async (request, pathname, env, filepath, contentHeader) => {
+const fetchFromR2 = async (request, pathname, env, filepath, contentHeader, disposition) => {
     let file;
 
     try {
@@ -877,7 +878,7 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader) => {
 
         return {
             success: true,
-            response: await buildResponse('File successfully fetched', 200, contentHeader, 'BLOB', finalPayload)
+            response: await buildResponse('File successfully fetched', 200, contentHeader, 'BLOB', finalPayload, `inline; filename=${disposition}`)
         }
     }
 }
@@ -1118,9 +1119,9 @@ const pullCarFile = async (iterationNumber, env, pathname, request) => {
 		}
 	}
 
-    const fileType = potentialFiles.objects[0].key.split('.')[1];
+    const fileName = potentialFiles.objects[0].key;
     let header;
-    switch (fileType) {
+    switch (fileName.split('.')[1]) {
         case 'png':
             header = 'image/png';
             break;
@@ -1131,7 +1132,7 @@ const pullCarFile = async (iterationNumber, env, pathname, request) => {
             header = 'application/octet-stream';
     }
 
-	const fetch = await fetchFromR2(request, pathname, env, potentialFiles.objects[0].key, header);
+	const fetch = await fetchFromR2(request, pathname, env, potentialFiles.objects[0].key, header, fileName);
 	if (!fetch.success) {
 		return {
 			success: false,

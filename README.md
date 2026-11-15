@@ -78,7 +78,6 @@ The portal can be accessed at https://teamblitz.pages.dev/portal.
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
 ## To-do (in order of priority)
-- fix the messy code on frontend (improve how errors are shown etc)
 - Make helper functions show up the data types of each argument on vsc (the weird comment thing)
 - replace any .all() with .first()
 - Prompt first-time users to change password upon login.

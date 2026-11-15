@@ -140,15 +140,18 @@ body div {
 }
 
 #show-password {
-    height: 4.5em;
-    width: 4.5em;
+    height: 1.6em;
+    width: 1.6em;
     position: absolute;
-    top: 0.5em;
-    right: 0.2em;
+    top: 0.1em;
+    right: 0;
+    display: block;
 }
 
 #show-password i {
-    font-size: 2.3em;
+    font-size: 1.1em;
+    top: 0.2em;
+    left: 0.4em;
 }
 
 #password-box {

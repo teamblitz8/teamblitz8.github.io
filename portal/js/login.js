@@ -28,7 +28,12 @@ form.addEventListener('submit', async (e) => {
                     credentials: 'include'
                 });
 
-                if (response.ok) await showError('Logging in..', false, true, 'https://teamblitz.pages.dev/portal/', 200, true);
+                if (response.ok) {
+                    await showError('Logging in..', false, true, 'https://teamblitz.pages.dev/portal/', 200, true);
+                    setTimeout(() => {
+                        window.location.replace('https://teamblitz.pages.dev/portal/');
+                    });
+                }
                 else {
                     await showError(undefined, response);
                     submit.disabled = false;

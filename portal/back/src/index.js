@@ -2,30 +2,7 @@
 // breaking change: backend now just sends the car in json, there is no nested objects now
 
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens } = require('../helpers.js');
-
-const updatePassword = async (userid, env, newPassword, pathname, request) => {
-	const hashAndSalt = hash(newPassword);
-	const statement = 'UPDATE users SET password_hash = ?, password_salt = ?, force_password_change = ? WHERE userid = ?';
-
-	try {
-		const query = env.blitz.prepare(statement).bind(hashAndSalt.hash, hashAndSalt.salt, 0, userid);
-		await query.run();
-	}
-	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
-		return {
-			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
-		}
-	}
-
-	await log('info', pathname, request, `Password successfully updated for user ${userid}`);
-	return {
-		success: true,
-		response: await buildResponse('Successfully changed password.', 200, normalHeader)
-	}
-}
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens, updatePassword } = require('../helpers.js');
 
 export default {
 	async fetch(request, env, ctx) {

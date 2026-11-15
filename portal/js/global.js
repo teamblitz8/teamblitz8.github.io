@@ -69,8 +69,6 @@ const waitForUsername = async () => {
 
     while (username.textContent.trim() === '') await wait(100);
 
-    wait(1000);
-
     nav.style.display = 'flex';
     menu.style.width = `${profile.offsetWidth}px`;
 }

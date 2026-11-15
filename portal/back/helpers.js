@@ -1257,16 +1257,23 @@ const pullCarFile = async (iterationNumber, env, pathname, request) => {
 	}
 }
 
-const uploadCarFile = async (carid, env, pathname, request, type, file) => {
-    try {
-        const object = await env.blitzr2.put(`assets/${pathname.split('/').at(-1)}/${carid}.${type.toLowerCase()}`, file);
-        if (object === null) throw new Error('There was no error stack provided; object returned was null - the file already exists.');
-        return await buildResponse('File upload successful.', 200, normalHeader, { carid: carid });
-    }
-    catch (error) {
-        await log('error', pathname, request, `R2 query failed when attempting to upload car file of type ${type} with car id ${carid}`, error);
-        return await buildResponse('There was an unexpected error.', 500, normalHeader);
-    }
+const uploadCarFile = async (carid, env, pathname, request, type, file, userid) => {
+	const carData = await pullCarMetaDataWithCarID(carid, env, pathname, request, false);
+	if (!carData.success) return carData.response;
+	else {
+		if (carData.data.creatorid === userid) {
+			try {
+				const object = await env.blitzr2.put(`assets/${pathname.split('/').at(-1)}/${carid}.${type.toLowerCase()}`, file);
+				if (object === null) throw new Error('There was no error stack provided; object returned was null - the file already exists.');
+				return await buildResponse('File upload successful.', 200, normalHeader, { carid: carid });
+			}
+			catch (error) {
+				await log('error', pathname, request, `R2 query failed when attempting to upload car file of type ${type} with car id ${carid}`, error);
+				return await buildResponse('There was an unexpected error.', 500, normalHeader);
+			}
+		}
+		else return await buildResponse('You must be logged in to view this page.', 401, normalHeader);
+	}
 }
 
 const deleteSessionToken = async (sessionToken, env, pathname, request) => {

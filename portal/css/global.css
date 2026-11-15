@@ -259,6 +259,11 @@ textarea {
     padding: 0.5em 1em;
     border-radius: 100vh;
     margin-top: 10vh;
+    display: none;
+}
+
+.visible {
+    display: inline;
 }
 
 @media screen and (max-width: 1000px) {

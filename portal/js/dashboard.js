@@ -19,16 +19,6 @@ const unfurl = async (iteration) => {
 
 const showPopup = () => document.querySelector('.popup-shroud').classList.toggle('popup-open');
 
-const loadMore = async () => {
-    const button = document.querySelector('#loadMore');
-
-    button.innerHTML = 'Fetching next car..'
-    await processFullCar(nextIteration);
-
-    if (nextIteration === 0) button.style.display = 'none';
-    else button.style.display = 'flex';
-};
-
 document.addEventListener('DOMContentLoaded', async () => {
     const carModel = document.querySelector('#car-model');
     const iso = document.querySelector('#iso');

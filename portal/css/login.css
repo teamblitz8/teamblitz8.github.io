@@ -150,6 +150,7 @@ body div {
 
 #show-password i {
     font-size: 1.1em;
+    position: absolute;
     top: 0.2em;
     left: 0.4em;
 }

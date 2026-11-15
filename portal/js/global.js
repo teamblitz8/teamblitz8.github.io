@@ -65,6 +65,8 @@ const waitForUsername = async () => {
     const username = document.querySelector('#profile p');
     const nav = document.querySelector('#nav');
 
+    console.log(username.textContent.trim());
+
     while (username.textContent.trim() === '') await wait(100);
 
     nav.style.display = 'flex';
@@ -381,3 +383,13 @@ const processFullCar = async (iterationNumber) => {
         await showError(error, false);
     }
 }
+
+const loadMore = async () => {
+    const button = document.querySelector('#loadMore');
+
+    button.innerHTML = 'Fetching next car..'
+    await processFullCar(nextIteration);
+
+    if (nextIteration === 0) button.style.display = 'none';
+    else button.style.display = 'flex';
+};

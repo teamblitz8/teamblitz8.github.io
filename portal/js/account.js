@@ -6,8 +6,7 @@ const confirmPassword = document.querySelector('#confirm-password');
 const username = document.querySelector('#profile p').value;
 
 form.addEventListener('submit', async (e) => {
-    let errored = false;
-    const errors = [];
+    hideError();
     e.preventDefault();
 
     if (!currentPassword.value) {

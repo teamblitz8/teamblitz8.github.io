@@ -11,6 +11,10 @@ html {
     scrollbar-color: #f8ac29 #1f2121;
 }
 
+#submit {
+    cursor: pointer;
+}
+
 body {
     background-color: #1f2121;
 }

@@ -396,7 +396,7 @@ const processFullCar = async (iterationNumber) => {
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '100%');
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);
 
-        if (!latestIteration) {
+        if (latest.iteration === 0) {
             latest.iteration = car.iteration;
             latest.creator = car.creatorName;
             latest.name = car['car_name'];
@@ -410,7 +410,7 @@ const processFullCar = async (iterationNumber) => {
 const loadMore = async () => {
     const button = document.querySelector('#loadMore');
 
-    button.innerHTML = 'Fetching next car..'
+    button.querySelector('button').innerHTML = 'Fetching next car..';
     await processFullCar(nextIteration);
 
     if (nextIteration === 0) button.style.display = 'none';

@@ -1555,7 +1555,7 @@ const fetchAllCars = async (env, pathname, request) => {
 
 	const cars = [];
 
-	for (let i = 0; i <= maxIteration.response; i++) {
+	for (let i = 1; i <= maxIteration.response; i++) {
 		const metadata = await pullCarMetaDataWithIterationNumber(i, env, pathname, request, false);
 		if (!metadata.success) return metadata.response;
 		cars.push(`${metadata.data['car_name']} by ${metadata.data.creatorName} (Iteration #${metadata.data.iteration})`);

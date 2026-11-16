@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const preview = document.querySelector('#preview');
     await processFullCar(0);
 
+    await fetchSelects();
+
     document.querySelector('#drag-coefficient').addEventListener('input', () => document.querySelector('#drag-calc').innerText = `Based on your values, we have calculated drag to be ${calcDrag(document.querySelector('#drag-coefficient').value, document.querySelector('#frontal-area').value)}N`);
     document.querySelector('#frontal-area').addEventListener('input', () => document.querySelector('#drag-calc').innerText = `Based on your values, we have calculated drag to be ${calcDrag(document.querySelector('#drag-coefficient').value, document.querySelector('#frontal-area').value)}N`);
     form.addEventListener('change', () => {

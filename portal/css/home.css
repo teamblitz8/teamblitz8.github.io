@@ -363,6 +363,11 @@ textarea {
     display: none;
 }
 
+#upload {
+    position: relative;
+    z-index: 5;
+}
+
 #metadata-error {
     padding: 0.5em 2em;
     margin: 0.25em 0;

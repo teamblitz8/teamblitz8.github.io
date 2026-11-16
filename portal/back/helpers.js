@@ -678,6 +678,14 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 	}
 }
 
+/**
+ * Checks whether the account associated with the user trying to login is active or not.
+ * @param {string} username The user's username.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{ allow: Boolean, response: Response | undefined }}
+ */
 const checkIfActive = async (username, env, pathname, request) => {
 	const statement = 'SELECT active FROM users WHERE username = ?';
 	let result;
@@ -723,6 +731,16 @@ const checkIfActive = async (username, env, pathname, request) => {
 	}
 }
 
+/**
+ * Creates a database record for a new session token.
+ * @param {Buffer} sessionToken The session token as a Buffer, generated from `crypto.randomBytes()`.
+ * @param {Env} env
+ * @param {string} enteredUsername The user's username.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {boolean} rememberMe Whether the user has opted in to stay logged in for longer.
+ * @returns {{ success: boolean, response: Response | undefined }}
+ */
 const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, request, rememberMe) => {
 	const userID = await fetchUserDataFromUsername(request, pathname, env, enteredUsername);
     if (!userID.success) {
@@ -760,6 +778,15 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 	}
 }
 
+/**
+ * Updates the user's password in the database. (Preview)
+ * @param {string} userid The user ID associated with the account.
+ * @param {Env} env
+ * @param {string} newPassword The new password to be associated with the account.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{ success: boolean, response: Response }}
+ */
 const updatePassword = async (userid, env, newPassword, pathname, request) => {
 	const hashAndSalt = hash(newPassword);
 	const statement = 'UPDATE users SET password_hash = ?, password_salt = ?, force_password_change = ? WHERE userid = ?';
@@ -783,6 +810,14 @@ const updatePassword = async (userid, env, newPassword, pathname, request) => {
 	}
 }
 
+/**
+ * Checks whether the session token sent by the client exists, and returns the user's `userid`.
+ * @param {string} sessionToken The session token as a string, taken from the cookie.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{ allow: boolean, response: Response | undefined, userid: string }}
+ */
 const checkSessionToken = async (sessionToken, env, pathname, request) => {
 	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
 	const attemptedHash = hash(sessionToken, theSalt).hash;
@@ -840,6 +875,11 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
 	}
 }
 
+/**
+ * Parses the cookie header into a comprehensible list.
+ * @param {string} cookieHeader The cookie header sent by the client.
+ * @returns {Array} An array of cookies.
+ */
 const parseCookies = (cookieHeader) => {
 	const list = {};
 	if (!cookieHeader) return list;
@@ -856,6 +896,13 @@ const parseCookies = (cookieHeader) => {
 	return list;
 }
 
+/**
+ * Checks whether there is a valid, authenticated session for this client and account.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Env} env
+ * @returns {{ allow: boolean, response: Response | undefined, userid: string | undefined, sessionToken: string | undefined }} Whether to allow the user to pass, with the `sessionToken` found and the `userid` of the user if allowed, or with a sample `Response` if not.
+ */
 const checkSession = async (request, pathname, env) => {
     const cookieHeader = request.headers.get('Cookie') || '';
     const cookies = parseCookies(cookieHeader);
@@ -869,7 +916,6 @@ const checkSession = async (request, pathname, env) => {
     }
 
     const userid = await checkSessionToken(sessionToken, env, pathname, request);
-    // clear the session token on the browser too
     if (!userid.allow) {
         const response = userid.response;
         response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
@@ -885,8 +931,26 @@ const checkSession = async (request, pathname, env) => {
     }
 }
 
+/**
+ * An ISO 8601 formatted date-time string (e.g., "2026-11-16T18:26:00.000Z").
+ * @typedef {string & { readonly __brand: 'ISODateString' }} ISODateString
+ */
+
+/**
+ * A boolean expressed as a number. 0 corresponds to `false`, whereas 1 corresponds to `true`.
+ * @typedef {string & { readonly __brand: 'BoolNumber' }} BoolNumber
+ */
+
+/**
+ * Fetches all of the user's personal and account data (except password details) using the `userid`.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Env} env
+ * @param {string} userid The user ID associated with the account.
+ * @returns {{ success: boolean, response: Response | { name: string, username: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
+ */
 const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
-	const statement = 'SELECT name, username, last_login, iterations FROM users WHERE userid = ?';
+	const statement = 'SELECT name, username, last_login, iterations, force_password_change FROM users WHERE userid = ?';
 	let results;
 
 	try {
@@ -902,14 +966,14 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 	}
 	
 	if (!results) {
-		log('warn', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, received none`);
+		log('warn', pathname, request, `User record not found for userid ${userid}; expected name, username, last_login, iterations, force_password_change, received none`);
 		return {
             success: false,
             response: buildResponse('User not found.', 404, normalHeader)
         }
 	}
 	else {
-        const expectedFields = ['name', 'username', 'last_login', 'iterations'];
+        const expectedFields = ['name', 'username', 'last_login', 'iterations', 'force_password_change'];
         for (let i of expectedFields) {
 			if (!Object.hasOwn(results, i)) {
 				log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for user id ${userid}; statement: ${statement}`);
@@ -931,8 +995,16 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 	}
 }
 
+/**
+ * Fetches all of the user's personal and account data (except password details) using the `username`.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Env} env
+ * @param {string} username The user's username.
+ * @returns {{ success: boolean, response: Response | { name: string, userid: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
+ */
 const fetchUserDataFromUsername = async (request, pathname, env, username) => {
-    const statement = 'SELECT name, userid, last_login, iterations FROM users WHERE username = ?';
+    const statement = 'SELECT name, userid, last_login, iterations, force_password_change FROM users WHERE username = ?';
     let results;
 
     try {
@@ -948,14 +1020,14 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
     }
     
     if (!results) {
-        log('warn', pathname, request, `User record not found for username ${username}; expected name, userid, last_login, iterations, received none`);
+        log('warn', pathname, request, `User record not found for username ${username}; expected name, userid, last_login, iterations, force_password_change, received none`);
         return {
             success: false,
             response: buildResponse('User not found.', 404, normalHeader)
         }
     }
     else {
-        const expectedFields = ['name', 'userid', 'last_login', 'iterations'];
+        const expectedFields = ['name', 'userid', 'last_login', 'iterations', 'force_password_change'];
         for (let i of expectedFields) {
 			if (!Object.hasOwn(results, i)) {
 				log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch user data for username ${username}; statement: ${statement}`);
@@ -977,6 +1049,16 @@ const fetchUserDataFromUsername = async (request, pathname, env, username) => {
     }
 }
 
+/**
+ * Fetches a file from R2, with built-in null-handling by sending a placeholder image.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Env} env
+ * @param {string} filepath The location of the file in the R2 bucket.
+ * @param {string} contentHeader The value of the 'Content-Type' HTTP header to be sent, varying based on the file type.
+ * @param {string} disposition The filename to be sent within the 'Content-Disposition' header of a successful HTTP response.
+ * @returns {{ success: boolean, response: Response }} Whether the fetch was successful, along with a Response with the data (or placeholder data) if it was, and a sample error Response if it wasn't.
+ */
 const fetchFromR2 = async (request, pathname, env, filepath, contentHeader, disposition) => {
     let file;
 
@@ -1029,6 +1111,15 @@ const fetchFromR2 = async (request, pathname, env, filepath, contentHeader, disp
     }
 }
 
+/**
+ * Fetches the metadata of a car via its iteration number.
+ * @param {number} iterationNumber The iteration number of the car.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {boolean} findDerivations Whether or not to repeat this process for the derived car of this car.
+ * @returns {{ success: boolean, response: Response | undefined, data: { creatorid: string, scrutineerid: string, carid: string, derived_carid: string, car_name: string, iteration: number, date_created: ISODateString, frontal_area: number, drag_coefficient: number, drag_force: number, changelog: Array<string>, additional_notes: string, creatorName: string, creatorUsername: string, scrutineerName: string, derivedCarName: string, derivedCarIteration: number } | undefined }} Whether or not the fetch succeeded, with a JavaScript Object of all the car's metadata if it did, and a sample error Response if it didn't.
+ */
 const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname, request, findDerivations) => {
 	let data;
 	let response;
@@ -1085,7 +1176,7 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 		if ((data['derived_carid'] !== null) && (findDerivations)) {
 			const derivedCar = await pullCarMetaDataWithCarID(data['derived_carid'], env, pathname, request, false);
 			if (!derivedCar.success) {
-				await log('warn', pathname, request, `Fetching car metadata for derived car id ${data['derived_carid']} failed; see earlier error messages for more information`);
+				log('warn', pathname, request, `Fetching car metadata for derived car id ${data['derived_carid']} failed; see earlier error messages for more information`);
 				success = false;
 				response = derivedCar.response;
 				throw new Error();
@@ -1106,6 +1197,15 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 	}
 }
 
+/**
+ * Fetches the metadata of a car via its car ID.
+ * @param {number} carid The car ID of the car.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {boolean} findDerivations Whether or not to repeat this process for the derived car of this car.
+ * @returns {{ success: boolean, response: Response | undefined, data: { creatorid: string, scrutineerid: string, carid: string, derived_carid: string, car_name: string, iteration: number, date_created: ISODateString, frontal_area: number, drag_coefficient: number, drag_force: number, changelog: Array<string>, additional_notes: string, creatorName: string, creatorUsername: string, scrutineerName: string, derivedCarName: string, derivedCarIteration: number } | undefined }} Whether or not the fetch succeeded, with a JavaScript Object of all the car's metadata if it did, and a sample error Response if it didn't.
+ */
 const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDerivations) => {
 	let data;
 	let response;
@@ -1119,23 +1219,23 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 			data = await query.first();
 		}
 		catch (error) {
-			await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
+			log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${carStatement}`, error);
 			success = false;
-			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			response = buildResponse('There was an unexpected error.', 500, normalHeader);
 			throw new Error();
 		}
 
 		if (!data) {
-			await log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
+			log('warn', pathname, request, `D1 query returned no data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
 			success = false;
-			response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+			response = buildResponse('There was an unexpected error.', 500, normalHeader);
 			throw new Error();
 		}
 
 		for (let i of expectedCarFields) {
 			if (!Object.hasOwn(data, i)) {
-				await log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
-				response = await buildResponse('There was an unexpected error.', 500, normalHeader);
+				log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch metadata for car id ${carid}; statement: ${carStatement}`);
+				response = buildResponse('There was an unexpected error.', 500, normalHeader);
 				success = false;
 				throw new Error();
 			}
@@ -1162,7 +1262,7 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 		if ((data['derived_carid'] !== null) && (findDerivations)) {
 			const derivedCar = await pullCarMetaDataWithCarID(data['derived_carid'], env, pathname, request, false);
 			if (!derivedCar.success) {
-				await log('warn', pathname, request, `Fetching car metadata for derived car id ${data['derived_carid']} failed; see earlier error messages for more information`);
+				log('warn', pathname, request, `Fetching car metadata for derived car id ${data['derived_carid']} failed; see earlier error messages for more information`);
 				success = false;
 				response = derivedCar.response;
 				throw new Error();
@@ -1183,6 +1283,13 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 	}
 }
 
+/**
+ * Finds the current maximum car iteration in the database.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Env} env
+ * @returns {{ success: boolean, response: Response | number }} Whether the request succeeded, with the maximum iteration number if it did and a sample Error response if it didn't.
+ */
 const identifyMaxIteration = async (request, pathname, env) => {
 	const statement = 'SELECT max(iteration) as max_iteration FROM cars';
 	let selection;
@@ -1190,18 +1297,18 @@ const identifyMaxIteration = async (request, pathname, env) => {
 		selection = await env.blitz.prepare(statement).first();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
 	if (selection === null) {
-		await log('warn', pathname, request, `Maximum iteration could not be found when executing the statement: ${statement}; expected an integer, received null`);
+		log('warn', pathname, request, `Maximum iteration could not be found when executing the statement: ${statement}; expected an integer, received null`);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error', 500, normalHeader)
+			response: buildResponse('There was an unexpected error', 500, normalHeader)
 		}
 	}
 	else {
@@ -1212,6 +1319,19 @@ const identifyMaxIteration = async (request, pathname, env) => {
 	}
 }
 
+/**
+ * An Array with every metadata field required each corresponding to the car.
+ * @typedef {[creatorid: string, scrutineerid: string, carid: string, derived_carid: string, car_name: string, iteration: number, date_created: ISODateString, frontal_area: number, drag_coefficient: number, drag_force: number, changelog: string, additional_notes: string]} carArray
+ */
+
+/**
+ * Uploads a new car's metadata into the database.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Env} env
+ * @param {carArray} carArray An Array with every metadata field required each corresponding to the car.
+ * @returns { success: boolean, response: Response } Whether the upload was successful and the appropriate Response for it.
+ */
 const uploadCarMetadata = async (request, pathname, env, carArray) => {
 	const statement = 'INSERT INTO cars (creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 	
@@ -1220,18 +1340,26 @@ const uploadCarMetadata = async (request, pathname, env, carArray) => {
 		await query.run();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 	return {
 		success: true,
-		response: await buildResponse('Upload successful.', 200, normalHeader, { carid: carArray[2] })
+		response: buildResponse('Upload successful.', 200, normalHeader, { carid: carArray[2] })
 	}
 }
 
+/**
+ * Fetches a file for a car via its iteration number using the API pathname to identify the type of file required.
+ * @param {number} iterationNumber The car's iteration number.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{ success: boolean, response: Response}} Whether the fetch succeeded, with the binary blob in a Response if it did, and a sample error Response if it didn't.
+ */
 const pullCarFile = async (iterationNumber, env, pathname, request) => {
 	const carid = await pullCarMetaDataWithIterationNumber(iterationNumber, env, pathname, request, false);
 	if (!carid.success) {
@@ -1246,18 +1374,18 @@ const pullCarFile = async (iterationNumber, env, pathname, request) => {
 		potentialFiles = await env.blitzr2.list({ prefix: `assets/${pathname.split('/').at(-1)}/${carid.data.carid}` });
 	}
 	catch (error) {
-		await log('error', pathname, request, `R2 query failed when attempting to fetch list of car model files for iteration ${iterationNumber}`, error);
+		log('error', pathname, request, `R2 query failed when attempting to fetch list of car model files for iteration ${iterationNumber}`, error);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
 	if (potentialFiles.objects.length === 0) {
-		await log('warn', pathname, request, `No car model files were found for iteration ${iterationNumber}.`);
+		log('warn', pathname, request, `No car model files were found for iteration ${iterationNumber}.`);
 		return {
 			success: false,
-			response: await buildResponse('Car model file not found.', 404, normalHeader)
+			response: buildResponse('Car model file not found.', 404, normalHeader)
 		}
 	}
 
@@ -1289,6 +1417,18 @@ const pullCarFile = async (iterationNumber, env, pathname, request) => {
 	}
 }
 
+/**
+ * Uploads a new file corresponding to a specific car, with built-in security to ensure another user cannot edit the car of another user.
+ * @param {string} carid The car ID of the car.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {'f3d' | 'previews' | 'planes' | 'iso'} type The type of file it is.
+ * @param {Blob} file The file blob to be uploaded.
+ * @param {string} userid The user ID of the user attempting to upload this car file.
+ * @returns {Response} The appropriate Response object based on whether the upload was successful or not.
+ */
+
 const uploadCarFile = async (carid, env, pathname, request, type, file, userid) => {
 	const carData = await pullCarMetaDataWithCarID(carid, env, pathname, request, false);
 	if (!carData.success) return carData.response;
@@ -1297,17 +1437,25 @@ const uploadCarFile = async (carid, env, pathname, request, type, file, userid) 
 			try {
 				const object = await env.blitzr2.put(`assets/${pathname.split('/').at(-1)}/${carid}.${type.toLowerCase()}`, file);
 				if (object === null) throw new Error('There was no error stack provided; object returned was null - the file already exists.');
-				return await buildResponse('File upload successful.', 200, normalHeader, { carid: carid });
+				return buildResponse('File upload successful.', 200, normalHeader, { carid: carid });
 			}
 			catch (error) {
-				await log('error', pathname, request, `R2 query failed when attempting to upload car file of type ${type} with car id ${carid}`, error);
-				return await buildResponse('There was an unexpected error.', 500, normalHeader);
+				log('error', pathname, request, `R2 query failed when attempting to upload car file of type ${type} with car id ${carid}`, error);
+				return buildResponse('There was an unexpected error.', 500, normalHeader);
 			}
 		}
-		else return await buildResponse('You must be logged in to view this page.', 401, normalHeader);
+		else return buildResponse('You must be logged in to view this page.', 401, normalHeader);
 	}
 }
 
+/**
+ * Deletes a session token from the database and from the client's cookies.
+ * @param {string} sessionToken The session token as a string, taken from the cookie.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{success: boolean, response: Response}} Whether the deletion succeeded, with an appropriate Response object (with the session token removed if successful).
+ */
 const deleteSessionToken = async (sessionToken, env, pathname, request) => {
 	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
 	const hashed = hash(sessionToken, theSalt).hash;
@@ -1318,14 +1466,14 @@ const deleteSessionToken = async (sessionToken, env, pathname, request) => {
 		await query.run();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
-	const response = await buildResponse('Logged out successfully.', 200, normalHeader);
+	const response = buildResponse('Logged out successfully.', 200, normalHeader);
     response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
 	return {
 		success: true,
@@ -1333,6 +1481,15 @@ const deleteSessionToken = async (sessionToken, env, pathname, request) => {
 	}
 }
 
+/**
+ * Deletes every session token from the database and from the client's cookies.
+ * @param {string} userid The user ID of the user.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} sessionToken The session token as a string, taken from the cookie.
+ * @returns {{success: boolean, response: Response}} Whether the deletion succeeded, with an appropriate Response object (with the session token removed if successful).
+ */
 const deleteAllSessionTokens = async (userid, env, pathname, request, sessionToken) => {
 	const statement = 'DELETE FROM sessiontokens WHERE userid = ?';
 	try {
@@ -1340,14 +1497,14 @@ const deleteAllSessionTokens = async (userid, env, pathname, request, sessionTok
 		await query.run();
 	}
 	catch (error) {
-		await log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
 		return {
 			success: false,
-			response: await buildResponse('There was an unexpected error.', 500, normalHeader)
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
 
-	const response = await buildResponse('Logged out of all devices successfully.', 200, normalHeader);
+	const response = buildResponse('Logged out of all devices successfully.', 200, normalHeader);
     response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
 	return {
 		success: true,

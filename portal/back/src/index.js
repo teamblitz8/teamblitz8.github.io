@@ -97,8 +97,8 @@ export default {
 
 				console.log(dataFetch.response);
 
-				if (dataFetch.response['force_password_change'] === 1) return await buildResponse('Your password has expired. Please change your password.', 403, normalHeader);
-				else return await buildResponse('Fetching user data..', 200, normalHeader, dataFetch.response);
+				if (dataFetch.response['force_password_change'] === 1) return buildResponse('Your password has expired. Please change your password.', 403, normalHeader);
+				else return buildResponse('Fetching user data..', 200, normalHeader, dataFetch.response);
 			}
 
 			else if (url.pathname === '/api/profile') {
@@ -144,7 +144,7 @@ export default {
 				
 				if (request.method === 'GET') {
 					const iterationNumberString = url.searchParams.get('iterationNumber');
-					if (iterationNumberString === null) return await buildResponse('There was an unexpected error.', 400, normalHeader);
+					if (iterationNumberString === null) return buildResponse('There was an unexpected error.', 400, normalHeader);
 					const iterationNumber = Number(iterationNumberString);
 					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
 					if (!maxIteration.success) return maxIteration.response;
@@ -166,13 +166,13 @@ export default {
 						const carData = await pullCarMetaDataWithIterationNumber(maxIteration.response, env, url.pathname, request, true);
 
 						if (!carData.success) return carData.response;
-						else return await buildResponse('Fetched car data', 200, normalHeader, carData.data);
+						else return buildResponse('Fetched car data', 200, normalHeader, carData.data);
 					}
 					else {
 						const carData = await pullCarMetaDataWithIterationNumber(iterationNumber, env, url.pathname, request, true);
 
 						if (!carData.success) return carData.response;
-						else return await buildResponse('Fetched car data', 200, normalHeader, carData.data);
+						else return buildResponse('Fetched car data', 200, normalHeader, carData.data);
 					}
 				}
 				else if (request.method === 'POST') {
@@ -289,7 +289,7 @@ export default {
 					const finalUpload = await uploadCarMetadata(request, url.pathname, env, carArray);
 					return finalUpload.response;
 				}
-				else return await buildResponse('There was an unexpected error.', 405, normalHeader);
+				else return buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
 
 			else if (url.pathname === '/api/dashboard/f3d') {
@@ -304,7 +304,7 @@ export default {
 				
 				if (request.method === 'GET') {
 					const iterationNumberString = url.searchParams.get('iterationNumber');
-					if (iterationNumberString === null) return await buildResponse('There was an unexpected error.', 400, normalHeader);
+					if (iterationNumberString === null) return buildResponse('There was an unexpected error.', 400, normalHeader);
 					const iterationNumber = Number(iterationNumberString);
 					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
 					if (!maxIteration.success) return maxIteration.response;
@@ -372,7 +372,7 @@ export default {
 
 					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
 				}
-				else return await buildResponse('There was an unexpected error.', 405, normalHeader);
+				else return buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
 
 			else if (url.pathname === '/api/dashboard/previews') {
@@ -387,7 +387,7 @@ export default {
 				
 				if (request.method === 'GET') {
 					const iterationNumberString = url.searchParams.get('iterationNumber');
-					if (iterationNumberString === null) return await buildResponse('There was an unexpected error.', 400, normalHeader);
+					if (iterationNumberString === null) return buildResponse('There was an unexpected error.', 400, normalHeader);
 					const iterationNumber = Number(iterationNumberString);
 					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
 					if (!maxIteration.success) return maxIteration.response;
@@ -455,7 +455,7 @@ export default {
 
 					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
 				}
-				else return await buildResponse('There was an unexpected error.', 405, normalHeader);
+				else return buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
 
 			else if (url.pathname.startsWith('/api/dashboard/')) {
@@ -470,7 +470,7 @@ export default {
 				
 				if (request.method === 'GET') {
 					const iterationNumberString = url.searchParams.get('iterationNumber');
-					if (iterationNumberString === null) return await buildResponse('There was an unexpected error.', 400, normalHeader);
+					if (iterationNumberString === null) return buildResponse('There was an unexpected error.', 400, normalHeader);
 					const iterationNumber = Number(iterationNumberString);
 					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
 					if (!maxIteration.success) return maxIteration.response;
@@ -538,7 +538,7 @@ export default {
 
 					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
 				}
-				else return await buildResponse('There was an unexpected error.', 405, normalHeader);
+				else return buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
 
 			else if (url.pathname === '/api/change-password') {
@@ -622,11 +622,11 @@ export default {
 				return deletion.response;
 			}
 
-			else return await buildResponse('Not Found', 404, normalHeader);
+			else return buildResponse('Not Found', 404, normalHeader);
 		}
 		catch (error) {
-			await log('error', url.pathname, request, 'Unexpected error thrown, uncaught by all functions.', error)
-			return await buildResponse('There was an unexpected error.', 500, normalHeader);
+			log('error', url.pathname, request, 'Unexpected error thrown, uncaught by all functions.', error)
+			return buildResponse('There was an unexpected error.', 500, normalHeader);
 		}
 	},
 

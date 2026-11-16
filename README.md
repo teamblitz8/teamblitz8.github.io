@@ -78,7 +78,7 @@ The portal can be accessed at https://teamblitz.pages.dev/portal.
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
 ## To-do (in order of priority)
-- Make helper functions show up the data types of each argument on vsc (the weird comment thing)
+- Improve error handling (consider adding new parameter to showerror() to ensure only one error box is affected)
 - Complete input validation for files, by analysing the actual binary contents
 - Downloads file names need to be .f3d or .f3z based on file type
 - Complete the My Designs and My Account pages
@@ -86,6 +86,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Add a filter, sort by bar on the dashboard
 - decrease number of helpers e.g. fetchuserdata can do everything
 - Reduce CPU time of the worker
+- Remove redundant success
 - Complete the contact form on the main site
 - Transfer the site from being hosted on GitHub Pages to Cloudflare on custom domain.
 

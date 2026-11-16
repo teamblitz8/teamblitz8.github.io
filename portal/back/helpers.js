@@ -1542,6 +1542,28 @@ const checkFileMagicBytes = async (file, expectedExtension) => {
 	else return false;
 }
 
+/**
+ * Fetches the metadata of all cars from a database and returns their name, creator and iteration number for upload selection purposes.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {Response} An appropriate Response object based on whether the fetch succeeded or not.
+ */
+const fetchAllCars = async (env, pathname, request) => {
+	const maxIteration = await identifyMaxIteration(request, pathname, env);
+	if (!maxIteration.success) return maxIteration.response;
+
+	const cars = [];
+
+	for (let i = 0; i <= maxIteration.response; i++) {
+		const metadata = await pullCarMetaDataWithIterationNumber(i, env, pathname, request, false);
+		if (!metadata.success) return metadata.response;
+		cars.push(`${metadata.data['car_name']} by ${metadata.data.creatorName} (Iteration #${metadata.data.iteration})`);
+	}
+
+	return buildResponse('Fetched successfully.', 200, normalHeader, { cars: cars });
+}
+
 module.exports = {
     convertBufferToString,
     hash,
@@ -1575,5 +1597,6 @@ module.exports = {
     deleteSessionToken,
     deleteAllSessionTokens,
 	updatePassword,
-	checkFileMagicBytes
+	checkFileMagicBytes,
+	fetchAllCars
 };

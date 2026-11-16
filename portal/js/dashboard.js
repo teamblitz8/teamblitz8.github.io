@@ -16,6 +16,32 @@ const unfurl = async (iteration) => {
     icon.className = expanded ? 'fa-solid fa-caret-up' : 'fa-solid fa-caret-down';
 }
 
+const fetchSelects = async () => {
+    try {
+        const response = await fetch('https://back.teamblitz.workers.dev/api/all-cars', {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const data = await parseJSON(response, ['message', 'cars']);
+            const select = document.querySelector('#derived-car');
+            for (let i of data.cars) {
+                const newOption = document.createElement('option');
+                newOption.innerText = i;
+                newOption.value = i.split('#')[1].split(')')[0];
+
+                select.appendChild(newOption);
+            }
+        }
+        else await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+    }
+    catch (error) {
+        console.error(error);
+        await showError(error, false, false);
+    }
+}
+
 const showPopup = () => document.querySelector('.popup-shroud').classList.toggle('popup-open');
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -29,11 +55,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('#frontal-area').addEventListener('input', () => document.querySelector('#drag-calc').innerText = `Based on your values, we have calculated drag to be ${calcDrag(document.querySelector('#drag-coefficient').value, document.querySelector('#frontal-area').value)}N`);
     form.addEventListener('change', () => {
         const currentValue = form.elements['scrutineerer'].value;
-        if (currentValue !== 'chen') document.querySelector('#funny').style.display = 'inline';
+        if (currentValue !== 'chen' && currentValue) document.querySelector('#funny').style.display = 'inline';
         else document.querySelector('#funny').style.display = 'none';
     });
 
-    for (let [key, value] of Object.entries({ carModel, iso, planes, preview })) {
+    for (let [key, value] of Object.entries({ carModel: carModel, iso: iso, planes: planes, preview: preview })) {
         value.addEventListener('change', () => {
             if (value.files.length !== 0) document.getElementById(`${key}-button`).innerText = `File selected: ${value.files[0].name}, ${value.files[0].size} bytes`;
         })

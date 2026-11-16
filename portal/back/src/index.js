@@ -2,7 +2,7 @@
 // breaking change: backend now just sends the car in json, there is no nested objects now
 
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens, updatePassword, checkFileMagicBytes } = require('../helpers.js');
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens, updatePassword, checkFileMagicBytes, fetchAllCars } = require('../helpers.js');
 
 export default {
 	async fetch(request, env, ctx) {
@@ -598,6 +598,19 @@ export default {
 					else return await deleteAllSessionTokens(userid, env, url.pathname, request, sessionCheck.sessionToken);
 				}
 				else return authentication.response;
+			}
+
+			else if (url.pathname === '/api/all-cars') {
+				const requestCheck = await checkRequest(url.pathname, request, ['GET']);
+				if (!requestCheck.success) return requestCheck.response;
+
+				const handleIP = await handleIPBan(url.pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
+
+				const sessionCheck = await checkSession(request, url.pathname, env);
+				if (!sessionCheck.allow) return sessionCheck.response;
+
+				return await fetchAllCars(env, url.pathname, request);
 			}
 
 			else if (url.pathname === '/api/clear-all-sessions') {

@@ -80,6 +80,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 ## To-do (in order of priority)
 - Improve error handling (consider adding new parameter to showerror() to ensure only one error box is affected)
 - Change it so the select actually loads all the previous cars lol
+- Derived cars dont exist anymore?
 - Complete the My Designs and My Account pages
 - Add mobile responsivity
 - Make a leaderboard!

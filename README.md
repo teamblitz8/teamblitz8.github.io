@@ -79,8 +79,8 @@ The portal is strictly for internal team use only. If you would like to see a de
 
 ## To-do (in order of priority)
 - Improve error handling (consider adding new parameter to showerror() to ensure only one error box is affected)
-- Downloads file names need to be .f3d or .f3z based on file type
 - Complete the My Designs and My Account pages
+- Add mobile responsivity
 - Make a leaderboard!
 - Add a filter, sort by bar on the dashboard
 - decrease number of helpers e.g. fetchuserdata can do everything

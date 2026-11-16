@@ -1,4 +1,3 @@
-// consider adding new parameter to showerror()? to ensure only one error box is affected
 const form = document.querySelector('#car-info');
 let nextIteration;
 let newCarID;

@@ -44,7 +44,7 @@ form.addEventListener('submit', async (e) => {
 
         if (!response.ok) {
             submit.disabled = false;
-            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+            await showError(undefined, response, true);
         }
     }
     catch (error) {

@@ -31,6 +31,8 @@ const fetchSelects = async () => {
                 newOption.innerText = i;
                 newOption.value = i.split('#')[1].split(')')[0];
 
+                if (i === data.cars.at(-1)) newOption.innerText = `Latest iteration: ${i.split('(')[0].trim()}`;
+
                 select.appendChild(newOption);
             }
         }

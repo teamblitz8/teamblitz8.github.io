@@ -1,21 +1,5 @@
 let username;
 let name;
-let latest = new Proxy({ name: '', creator: '', iteration: 0 }, {
-    set(target, property, value) {
-        target[property] = value;
-        if (property === 'name') {
-            updateSelects();
-        }
-        return true;
-    }
-});
-
-const updateSelects = () => {
-    if (window.location.href !== 'https://teamblitz.pages.dev/portal/' || window.location.href !== 'https://teamblitz.pages.dev/portal') return;
-
-    document.querySelector('#derived-car').firstChild.innerText = `Latest iteration: ${latest.name} by ${latest.creator} (Iteration ${latest.iteration})`;
-    document.querySelector('#derived-car').firstChild.value = latest.iteration;
-}
 
 const fetchProfile = async (username) => {
     const endpoint = new URL('https://back.teamblitz.workers.dev/api/profile');
@@ -395,12 +379,6 @@ const processFullCar = async (iterationNumber) => {
 
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '100%');
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);
-
-        if (latest.iteration === 0) {
-            latest.iteration = car.iteration;
-            latest.creator = car.creatorName;
-            latest.name = car['car_name'];
-        }
     }
     catch (error) {
         await showError(error, false);

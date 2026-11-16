@@ -1512,6 +1512,34 @@ const deleteAllSessionTokens = async (userid, env, pathname, request, sessionTok
 	}
 }
 
+/**
+ * Checks whether a file has the correct magic bytes its expected extension.
+ * @param {Blob} file The file blob to be checked.
+ * @param {string} expectedExtension The expected file type for this file, as a file extension.
+ * @returns {Boolean} Whether the file is safe or not.
+ */
+const checkFileMagicBytes = (file, expectedExtension) => {
+	const bytes = file instanceof Uint8Array ? file : new Uint8Array(file);
+	if (expectedExtension === 'f3d/f3z') {
+		if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03 && bytes[3] === 0x04) return true;
+		else return false;
+	}
+	else if (expectedExtension === 'glb') {
+		if (bytes[0] === 0x67 && bytes[1] === 0x6C && bytes[2] === 0x54 && bytes[3] === 0x46) return true;
+		else return false;
+	}
+	else if (expectedExtension === 'png') {
+		if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47 && bytes[4] === 0x0D && bytes[5] === 0x0A && bytes[6] === 0x1A && bytes[7] === 0x0A) return true;
+		else return false;
+	}
+	else if (expectedExtension === 'glb/png') {
+		if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47 && bytes[4] === 0x0D && bytes[5] === 0x0A && bytes[6] === 0x1A && bytes[7] === 0x0A) return true;
+		else if (bytes[0] === 0x67 && bytes[1] === 0x6C && bytes[2] === 0x54 && bytes[3] === 0x46) return true;
+		else return false;
+	}
+	else return false;
+}
+
 module.exports = {
     convertBufferToString,
     hash,
@@ -1544,5 +1572,6 @@ module.exports = {
     uploadCarFile,
     deleteSessionToken,
     deleteAllSessionTokens,
-	updatePassword
+	updatePassword,
+	checkFileMagicBytes
 };

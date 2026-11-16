@@ -79,7 +79,6 @@ The portal is strictly for internal team use only. If you would like to see a de
 
 ## To-do (in order of priority)
 - Improve error handling (consider adding new parameter to showerror() to ensure only one error box is affected)
-- Complete input validation for files, by analysing the actual binary contents
 - Downloads file names need to be .f3d or .f3z based on file type
 - Complete the My Designs and My Account pages
 - Make a leaderboard!
@@ -89,6 +88,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Remove redundant success
 - Complete the contact form on the main site
 - Transfer the site from being hosted on GitHub Pages to Cloudflare on custom domain.
+- Complete input validation for files, by parsing and reencoding files.
 
 ## Enquiries
 If you have any sponsorship enquiries for my team, please contact us at business@teamblitz.uk.

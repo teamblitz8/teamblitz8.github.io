@@ -2,7 +2,7 @@
 // breaking change: backend now just sends the car in json, there is no nested objects now
 
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens, updatePassword } = require('../helpers.js');
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens, updatePassword, checkFileMagicBytes } = require('../helpers.js');
 
 export default {
 	async fetch(request, env, ctx) {
@@ -370,6 +370,9 @@ export default {
 					const inputCheck = await validateInputs(url.pathname, request, inputs, env);
 					if (!inputCheck.success) return inputCheck.response;
 
+					const fileCheck = checkFileMagicBytes(parseRequest.blob, 'f3d/f3z');
+					if (!fileCheck) return buildResponse('There was an unexpected error.', 400, normalHeader);
+
 					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
 				}
 				else return buildResponse('There was an unexpected error.', 405, normalHeader);
@@ -452,6 +455,9 @@ export default {
 
 					const inputCheck = await validateInputs(url.pathname, request, inputs, env);
 					if (!inputCheck.success) return inputCheck.response;
+					
+					const fileCheck = checkFileMagicBytes(parseRequest.blob, 'glb/png');
+					if (!fileCheck) return buildResponse('There was an unexpected error.', 400, normalHeader);
 
 					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
 				}
@@ -504,8 +510,8 @@ export default {
 					const parseRequest = await parseRequestBlob(url.pathname, request, 5000000);
 					if (!parseRequest.success) return parseRequest.response;
 
-					const maxIteration = await identifyMaxIteration(request, url.pathname, env);
-					if (!maxIteration.success) return maxIteration.response;
+					const fileCheck = checkFileMagicBytes(parseRequest.blob, 'png');
+					if (!fileCheck) return buildResponse('There was an unexpected error.', 400, normalHeader);
 
 					const carid = url.searchParams.get('carid');
 					const fileType = url.searchParams.get('fileType');

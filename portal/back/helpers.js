@@ -384,7 +384,7 @@ const validateInputs = async (pathname, request, inputs, env, delay) => {
                 let results;
 
                 try {
-                    const selection = env.blitz.prepare(i.requirements.dbCheck.statement).bind(...i.requirements.vars);
+                    const selection = env.blitz.prepare(i.requirements.dbCheck.statement).bind(...i.requirements.dbCheck.vars);
                     results = await selection.first();
                 }
                 catch (error) {
@@ -1516,10 +1516,12 @@ const deleteAllSessionTokens = async (userid, env, pathname, request, sessionTok
  * Checks whether a file has the correct magic bytes its expected extension.
  * @param {Blob} file The file blob to be checked.
  * @param {string} expectedExtension The expected file type for this file, as a file extension.
- * @returns {Boolean} Whether the file is safe or not.
+ * @returns {Promise<Boolean>} Whether the file is safe or not.
  */
-const checkFileMagicBytes = (file, expectedExtension) => {
-	const bytes = file instanceof Uint8Array ? file : new Uint8Array(file);
+const checkFileMagicBytes = async (file, expectedExtension) => {
+	const bytes = file instanceof Uint8Array
+		? file
+		: new Uint8Array(await file.arrayBuffer());
 	if (expectedExtension === 'f3d/f3z') {
 		if (bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03 && bytes[3] === 0x04) return true;
 		else return false;

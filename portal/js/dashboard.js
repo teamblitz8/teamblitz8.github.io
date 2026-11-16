@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     hideError();
 
-    const greeting = document.querySelector('#greeting');
-    greeting.innerText = `Hello, ${name}`;
+    document.querySelector('#greeting').innerText = `Hello, ${name}`;
+    document.querySelector('#logged-username').innerText = `Logged in as ${username}`;
 });
 
 form.addEventListener('submit', async (e) => {

@@ -301,6 +301,7 @@ export default {
 
 				const sessionCheck = await checkSession(request, url.pathname, env);
 				if (!sessionCheck.allow) return sessionCheck.response;
+				const userid = sessionCheck.userid;
 				
 				if (request.method === 'GET') {
 					const iterationNumberString = url.searchParams.get('iterationNumber');
@@ -370,10 +371,10 @@ export default {
 					const inputCheck = await validateInputs(url.pathname, request, inputs, env);
 					if (!inputCheck.success) return inputCheck.response;
 
-					const fileCheck = checkFileMagicBytes(parseRequest.blob, 'f3d/f3z');
+					const fileCheck = await checkFileMagicBytes(parseRequest.blob, 'f3d/f3z');
 					if (!fileCheck) return buildResponse('There was an unexpected error.', 400, normalHeader);
 
-					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
+					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob, userid);
 				}
 				else return buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
@@ -387,6 +388,7 @@ export default {
 
 				const sessionCheck = await checkSession(request, url.pathname, env);
 				if (!sessionCheck.allow) return sessionCheck.response;
+				const userid = sessionCheck.userid;
 				
 				if (request.method === 'GET') {
 					const iterationNumberString = url.searchParams.get('iterationNumber');
@@ -456,15 +458,15 @@ export default {
 					const inputCheck = await validateInputs(url.pathname, request, inputs, env);
 					if (!inputCheck.success) return inputCheck.response;
 					
-					const fileCheck = checkFileMagicBytes(parseRequest.blob, 'glb/png');
+					const fileCheck = await checkFileMagicBytes(parseRequest.blob, 'glb/png');
 					if (!fileCheck) return buildResponse('There was an unexpected error.', 400, normalHeader);
 
-					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
+					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob, userid);
 				}
 				else return buildResponse('There was an unexpected error.', 405, normalHeader);
 			}
 
-			else if (url.pathname.startsWith('/api/dashboard/')) {
+			else if (url.pathname === '/api/dashboard/iso' || url.pathname === '/api/dashboard/planes') {
 				const requestCheck = await checkRequest(url.pathname, request, ['POST', 'GET']);
 				if (!requestCheck.success) return requestCheck.response;
 
@@ -473,6 +475,7 @@ export default {
 
 				const sessionCheck = await checkSession(request, url.pathname, env);
 				if (!sessionCheck.allow) return sessionCheck.response;
+				const userid = sessionCheck.userid;
 				
 				if (request.method === 'GET') {
 					const iterationNumberString = url.searchParams.get('iterationNumber');
@@ -510,7 +513,7 @@ export default {
 					const parseRequest = await parseRequestBlob(url.pathname, request, 5000000);
 					if (!parseRequest.success) return parseRequest.response;
 
-					const fileCheck = checkFileMagicBytes(parseRequest.blob, 'png');
+					const fileCheck = await checkFileMagicBytes(parseRequest.blob, 'png');
 					if (!fileCheck) return buildResponse('There was an unexpected error.', 400, normalHeader);
 
 					const carid = url.searchParams.get('carid');
@@ -542,7 +545,7 @@ export default {
 					const inputCheck = await validateInputs(url.pathname, request, inputs, env);
 					if (!inputCheck.success) return inputCheck.response;
 
-					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob);
+					return await uploadCarFile(carid, env, url.pathname, request, fileType, parseRequest.blob, userid);
 				}
 				else return buildResponse('There was an unexpected error.', 405, normalHeader);
 			}

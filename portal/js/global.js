@@ -68,6 +68,7 @@ const waitForUsername = async () => {
     console.log(username.textContent.trim());
 
     while (username.textContent.trim() === '') await wait(100);
+    while (document.querySelector('#profile img').src === '') await wait(100);
 
     nav.style.display = 'flex';
     menu.style.width = `${profile.offsetWidth}px`;

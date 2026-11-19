@@ -16,7 +16,7 @@ const fetchProfile = async (username) => {
     }
     catch (error) {
         console.error(error);
-        await showError(error, false, false);
+        await showError(error, false, false, undefined, undefined, false, '#main-error');
     }
 }
 
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (response.ok) {
             data = await parseJSON(response, ['username', 'name']);
-            if (!data) return await showError('There was an unexpected error.', response, false);
+            if (!data) return await showError('There was an unexpected error.', response, false, undefined, undefined, false, '#main-error');
 
             username = await data.username;
             name = await data.name;
@@ -43,17 +43,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             await waitForUsername();
         }
         else {
-            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#main-error');
             if (!window.location.href.startsWith('https://teamblitz.pages.dev/portal/account')) {
                 const url = 'https://teamblitz.pages.dev/portal/account';
                 url.search = new URLSearchParams({ redirect: true });
-                await showError(undefined, response, true, url, 403);
+                await showError(undefined, response, true, url, 403, false, '#main-error');
             }
         }
     }
     catch (error) {
         console.error(error);
-        await showError(error, false, false);
+        await showError(error, false, false, undefined, undefined, false, '#main-error');
     }
 });
 
@@ -94,11 +94,11 @@ const logout = async () => {
         });
 
         if (response.ok) window.location.replace('https://teamblitz.pages.dev');
-        else await showError(undefined, response, false);
+        else await showError(undefined, response, false, undefined, undefined, false, '#main-error');
     }
     catch (error) {
         console.error(error);
-        await showError(error, false, false);
+        await showError(error, false, false, undefined, undefined, false, '#main-error');
     }
 }
 
@@ -115,21 +115,28 @@ const unroll = () => {
     }
 }
 
-const showError = async (error, response, redirect, url, statusCondition, success) => {
-    const err = document.querySelectorAll('.error');
+const showError = async (error, response, redirect, url, statusCondition, success, errorElement) => {
+    const err = errorElement
+        ? [typeof errorElement === 'string' ? document.querySelector(errorElement) : errorElement].filter(Boolean)
+        : document.querySelectorAll('.error');
     let msg;
-    if (response === false) msg = typeof error === 'string' ? error : error.message;
+    if (response === false) msg = typeof error === 'string' ? error : error?.message;
     else {
         msg = await parseJSON(response, ['message']);
         if (!msg) msg = 'There was an unexpected error.';
         else msg = msg.message;
         console.error(`${response.status}: ${msg}`);
     }
+    if (!msg) msg = 'There was an unexpected error.';
 
     for (let i of err) {
         i.innerText = msg;
+        i.classList.remove('success');
         i.classList.add('visible');
         if (success) i.classList.add('success');
+        i.style.removeProperty('display');
+        i.setAttribute('role', success ? 'status' : 'alert');
+        i.setAttribute('aria-live', 'polite');
     }
 
     if (redirect && response && (response.status === statusCondition)) window.location.replace(url);
@@ -137,9 +144,16 @@ const showError = async (error, response, redirect, url, statusCondition, succes
     return msg;
 }
 
-const hideError = () => {
-    for (let i of document.querySelectorAll('.error')) {
+const hideError = (errorElement) => {
+    const err = errorElement
+        ? [typeof errorElement === 'string' ? document.querySelector(errorElement) : errorElement].filter(Boolean)
+        : document.querySelectorAll('.error');
+
+    for (let i of err) {
         i.className = 'error';
+        i.style.display = 'none';
+        i.removeAttribute('role');
+        i.removeAttribute('aria-live');
     }
 }
 
@@ -230,7 +244,7 @@ const parseBlob = async (response) => {
         return URL.createObjectURL(blob);
     }
     catch (error) {
-        await showError(error, false);
+        await showError(error, false, false, undefined, undefined, false, '#main-error');
     }
 }
 
@@ -246,7 +260,7 @@ const getData = async (type, iterationNumber) => {
             return { ...meta.data, model: model, preview: preview, iso: iso, planes: planes };
         }
         catch (error) {
-            const msg = await showError(error, false, false);
+            const msg = await showError(error, false, false, undefined, undefined, false, '#main-error');
             throw new Error(msg);
         }
     }
@@ -260,7 +274,7 @@ const getData = async (type, iterationNumber) => {
         });
 
         if (!response.ok) {
-            const msg = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+            const msg = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#main-error');
             throw new Error(msg);
         }
         else {
@@ -269,7 +283,7 @@ const getData = async (type, iterationNumber) => {
             else if (['f3d', 'previews', 'iso', 'planes'].includes(type)) data = await parseBlob(response);
 
             if (!data) {
-                const msg = await showError('There was an unexpected error.', false);
+                const msg = await showError('There was an unexpected error.', false, false, undefined, undefined, false, '#main-error');
                 throw new Error(msg);
             }
             else return { data: data, contentType: response.headers.get('Content-Type'), contentDisposition: response.headers.get('Content-Disposition') };
@@ -331,7 +345,7 @@ const upload = async (type, data, filetype) => {
                 newCarID = data.carid;
             }
             else {
-                const err = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+                const err = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#main-error');
                 throw new Error(err);
             }
         }
@@ -342,7 +356,7 @@ const upload = async (type, data, filetype) => {
 }
 
 const processFullCar = async (iterationNumber) => {
-    await showError('Fetching car data...', false, false, false, false, true);
+    await showError('Fetching car data...', false, false, false, false, true, '#main-error');
 
     try {
         const car = await getData('fullworks', iterationNumber);
@@ -412,7 +426,7 @@ const processFullCar = async (iterationNumber) => {
         <div class="image">
             ${preview}
         </div>`;
-        hideError();
+        hideError('#main-error');
 
         document.getElementById('upload').style.display = 'inline-block';
         document.getElementById('title').innerText = 'Latest Cars';
@@ -423,7 +437,7 @@ const processFullCar = async (iterationNumber) => {
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);
     }
     catch (error) {
-        await showError(error, false);
+        await showError(error, false, false, undefined, undefined, false, '#main-error');
     }
 }
 

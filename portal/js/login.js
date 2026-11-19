@@ -1,7 +1,7 @@
 const form = document.querySelector('form');
 
 form.addEventListener('submit', async (e) => {
-    hideError();
+    hideError('#login-error');
     e.preventDefault();
 
     const username = document.querySelector('#username');
@@ -15,7 +15,7 @@ form.addEventListener('submit', async (e) => {
         throw new Error();
     }
     catch (error) {
-        if (error.message) showError(error, false);
+        if (error.message) showError(error, false, false, undefined, undefined, false, '#login-error');
         else {
             submit.disabled = true;
             try {
@@ -29,19 +29,19 @@ form.addEventListener('submit', async (e) => {
                 });
 
                 if (response.ok) {
-                    await showError('Logging in..', false, true, 'https://teamblitz.pages.dev/portal/', 200, true);
+                    await showError('Logging in..', false, true, 'https://teamblitz.pages.dev/portal/', 200, true, '#login-error');
                     setTimeout(() => {
                         window.location.replace('https://teamblitz.pages.dev/portal/');
                     });
                 }
                 else {
-                    await showError(undefined, response);
+                    await showError(undefined, response, false, undefined, undefined, false, '#login-error');
                     submit.disabled = false;
                 }
             }
             catch (error) {
                 console.error(error);
-                showError(error, false, false);
+                showError(error, false, false, undefined, undefined, false, '#login-error');
                 submit.disabled = false;
             }
         }

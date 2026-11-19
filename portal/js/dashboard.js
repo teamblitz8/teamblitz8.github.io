@@ -36,11 +36,11 @@ const fetchSelects = async () => {
                 select.appendChild(newOption);
             }
         }
-        else await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+        else await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#main-error');
     }
     catch (error) {
         console.error(error);
-        await showError(error, false, false);
+        await showError(error, false, false, undefined, undefined, false, '#main-error');
     }
 }
 
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         })
     }
 
-    hideError();
+    hideError('#metadata-error');
 
     document.querySelector('#greeting').innerText = `Hello, ${name}`;
     document.querySelector('#logged-username').innerText = `Logged in as ${username}`;
@@ -120,12 +120,12 @@ form.addEventListener('submit', async (e) => {
         if (!/^-?\d+$/.test(derivedCar)) throw new Error('There was an unexpected error. Please refresh the page.');
     }
     catch (error) {
-        await showError(error.message, false);
+        await showError(error.message, false, false, undefined, undefined, false, '#metadata-error');
         throw new Error();
     }
 
     submit.disabled = true;
-    await showError('Uploading data..', false, false, false, false, true);
+    await showError('Uploading data..', false, false, false, false, true, '#main-error');
 
     try {
         await upload('fullworks', {
@@ -145,13 +145,13 @@ form.addEventListener('submit', async (e) => {
             preview: preview
         }, { carModel: carModel.name.split('.')[1].toLowerCase(), preview: preview.name.split('.')[1].toLowerCase() });
 
-        await showError('Upload successful!', false, false, false, false, true);
+        await showError('Upload successful!', false, false, false, false, true, '#main-error');
         setTimeout(() => {
             window.location.replace('https://teamblitz.pages.dev/portal/');
         }, 1000);
     }
     catch (error) {
         submit.disabled = false;
-        await showError(error.message, false);
+        await showError(error.message, false, false, undefined, undefined, false, '#main-error');
     }
 });

@@ -45,6 +45,15 @@ a:hover, input:hover, select:hover, textarea:hover {
     transition: border 0.5s ease;
 }
 
+.visible {
+    display: inline;
+}
+
+.success {
+    background-color: rgb(100, 255, 100);
+    border: 1px solid green;
+}
+
 select, ::picker(select) {
     appearance: base-select;
 }
@@ -264,10 +273,6 @@ textarea {
     border-radius: 100vh;
     margin-top: 10vh;
     display: none;
-}
-
-.visible {
-    display: inline;
 }
 
 @media screen and (max-width: 1000px) {

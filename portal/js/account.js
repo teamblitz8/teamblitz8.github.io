@@ -1,7 +1,7 @@
 const form = document.querySelector('form');
 
 form.addEventListener('submit', async (e) => {
-    hideError();
+    hideError('#password-error');
     e.preventDefault();
 
     const currentPassword = document.querySelector('#current-password').value;
@@ -24,12 +24,12 @@ form.addEventListener('submit', async (e) => {
         if (newPassword !== confirmPassword) throw new Error('Please ensure your new password and confirm password fields match.');
     }
     catch (error) {
-        await showError(error.message, false);
+        await showError(error.message, false, false, undefined, undefined, false, '#password-error');
         throw new Error();
     }
 
     submit.disabled = true;
-    showError('Updating password..', false, false, undefined, undefined, true);
+    showError('Updating password..', false, false, undefined, undefined, true, '#password-error');
 
     try {
         if (username === null) throw new Error('There was an unexpected error. Please refresh the page.');
@@ -44,12 +44,12 @@ form.addEventListener('submit', async (e) => {
 
         if (!response.ok) {
             submit.disabled = false;
-            await showError(undefined, response, true);
+            await showError(undefined, response, true, undefined, undefined, false, '#password-error');
         }
     }
     catch (error) {
         submit.disabled = false;
-        await showError(error.message, false);
+        await showError(error.message, false, false, undefined, undefined, false, '#password-error');
     }
 
     try {
@@ -64,10 +64,10 @@ form.addEventListener('submit', async (e) => {
 
         if (!response.ok) {
             submit.disabled = false;
-            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#password-error');
         }
         else {
-            await showError('Password change successful', false, false, undefined, undefined, true);
+            await showError('Password change successful', false, false, undefined, undefined, true, '#password-error');
             setTimeout(() => {
                 window.location.replace('https://teamblitz.pages.dev/portal/');
             }, 1000);
@@ -75,11 +75,11 @@ form.addEventListener('submit', async (e) => {
     }
     catch (error) {
         submit.disabled = false;
-        await showError(error.message, false);
+        await showError(error.message, false, false, undefined, undefined, false, '#password-error');
     }
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false);
+    if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false, false, undefined, undefined, false, '#main-error');
 });

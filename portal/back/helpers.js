@@ -1185,9 +1185,10 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 			data.derivedCarName = derivedCar.data['car_name'];
 			data.derivedCarIteration = derivedCar.data.iteration;
 		}
-
-		data.derivedCarName = '67';
-		data.derivedCarIteration = '67';
+		else {
+			data.derivedCarName = '67';
+			data.derivedCarIteration = '67';
+		}
 		
 		throw new Error();
 	}
@@ -1274,9 +1275,10 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 			data.derivedCarName = derivedCar.data['car_name'];
 			data.derivedCarIteration = derivedCar.data.iteration;
 		}
-
-		data.derivedCarName = '67';
-		data.derivedCarIteration = '67';
+		else {
+			data.derivedCarName = '67';
+			data.derivedCarIteration = '67';
+		}
 		
 		throw new Error();
 	}

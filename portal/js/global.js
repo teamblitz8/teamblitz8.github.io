@@ -65,13 +65,10 @@ const waitForUsername = async () => {
     const username = document.querySelector('#profile p');
     const nav = document.querySelector('#nav');
 
-    console.log(username.textContent.trim());
-
     while (username.textContent.trim() === '') await wait(100);
-    while (document.querySelector('#profile img').src === '') await wait(100);
 
     nav.style.display = 'flex';
-    menu.style.width = `${profile.offsetWidth}px`;
+    menu.style.width = `calc(${profile.offsetWidth - 2}px + 3em)`;
 }
 
 const showPassword = (field) => {
@@ -250,7 +247,7 @@ const getData = async (type, iterationNumber) => {
         }
         catch (error) {
             const msg = await showError(error, false, false);
-            throw new Error(msg); // pauses all remaining fetches if one fails.
+            throw new Error(msg);
         }
     }
     else {
@@ -316,29 +313,31 @@ const upload = async (type, data, filetype) => {
     }
     else throw new Error('Incorrect upload type.');
 
-    try {
-        const url = new URL(`https://back.teamblitz.workers.dev/api/dashboard/${type}`);
-        url.search = new URLSearchParams({ carid: newCarID, fileType: filetype });
-        const response = await fetch(url, {
-            method: 'POST',
-            body: body,
-            headers: {
-                'Content-Type': contentHeader
-            },
-            credentials: 'include'
-        });
+    if (['previews', 'iso', 'planes', 'f3d', 'text'].includes(type)) {
+        try {
+            const url = new URL(`https://back.teamblitz.workers.dev/api/dashboard/${type}`);
+            url.search = new URLSearchParams({ carid: newCarID, fileType: filetype });
+            const response = await fetch(url, {
+                method: 'POST',
+                body: body,
+                headers: {
+                    'Content-Type': contentHeader
+                },
+                credentials: 'include'
+            });
 
-        if (response.ok) {
-            const data = await parseJSON(response, ['carid']);
-            newCarID = data.carid;
+            if (response.ok) {
+                const data = await parseJSON(response, ['carid']);
+                newCarID = data.carid;
+            }
+            else {
+                const err = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
+                throw new Error(err);
+            }
         }
-        else {
-            const err = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401);
-            throw new Error(err);
+        catch (error) {
+            throw new Error(error.message);
         }
-    }
-    catch (error) {
-        throw new Error(error.message);
     }
 }
 
@@ -364,12 +363,54 @@ const processFullCar = async (iterationNumber) => {
         if (car['derived_carid'] !== null) derivation = `<p>This design was derived from iteration #${car.derivedCarIteration}, ${car.derivedCarName}. Changes include:</p>`;
 
         let addNotes = '';
-        if (car['additional_notes'] !== null) addNotes = `<div class="notes"><h3>Additional notes</h3><p>${car['additional_notes']}</p></div></div></div>`;
+        if (car['additional_notes'] !== null) addNotes = `<div class="notes"><h3>Additional notes</h3><p>${car['additional_notes']}</p></div>`;
 
         const carModelType = car.model.contentDisposition?.split('=')[1];
         const creatorProfileURL = await fetchProfile(car.creatorUsername);
 
-        devContainer.innerHTML += `<div class="car"><div class="details"><h3>${car['car_name']} - Iteration #${car.iteration}</h3><div class="creator"><img src="${creatorProfileURL}" class="portrait"><div class="person"><h3>${car.creatorName}</h3><p class="date"><i class="fa-solid fa-calendar"></i> Created ${new Date(car['date_created']).toDateString()}</p><p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${car.scrutineerName}</p></div></div><p>Frontal Area: ${car['frontal_area']}mm²</p><p>Drag Coefficient: ${car['drag_coefficient']}</p><p class="drag">Drag: ${car['drag_force']}N</p><div class="buttons"><div class="download"><a href="${car.model.data}" download="${car['car_name']}.${carModelType}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a></div><div class="button"><button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button></div></div><div class="i${car.iteration} hidden more-details"><div class="iso-surfaces"><h3>Iso Surfaces</h3><img src="${car.iso.data}"></div><div class="planes"><h3>Planes</h3><img src="${car.planes.data}"></div><div class="changes"><h3>Changes</h3>${derivation}<ul>${changelog}</ul></div>${addNotes}<div class="image">${preview}</div></div>`;
+        devContainer.innerHTML += `<div class="car">
+        <div class="details">
+            <h3>${car['car_name']} - Iteration #${car.iteration}</h3>
+            <div class="creator">
+                <img src="${creatorProfileURL}" class="portrait">
+                <div class="person">
+                    <h3>${car.creatorName}</h3>
+                    <p class="date"><i class="fa-solid fa-calendar"></i> Created ${new Date(car['date_created']).toDateString()}</p>
+                    <p><i class="fa-solid fa-magnifying-glass"></i> Scrutineered by ${car.scrutineerName}</p>
+                </div>
+            </div>
+            <p>Frontal Area: ${car['frontal_area']}mm²</p>
+            <p>Drag Coefficient: ${car['drag_coefficient']}</p>
+            <p class="drag">Drag: ${car['drag_force']}N</p>
+            <div class="buttons">
+                <div class="download">
+                    <a href="${car.model.data}" download="${car['car_name']}.${carModelType}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a>
+                </div>
+            <div class="button">
+                <button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button>
+            </div>
+        </div>
+        <div class="i${car.iteration} hidden more-details">
+            <div class="iso-surfaces">
+                <h3>Iso Surfaces</h3>
+                <img src="${car.iso.data}">
+            </div>
+            <div class="planes">
+                <h3>Planes</h3>
+                <img src="${car.planes.data}">
+            </div>
+            <div class="changes">
+                <h3>Changes</h3>
+                ${derivation}
+                <ul>
+                    ${changelog}
+                </ul>
+            </div>
+            ${addNotes}
+        </div>
+        <div class="image">
+            ${preview}
+        </div>`;
         hideError();
 
         document.getElementById('upload').style.display = 'inline-block';

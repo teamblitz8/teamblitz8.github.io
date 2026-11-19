@@ -80,6 +80,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 ## To-do (in order of priority)
 - Improve error handling (consider adding new parameter to showerror() to ensure only one error box is affected)
 - Complete the My Designs and My Account pages
+- Stop user from changing password to one they already have
 - Add mobile responsivity
 - Make a leaderboard!
 - Add a filter, sort by bar on the dashboard

@@ -265,7 +265,7 @@ const getData = async (type, iterationNumber) => {
         }
         else {
             let data;
-            if (type === 'text') data = await parseJSON(response, ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes', 'creatorName', 'creatorUsername', 'scrutineerName']);
+            if (type === 'text') data = await parseJSON(response, ['creatorid', 'scrutineerid', 'carid', 'derived_carid', 'car_name', 'iteration', 'date_created', 'frontal_area', 'drag_coefficient', 'drag_force', 'changelog', 'additional_notes', 'creatorName', 'creatorUsername', 'scrutineerName', 'derivedCarName', 'derivedCarIteration']);
             else if (['f3d', 'previews', 'iso', 'planes'].includes(type)) data = await parseBlob(response);
 
             if (!data) {
@@ -390,24 +390,24 @@ const processFullCar = async (iterationNumber) => {
                     <button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button>
                 </div>
             </div>
-        </div>
-        <div class="i${car.iteration} hidden more-details">
-            <div class="iso-surfaces">
-                <h3>Iso Surfaces</h3>
-                <img src="${car.iso.data}">
+            <div class="i${car.iteration} hidden more-details">
+                <div class="iso-surfaces">
+                    <h3>Iso Surfaces</h3>
+                    <img src="${car.iso.data}">
+                </div>
+                <div class="planes">
+                    <h3>Planes</h3>
+                    <img src="${car.planes.data}">
+                </div>
+                <div class="changes">
+                    <h3>Changes</h3>
+                    ${derivation}
+                    <ul>
+                        ${changelog}
+                    </ul>
+                </div>
+                ${addNotes}
             </div>
-            <div class="planes">
-                <h3>Planes</h3>
-                <img src="${car.planes.data}">
-            </div>
-            <div class="changes">
-                <h3>Changes</h3>
-                ${derivation}
-                <ul>
-                    ${changelog}
-                </ul>
-            </div>
-            ${addNotes}
         </div>
         <div class="image">
             ${preview}

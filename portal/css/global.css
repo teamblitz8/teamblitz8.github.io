@@ -49,11 +49,6 @@ a:hover, input:hover, select:hover, textarea:hover {
     display: inline;
 }
 
-.success {
-    background-color: rgb(100, 255, 100);
-    border: 1px solid green;
-}
-
 select, ::picker(select) {
     appearance: base-select;
 }
@@ -269,9 +264,14 @@ textarea {
 .error {
     background-color: rgb(255, 100, 100);
     color: white;
-    padding: 0.5em 1em;
+    padding: 0 1em;
     border-radius: 100vh;
     margin-top: 10vh;
+}
+
+.success {
+    background-color: rgb(100, 255, 100);
+    border: 1px solid green;
 }
 
 @media screen and (max-width: 1000px) {

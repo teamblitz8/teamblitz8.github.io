@@ -386,8 +386,9 @@ const processFullCar = async (iterationNumber) => {
                 <div class="download">
                     <a href="${car.model.data}" download="${car['car_name']}.${carModelType}"><i class="fa-solid fa-file-arrow-down"></i>  Download .f3z/.f3d file</a>
                 </div>
-            <div class="button">
-                <button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button>
+                <div class="button">
+                    <button onclick="unfurl(${car.iteration})"><i class="fa-solid fa-caret-down"></i> See more details</button>
+                </div>
             </div>
         </div>
         <div class="i${car.iteration} hidden more-details">

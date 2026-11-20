@@ -52,9 +52,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const planes = document.querySelector('#planes');
     const preview = document.querySelector('#preview');
 
-    await toggleFullScreen();
-    await toggleLoading('Fetching car..', true);
-
     await processFullCar(0);
 
     await fetchSelects();
@@ -78,8 +75,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (name) {
         document.querySelector('#greeting').innerText = `Hello, ${name}`;
         document.querySelector('#logged-username').innerText = `Logged in as ${username}`;
-        await toggleLoading('', false);
-        await toggleFullScreen();
     }
 });
 
@@ -137,7 +132,7 @@ form.addEventListener('submit', async (e) => {
 
     try {
         await toggleFullScreen();
-        showLoading('Uploading data..', true);
+        toggleLoading('Uploading data..', true);
         await upload('fullworks', {
             metadata: {
                 carName: carName,

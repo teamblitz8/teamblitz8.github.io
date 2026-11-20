@@ -84,6 +84,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Make a leaderboard!
 - Add a filter, sort by bar on the dashboard
 - decrease number of helpers e.g. fetchuserdata can do everything
+- Add a try again button to errors
 - Reduce CPU time of the worker
 - Remove redundant success
 - Complete the contact form on the main site

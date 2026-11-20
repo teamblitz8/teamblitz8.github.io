@@ -362,6 +362,8 @@ const upload = async (type, data, filetype) => {
 
 const processFullCar = async (iterationNumber) => {
     try {
+        await toggleFullScreen();
+        await toggleLoading('Fetching car..', true);
         const car = await getData('fullworks', iterationNumber);
         const devContainer = document.querySelector('#development-container');
         nextIteration = Number(car.iteration) - 1;
@@ -438,8 +440,11 @@ const processFullCar = async (iterationNumber) => {
 
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '100%');
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);
+        await toggleLoading('', false);
+        await toggleFullScreen();
     }
     catch (error) {
+        await toggleLoading('', false);
         await showError(error, false, false, undefined, undefined, false, '#main-error');
     }
 }

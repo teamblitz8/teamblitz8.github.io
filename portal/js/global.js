@@ -116,6 +116,7 @@ const unroll = () => {
 }
 
 const showError = async (error, response, redirect, url, statusCondition, success, errorElement) => {
+    toggleLoading('', false);
     const err = errorElement
         ? [typeof errorElement === 'string' ? document.querySelector(errorElement) : errorElement].filter(Boolean)
         : document.querySelectorAll('.error');
@@ -356,8 +357,6 @@ const upload = async (type, data, filetype) => {
 }
 
 const processFullCar = async (iterationNumber) => {
-    await showError('Fetching car data...', false, false, false, false, true, '#main-error');
-
     try {
         const car = await getData('fullworks', iterationNumber);
         const devContainer = document.querySelector('#development-container');
@@ -444,9 +443,20 @@ const processFullCar = async (iterationNumber) => {
 const loadMore = async () => {
     const button = document.querySelector('#loadMore');
 
-    button.querySelector('button').innerHTML = 'Fetching next car..';
+    button.querySelector('button').innerHTML = 'Fetching car..';
     await processFullCar(nextIteration);
 
     if (nextIteration === 0) button.style.display = 'none';
     else button.style.display = 'flex';
 };
+
+const toggleFullScreen = () => {
+    const err = document.querySelector('#error-box');
+    err.classList.toggle('full-screen');
+}
+
+const toggleLoading = (text, on) => {
+    const err = document.querySelector('#error-box');
+    if (on) err.innerHTML = `<div class="loading"></div><div id="main-error" class="error success">${text}</div>`;
+    else err.innerHTML = `<div id="main-error" class="error">${text}</div>`;
+}

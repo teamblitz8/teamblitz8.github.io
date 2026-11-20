@@ -51,6 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const iso = document.querySelector('#iso');
     const planes = document.querySelector('#planes');
     const preview = document.querySelector('#preview');
+
+    toggleFullScreen();
+    toggleLoading('Fetching car..', true);
+
     await processFullCar(0);
 
     await fetchSelects();
@@ -71,12 +75,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     hideError('#metadata-error');
 
-    document.querySelector('#greeting').innerText = `Hello, ${name}`;
-    document.querySelector('#logged-username').innerText = `Logged in as ${username}`;
+    if (name) {
+        document.querySelector('#greeting').innerText = `Hello, ${name}`;
+        document.querySelector('#logged-username').innerText = `Logged in as ${username}`;
+        toggleLoading('', false);
+        toggleFullScreen();
+    }
 });
 
 form.addEventListener('submit', async (e) => {
-    hideError();
+    hideError('#metadata-error');
     e.preventDefault();
 
     const carName = document.querySelector('#name').value?.trim();

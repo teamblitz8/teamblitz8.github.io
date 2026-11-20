@@ -21,7 +21,7 @@ const fetchProfile = async (username) => {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    if (window.location.href.startsWith('https://teamblitz.pages.dev/portal/login')) return;
+    if (window.location.href.startsWith('https://teamblitz.pages.dev/portal/login') || window.location.href.startsWith('http://127.0.0.1:3000/portal/login')) return;
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/account', {
             method: 'GET',

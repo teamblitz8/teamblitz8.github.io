@@ -11,11 +11,11 @@ form.addEventListener('submit', async (e) => {
 
     try {
         if (!username.value || !password.value) throw new Error('You must provide both a username and password.');
-        if (username.value.length > 25 || password.value.length > 128) throw new Error('Invalid username or password.');
+        if (username.value.length > 25 || password.value.length > 128 || username.value.length < 3 || password.value.length < 3) throw new Error('Invalid username or password.');
         throw new Error();
     }
     catch (error) {
-        if (error.message) showError(error, false, false, undefined, undefined, false, '#login-error');
+        if (error.message) showError(error, false, false, undefined, undefined, false, '#main-error');
         else {
             submit.disabled = true;
             try {

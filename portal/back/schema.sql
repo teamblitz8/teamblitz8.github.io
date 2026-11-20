@@ -36,12 +36,13 @@ CREATE TABLE IF NOT EXISTS ipbans (
     date_banned TEXT
 );
 CREATE TABLE IF NOT EXISTS sessiontokens (
-    session_token_hash TEXT PRIMARY KEY,
+    token_id TEXT PRIMARY KEY,
+    session_token_hash TEXT,
     userid TEXT NOT NULL,
     expiration_date TEXT NOT NULL,
     browser TEXT NOT NULL,
     ip TEXT NOT NULL,
     geolocation TEXT NOT NULL,
-    last_accessed TEXT NOT NULL
+    last_accessed TEXT NOT NULL,
     FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE
 );

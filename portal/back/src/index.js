@@ -2,7 +2,7 @@
 // breaking change: backend now just sends the car in json, there is no nested objects now
 
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionToken, deleteAllSessionTokens, updatePassword, checkFileMagicBytes, fetchAllCars } = require('../helpers.js');
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionTokenFromSessionToken, deleteSessionTokenFromTokenID, deleteAllSessionTokens, updatePassword, checkFileMagicBytes, fetchAllCars, fetchCurrentSessions } = require('../helpers.js');
 
 export default {
 	async fetch(request, env, ctx) {
@@ -640,8 +640,47 @@ export default {
 				if (!sessionCheck.allow) return sessionCheck.response;
 
 				const sessionToken = sessionCheck.sessionToken;
-				const deletion = await deleteSessionToken(sessionToken, env, url.pathname, request);
+				const deletion = await deleteSessionTokenFromSessionToken(sessionToken, env, url.pathname, request);
 				return deletion.response;
+			}
+
+			else if (url.pathname === '/api/sessions') {
+				const requestCheck = await checkRequest(url.pathname, request, ['GET', 'POST']);
+				if (!requestCheck.success) return requestCheck.response;
+
+				const handleIP = await handleIPBan(url.pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
+
+				const sessionCheck = await checkSession(request, url.pathname, env);
+				if (!sessionCheck.allow) return sessionCheck.response;
+
+				if (request.method === 'GET') {
+					const fetchSessions = await fetchCurrentSessions(env, url.pathname, request, sessionCheck.userid);
+					return fetchSessions.response;
+				}
+				else if (request.method === 'POST') {
+					const requestCheck = await checkRequest(url.pathname, request, ['POST'], 'application/json');
+					if (!requestCheck.success) return requestCheck.response;
+
+					const parseRequest = await parseRequestJSON(url.pathname, request, ['currentPassword', 'newPassword']);
+					if (!parseRequest.success) return parseRequest.response;
+
+					const tokenID = parseRequest.json.tokenID;
+					const tokenInput = {
+						name: 'tokenID',
+						input: tokenID,
+						requirements: {
+							dataType: 'string',
+							maxLength: 36,
+							minLength: 36
+						}
+					}
+					const inputCheck = await validateInputs(url.pathname, request, [tokenInput], env, false);
+					if (!inputCheck.success) return inputCheck.response;
+
+					const deletion = await deleteSessionTokenFromTokenID(tokenID, env, url.pathname, request);
+					return deletion.response;
+				}
 			}
 
 			else return buildResponse('Not Found', 404, normalHeader);

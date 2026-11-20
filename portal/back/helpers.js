@@ -1,5 +1,6 @@
 const crypto = require('node:crypto');
 const normalHeader = 'application/json; charset=UTF-8';
+const { UAParser } = require('ua-parser-js');
 
 /**
  * Converts a buffer, such as one generated from a cryptographic hashing algorithm, into a string.
@@ -489,7 +490,7 @@ const updateLastLogin = async (pathname, request, env, enteredUsername, sessionT
 		await query.run();
 	}
 	catch (error) {
-		const deletion = deleteSessionToken(sessionToken, env, pathname, request);
+		const deletion = deleteSessionTokenFromSessionToken(sessionToken, env, pathname, request);
 		if (!deletion.success) {
 			response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=0; Path=/; SameSite=None; Secure;`);
 		}
@@ -733,7 +734,7 @@ const checkIfActive = async (username, env, pathname, request) => {
 
 /**
  * Creates a database record for a new session token.
- * @param {Buffer} sessionToken The session token as a Buffer, generated from `crypto.randomBytes()`.
+ * @param {Buffer} sessionToken The session token as a Buffer, generated from `crypto.randomUUID()`.
  * @param {Env} env
  * @param {string} enteredUsername The user's username.
  * @param {string} pathname The API endpoint called by the client.
@@ -758,10 +759,12 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 	const tokenSalt = Buffer.from(env.sessionTokenSalt, 'hex');
 	const hashedToken = hash(sessionToken, tokenSalt);
 	const tokenHash = hashedToken.hash;
+	const useragent = new UAParser(request.headers.get('User-Agent')).getResult();
+	const uuid = convertBufferToString(crypto.randomUUID());
 
-	const insertionStatement = 'INSERT INTO sessiontokens (session_token_hash, userid, expiration_date) VALUES (?, ?, ?);';
+	const insertionStatement = 'INSERT INTO sessiontokens (token_id, session_token_hash, userid, expiration_date, browser, ip, geolocation, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
 	try {
-		const insertion = env.blitz.prepare(insertionStatement).bind(tokenHash, userID.response.userid, expiry);
+		const insertion = env.blitz.prepare(insertionStatement).bind(uuid, tokenHash, userID.response.userid, expiry, `${useragent.browser.toString()} on ${useragent.device.toString()} running ${useragent.os.toString()}`, `${request.headers.get('cf-connecting-ip')}`, `${request.cf.city}, ${request.cf.country}`, `${new Date().toISOString()}`);
 		await insertion.run();
 	}
 	catch (error) {
@@ -1457,14 +1460,14 @@ const uploadCarFile = async (carid, env, pathname, request, type, file, userid) 
 }
 
 /**
- * Deletes a session token from the database and from the client's cookies.
+ * Deletes a session token from the database and from the client's cookies using the token itself.
  * @param {string} sessionToken The session token as a string, taken from the cookie.
  * @param {Env} env
  * @param {string} pathname The API endpoint called by the client.
  * @param {Request} request The Request object associated with it.
  * @returns {{success: boolean, response: Response}} Whether the deletion succeeded, with an appropriate Response object (with the session token removed if successful).
  */
-const deleteSessionToken = async (sessionToken, env, pathname, request) => {
+const deleteSessionTokenFromSessionToken = async (sessionToken, env, pathname, request) => {
 	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
 	const hashed = hash(sessionToken, theSalt).hash;
 
@@ -1486,6 +1489,34 @@ const deleteSessionToken = async (sessionToken, env, pathname, request) => {
 	return {
 		success: true,
 		response: response
+	}
+}
+
+/**
+ * Deletes a session token from the database and from the client's cookies.
+ * @param {string} tokenID The session token ID.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{success: boolean, response: Response}} Whether the deletion succeeded, with an appropriate Response object (with the session token removed if successful).
+ */
+const deleteSessionTokenFromTokenID = async (tokenID, env, pathname, request) => {
+	const statement = 'DELETE FROM sessiontokens WHERE token_id = ?';
+	try {
+		const query = env.blitz.prepare(statement).bind(tokenID);
+		await query.run();
+	}
+	catch (error) {
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	return {
+		success: true,
+		response: buildResponse('Logged out successfully.', 200, normalHeader)
 	}
 }
 
@@ -1572,6 +1603,45 @@ const fetchAllCars = async (env, pathname, request) => {
 	return buildResponse('Fetched successfully.', 200, normalHeader, { cars: cars });
 }
 
+/**
+ * Fetches all the current sessions by a specific user.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @param {string} userid The user's user id.
+ * @returns {{ success: Boolean, response: Response | Array<{ browser: String, ip: String, geolocation: String, last_accessed: ISODateString }> }} Whether the request succeeded or not, with an array of JavaScript Objects of the details of each session token if it did, or a sample error Response if not.
+ */
+const fetchCurrentSessions = async (env, pathname, request, userid) => {
+	const statement = 'SELECT browser, ip, geolocation, last_accessed, token_id FROM sessiontokens WHERE userid = ?';
+	let sessions;
+
+	try {
+		const selection = env.blitz.prepare(statement).bind(userid);
+		sessions = await selection.all();
+	}
+	catch (error) {
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	if (sessions.results.length === 0) {
+		log('warn', pathname, request, `D1 query returned no results when attempting to execute the statement: ${statement}`);
+		return {
+			success: false,
+			response: buildResponse('There was an unexpected error.', 401, normalHeader)
+		}
+	}
+	else {
+		return {
+			success: true,
+			response: buildResponse('Fetched successfully.', 200, normalHeader, sessions.results)
+		}
+	}
+}
+
 module.exports = {
     convertBufferToString,
     hash,
@@ -1602,9 +1672,11 @@ module.exports = {
     pullCarFile,
     parseRequestBlob,
     uploadCarFile,
-    deleteSessionToken,
+    deleteSessionTokenFromSessionToken,
+	deleteSessionTokenFromTokenID,
     deleteAllSessionTokens,
 	updatePassword,
 	checkFileMagicBytes,
-	fetchAllCars
+	fetchAllCars,
+	fetchCurrentSessions,
 };

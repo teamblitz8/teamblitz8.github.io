@@ -88,6 +88,75 @@ const switchMenu = (menu) => {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false, false, undefined, undefined, false, '#main-error');
+    await toggleFullScreen();
+    await toggleLoading('Fetching car..', true);
+
+    try {
+        const response = await fetch('https://back.teamblitz.workers.dev/api/sessions', {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            const msg = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#main-error');
+            throw new Error(msg);
+        }
+        else {
+            let data;
+            data = await parseJSON(response, ['browser', 'ip', 'geolocation', 'last_accessed', 'token_id']);
+
+            if (!data) {
+                const msg = await showError('There was an unexpected error.', false, false, undefined, undefined, false, '#main-error');
+                throw new Error(msg);
+            }
+            else {
+                for (let session of data) {
+                    const box = document.querySelector('#sessions');
+                    box.innerHTML += `<div class="session ${session['token_id']}"><p>${session.browser}</p><p>${session.geolocation}</p><p>${session.ip}</p><p>Last accessed ${session['last_accessed']}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
+                }
+            }
+
+            await toggleLoading('', false)
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false, false, undefined, undefined, false, '#main-error');
+            await toggleFullScreen();
+        }
+    }
+    catch (error) {
+        await toggleLoading('', false);
+        showError(error, false, false, undefined, undefined, false, '#main-error');
+    }
 });
+
+const logoutDevice = async (tokenID) => {
+    const buttons = document.querySelectorAll('.kick');
+    for (let i of buttons) {
+        i.disabled = true;
+    }
+    
+    try {
+        const response = await fetch('https://back.teamblitz.workers.dev/api/sessions', {
+            method: 'POST',
+            body: JSON.stringify({ tokenID: tokenID }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#session-error');
+        }
+        else {
+            await showError('Successfully logged out of that device.', false, false, undefined, undefined, true, '#session-error');
+            document.querySelector(`.${tokenID}`).innerHTML = '';
+        }
+    }
+    catch (error) {
+        await showError(error.message, false, false, undefined, undefined, false, '#session-error');
+    }
+
+    for (let i of buttons) {
+        i.disabled = false;
+    }
+}

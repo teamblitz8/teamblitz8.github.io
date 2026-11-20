@@ -136,6 +136,8 @@ form.addEventListener('submit', async (e) => {
     await showError('Uploading data..', false, false, false, false, true, '#main-error');
 
     try {
+        toggleFullScreen();
+        showLoading('Uploading data..', true);
         await upload('fullworks', {
             metadata: {
                 carName: carName,

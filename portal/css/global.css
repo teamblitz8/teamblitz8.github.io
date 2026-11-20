@@ -301,6 +301,10 @@ textarea {
     animation: spin 2s linear infinite;
 }
 
+span:empty {
+    display: none;
+}
+
 @keyframes spin {
     0% { 
         transform: rotate(0deg); 

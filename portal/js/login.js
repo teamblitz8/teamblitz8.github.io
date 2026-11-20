@@ -32,7 +32,7 @@ form.addEventListener('submit', async (e) => {
                     await showError('Logging in..', false, true, 'https://teamblitz.pages.dev/portal/', 200, true, '#login-error');
                     setTimeout(() => {
                         window.location.replace('https://teamblitz.pages.dev/portal/');
-                    });
+                    }, 1000);
                 }
                 else {
                     await showError(undefined, response, false, undefined, undefined, false, '#login-error');
@@ -52,3 +52,8 @@ const goAway = () => {
     const box = document.querySelector('#cookie-notice-box');
     box.className = 'slidAway';
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('redirect') === 'true') showError('You must be logged in to see that page.', false, false, undefined, undefined, false, '#login-error');
+});

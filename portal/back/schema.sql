@@ -39,5 +39,9 @@ CREATE TABLE IF NOT EXISTS sessiontokens (
     session_token_hash TEXT PRIMARY KEY,
     userid TEXT NOT NULL,
     expiration_date TEXT NOT NULL,
+    browser TEXT NOT NULL,
+    ip TEXT NOT NULL,
+    geolocation TEXT NOT NULL,
+    last_accessed TEXT NOT NULL
     FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE
 );

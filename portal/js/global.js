@@ -131,7 +131,7 @@ const showError = async (error, response, redirect, url, statusCondition, succes
     if (!msg) msg = 'There was an unexpected error.';
 
     for (let i of err) {
-        i.innerText = msg;
+        i.innerText = 'There was an unexpected error.';
         i.classList.remove('success');
         i.classList.add('visible');
         if (success) i.classList.add('success');

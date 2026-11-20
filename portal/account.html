@@ -25,71 +25,84 @@
                 <a id="placeholder-button"></a>
                 <a href="./" id="first-button"><i class="fa-solid fa-igloo"></i> Dashboard</a>
                 <a href="./designs.html"><i class="fa-solid fa-pencil"></i> My designs</a>
+                <a href="./leaderboard.html"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
                 <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
             </div>
         </div>
 
-        <div id="account-box">
-            <div id="main-error" class="error" style="display:none;"></div>
-            <h1>My Account</h1>
+        <h1 id="page-title">My Account</h1>
+        <div id="menu-container">
+            <div id="main-error" class="error"></div>
+            <div id="sidebar-container">
+                <div id="sidebar" class="card">
+                    <button onclick="switchMenu('security')" class="active">Security</button>
+                    <button onclick="switchMenu('security')">Security</button>
+                    <button onclick="switchMenu('security')">Security</button>
+                    <button onclick="switchMenu('security')">Security</button>
+                    <button onclick="switchMenu('security')">Security</button>
+                </div>
+            </div>
             <div id="main-menu">
-                <h2>Security</h2>
-                <form novalidate id="formz" class="security-box">
-                    <h3>Change my password</h3>
-                    <div id="password-error" class="error" style="display:none;"></div>
-                    <div class="question">
-                        <label for="current-password">Current password</label><br>
-                        <div>
-                            <input type="password" placeholder="password123" name="current-password" id="current-password">
-                            <button onclick="showPassword('current-password')" type="button" class="reveal"><i class="fa-solid fa-eye"></i></button>
-                        </div>
+                <div id="security" class="section">
+                    <div id="change-password" class="card">
+                        <form novalidate id="formz" class="security-box">
+                            <h3>Change my password</h3>
+                            <div id="password-error" class="error"></div>
+                            <div class="question">
+                                <label for="current-password">Current password</label><br>
+                                <div class="password-box">
+                                    <input type="password" placeholder="password123" name="current-password" id="current-password">
+                                    <button onclick="showPassword('current-password')" type="button" class="reveal"><i class="fa-solid fa-eye"></i></button>
+                                </div>
+                            </div>
+                            <div class="question">
+                                <label for="new-password">New password</label><br>
+                                <div class="password-box">
+                                    <input type="password" placeholder="mysupersupersecureUNGuesSablePASSWORD123!??$?$?$?!?£*&$£" name="new-password" id="new-password">
+                                    <button onclick="showPassword('new-password')" type="button" class="reveal"><i class="fa-solid fa-eye"></i></button>
+                                </div>
+                                <p>New passwords must:</p>
+                                <ul>
+                                    <li>be at least 10 characters long</li>
+                                    <li>have at least one uppercase letter</li>
+                                    <li>have at least one lowercase letter</li>
+                                    <li>contain at least one number</li>
+                                    <li>contain at least one special character - any from .!@#$%^&*()_+-=</li>
+                                    <li>must not contain easily guessable words or phrases e.g. password or yashhasnolife</li>
+                                </ul>
+                            </div>
+                            <div class="question">
+                                <label for="confirm-password">Confirm new password</label><br>
+                                <div class="password-box">
+                                    <input type="password" placeholder="Type your new password here again" name="confirm-password" id="confirm-password">
+                                    <button onclick="showPassword('confirm-password')" type="button" class="reveal"><i class="fa-solid fa-eye"></i></button>
+                                </div>
+                            </div>
+                            <div class="question" id="submit-box">
+                                <input type="submit" id="submit" name="submit">
+                            </div>
+                        </form>
                     </div>
-                    <div class="question">
-                        <label for="new-password">New password</label><br>
-                        <div>
-                            <input type="password" placeholder="mysupersupersecureUNGuesSablePASSWORD123!??$?$?$?!?£*&$£" name="new-password" id="new-password">
-                            <button onclick="showPassword('new-password')" type="button" class="reveal"><i class="fa-solid fa-eye"></i></button>
-                        </div>
-                        <p>New passwords must:</p>
-                        <ul>
-                            <li>be at least 10 characters long</li>
-                            <li>have at least one uppercase letter</li>
-                            <li>have at least one lowercase letter</li>
-                            <li>contain at least one number</li>
-                            <li>contain at least one special character - any from .!@#$%^&*()_+-=</li>
-                            <li>must not contain easily guessable words or phrases e.g. password or yashhasnolife</li>
-                        </ul>
-                    </div>
-                    <div class="question">
-                        <label for="confirm-password">Confirm new password</label><br>
-                        <div>
-                            <input type="password" placeholder="Type your new password here again" name="confirm-password" id="confirm-password">
-                            <button onclick="showPassword('confirm-password')" type="button" class="reveal"><i class="fa-solid fa-eye"></i></button>
-                        </div>
-                    </div>
-                    <div class="question" id="submit-box">
-                        <input type="submit" id="submit" name="submit">
-                    </div>
-                </form>
-                <div class="security-box">
-                    <h3>Sign out of all sessions</h3>
-                    <div>
-                        <div class="session">
-                            <p>Google Chrome</p>
-                            <p>London, UK</p>
-                            <p>255.255.255.255</p>
-                            <p>Last accessed 01/01/1900 at 19:00:00.000</p>
-                            <button onclick="logoutDevice()">Log out of this device</button>
-                        </div>
-                        <div class="session">
-                            <p>Safari</p>
-                            <p>New York, USA</p>
-                            <p>111.111.111.111</p>
-                            <p>Last accessed 01/01/1900 at 19:00:00.000</p>
-                            <button onclick="logoutDevice()">Log out of this device</button>
-                        </div>
-                        <div class="session">
-                            <button onclick="logoutAll()">Log out of all devices (requires sign-in)</button>
+                    <div id="sign-out" class="card">
+                        <h3>Logged in devices</h3>
+                        <div id="sessions">
+                            <div class="session">
+                                <p>Google Chrome</p>
+                                <p>London, UK</p>
+                                <p>255.255.255.255</p>
+                                <p>Last accessed 01/01/1900 at 19:00:00.000</p>
+                                <button onclick="logoutDevice()">Log out of this device</button>
+                            </div>
+                            <div class="session">
+                                <p>Safari</p>
+                                <p>New York, USA</p>
+                                <p>111.111.111.111</p>
+                                <p>Last accessed 01/01/1900 at 19:00:00.000</p>
+                                <button onclick="logoutDevice()">Log out of this device</button>
+                            </div>
+                            <div class="session">
+                                <button onclick="logoutAll()">Log out of all devices (requires sign-in)</button>
+                            </div>
                         </div>
                     </div>
                 </div>

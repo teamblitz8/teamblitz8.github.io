@@ -1,44 +1,15 @@
-#account-box {
-    margin: auto;
-}
-
-#account-box h1 {
-    text-align: center;
-}
-
-#main-menu {
-    width: 75%;
-    border: 1px solid #f8ac29;
-    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
-    margin: auto;
-    padding: 2em;
-    border-radius: 3em;
-}
-
-#account-box h1 {
-    margin-top: 10vh;
-}
-
-#main-menu h2 {
-    text-align: center;
-}
-
 .question {
     margin: 1em 0;
     width: 100%;
 }
 
-.question p {
-    margin-top: 1em;
+#page-title {
+    width: 75%;
+    margin: auto;
 }
 
-.security-box {
-    margin: auto;
-    margin-top: 2em;
-    width: 50%;
-    border: 1px solid #f8ac29;
-    border-radius: 3em;
-    padding: 2em;
+.question p {
+    margin-top: 1em;
 }
 
 .question div input {
@@ -56,21 +27,16 @@
     text-align: center;
 }
 
-.reveal {
-    height: 2em;
-    width: 2em;
-    display: block;
-}
-
-.reveal i {
-    transform: translateX(-50%);
+#sessions {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
 }
 
 .session {
     border: 1px solid #f8ac29;
-    border-radius: 2em;
-    padding: 1.5em 2em;
-    margin: 1em 0;
+    border-radius: 1.25em;
+    padding: 1em 1.25em;
 }
 
 .session button {
@@ -82,4 +48,71 @@
     padding: 0;
     margin: 0;
     text-align: center;
+}
+
+#menu-container {
+    width: 75%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+#sidebar-container {
+    width: 22.5%;
+}
+
+#main-menu {
+    width: 72.5%;
+}
+
+.card {
+    background-color: rgb(36, 38, 38);
+    border-radius: 1.5em;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #f5d53d;
+    gap: 0.35em;
+    padding: 1.5em;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+#sidebar {
+    padding: 0.35em 0.35em;
+}
+
+#sidebar button {
+    background-color: rgb(36, 38, 38);
+    border: 0px;
+    box-shadow: none;
+    border-radius: 100vh;
+    padding: 0.5em 1.5em;
+}
+
+#sidebar button.active {
+    background-color: rgb(46, 48, 48);
+}
+
+.reveal {
+    height: 1.6em;
+    width: 1.6em;
+    position: absolute;
+    top: 0.1em;
+    right: 0.1em;
+    display: block;
+}
+
+.reveal i {
+    font-size: 1.1em;
+    position: absolute;
+    top: 0.2em;
+    left: 0.4em;
+}
+
+.password-box {
+    position: relative;
 }

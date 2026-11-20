@@ -79,6 +79,14 @@ form.addEventListener('submit', async (e) => {
     }
 });
 
+const switchMenu = (menu) => {
+    for (let i of ['security']) {
+        const j = document.querySelector(`#${i}`);
+        i.style.display = 'none';
+    }
+    document.querySelector(`#${menu}`).style.display = 'flex';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false, false, undefined, undefined, false, '#main-error');

@@ -226,7 +226,7 @@ textarea {
 }
 
 .opened #profile-menu {
-    max-height: 20vh;
+    max-height: 100vh;
 }
 
 .opened {

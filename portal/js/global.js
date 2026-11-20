@@ -140,7 +140,11 @@ const showError = async (error, response, redirect, url, statusCondition, succes
         i.setAttribute('aria-live', 'polite');
     }
 
-    if (redirect && response && (response.status === statusCondition)) window.location.replace(url);
+    if (redirect && response && (response.status === statusCondition)) {
+        const urll = new URL(url);
+        urll.search = new URLSearchParams({ redirect: 'true' });
+        window.location.replace(urll);
+    }
 
     return msg;
 }

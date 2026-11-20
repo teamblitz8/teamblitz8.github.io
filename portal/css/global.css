@@ -263,6 +263,7 @@ textarea {
 
 .error {
     background-color: rgb(255, 100, 100);
+    border: 1px solid red;
     color: white;
     padding: 0 1em;
     border-radius: 100vh;

@@ -110,10 +110,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(msg);
             }
             else {
+                const box = document.querySelector('#sessions');
                 for (let session of data.array) {
-                    const box = document.querySelector('#sessions');
-                    box.innerHTML += `<div class="session ${session['token_id']}"><p>${session.browser}</p><p>${session.geolocation}</p><p>${session.ip}</p><p>Last accessed ${session['last_accessed']}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
+                    box.innerHTML += `<div class="session ${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
                 }
+                box.innerHTML += '<div class="session"><button onclick="logoutAll()">Log out of all devices (requires sign-in)</button></div>';
             }
 
             await toggleLoading('', false)

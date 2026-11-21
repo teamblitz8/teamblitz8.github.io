@@ -1639,8 +1639,6 @@ const fetchCurrentSessions = async (env, pathname, request, userid) => {
 		}
 	}
 	else {
-		console.log(sessions.results);
-		console.log(sessions);
 		return {
 			success: true,
 			response: buildResponse('Fetched successfully.', 200, normalHeader, sessions.results)

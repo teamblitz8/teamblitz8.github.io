@@ -32,7 +32,6 @@
 
         <h1 id="page-title">My Account</h1>
         <div id="menu-container">
-            <div id="error-box"><div id="main-error" class="error"></div></div>
             <div id="sidebar-container">
                 <div id="sidebar" class="card">
                     <button onclick="switchMenu('security')" class="active">Security</button>
@@ -87,27 +86,11 @@
                         <h3>Logged in devices</h3>
                         <div id="sessions">
                             <div id="session-error" class="error"></div>
-                            <div class="session">
-                                <p>Google Chrome</p>
-                                <p>London, UK</p>
-                                <p>255.255.255.255</p>
-                                <p>Last accessed 01/01/1900 at 19:00:00.000</p>
-                                <button onclick="logoutDevice()">Log out of this device</button>
-                            </div>
-                            <div class="session">
-                                <p>Safari</p>
-                                <p>New York, USA</p>
-                                <p>111.111.111.111</p>
-                                <p>Last accessed 01/01/1900 at 19:00:00.000</p>
-                                <button onclick="logoutDevice()">Log out of this device</button>
-                            </div>
-                            <div class="session">
-                                <button onclick="logoutAll()">Log out of all devices (requires sign-in)</button>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div id="error-box"><div id="main-error" class="error"></div></div>
         </div>
     </body>
 </html>

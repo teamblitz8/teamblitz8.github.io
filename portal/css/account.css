@@ -27,6 +27,11 @@
     text-align: center;
 }
 
+#submit {
+    background-color: #f8ac29;
+    font-weight: 600;
+}
+
 #sessions {
     display: flex;
     flex-direction: column;
@@ -48,6 +53,15 @@
     padding: 0;
     margin: 0;
     text-align: center;
+}
+
+.session h1 {
+    font-weight: 600;
+    font-size: 1.5em;
+}
+
+.session p {
+    font-weight: 200;
 }
 
 #menu-container {

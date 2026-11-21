@@ -1,8 +1,6 @@
 const form = document.querySelector('form');
 
 form.addEventListener('submit', async (e) => {
-    await toggleFullScreen();
-    await toggleLoading('Processing..', true);
     hideError('#password-error');
     e.preventDefault();
 
@@ -34,6 +32,8 @@ form.addEventListener('submit', async (e) => {
     showError('Updating password..', false, false, undefined, undefined, true, '#password-error');
 
     try {
+        await toggleFullScreen();
+        await toggleLoading('Processing..', true);
         const response = await fetch('https://back.teamblitz.workers.dev/api/change-password', {
             method: 'POST',
             body: JSON.stringify({ currentPassword: currentPassword, newPassword: newPassword }),

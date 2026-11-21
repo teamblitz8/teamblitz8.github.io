@@ -34,27 +34,6 @@ form.addEventListener('submit', async (e) => {
     showError('Updating password..', false, false, undefined, undefined, true, '#password-error');
 
     try {
-        if (username === null) throw new Error('There was an unexpected error. Please refresh the page.');
-        const response = await fetch('https://back.teamblitz.workers.dev/api/auth', {
-            method: 'POST',
-            body: JSON.stringify({ username: username, password: currentPassword.value }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-
-        if (!response.ok) {
-            submit.disabled = false;
-            await showError(undefined, response, true, undefined, undefined, false, '#password-error');
-        }
-    }
-    catch (error) {
-        submit.disabled = false;
-        await showError(error.message, false, false, undefined, undefined, false, '#password-error');
-    }
-
-    try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/change-password', {
             method: 'POST',
             body: JSON.stringify({ currentPassword: currentPassword, newPassword: newPassword }),

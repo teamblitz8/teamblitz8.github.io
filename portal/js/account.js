@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         if (!response.ok) {
-            const msg = await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#main-error');
+            const msg = await showError(undefined, response, false, undefined, undefined, false, '#main-error');
             throw new Error(msg);
         }
         else {

@@ -633,7 +633,7 @@ const authenticate = async (username, enteredPassword, env, pathname, request) =
 	let result;
 
 	try {
-		const query = env.blitz.prepare(statement).bind(username);
+		const query = env.blitz.prepare(statement).bind(username.toLowerCase());
 		result = await query.first();
 	}
 	catch (error) {
@@ -870,7 +870,7 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
                 return {
                     allow: true,
                     userid: results.userid,
-					tokenid: results['tokenid']
+					tokenid: results.token_id
                 }
             }
 		}

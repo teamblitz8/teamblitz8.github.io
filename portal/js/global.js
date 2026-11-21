@@ -32,12 +32,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         let data;
 
         if (response.ok) {
-            data = await parseJSON(response, ['username', 'name']);
+            data = await parseJSON(response, ['username', 'name', 'tokenid']);
             if (!data) return await showError('There was an unexpected error.', response, false, undefined, undefined, false, '#main-error');
 
             username = await data.username;
             name = await data.name;
-            tokenid = await data['token_id'];
+            tokenid = await data.tokenid;
 
             const profileURL = await fetchProfile(username);
             document.querySelector('#profile p').innerText = await username;

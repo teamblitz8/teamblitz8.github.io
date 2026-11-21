@@ -656,6 +656,7 @@ export default {
 
 				if (request.method === 'GET') {
 					const fetchSessions = await fetchCurrentSessions(env, url.pathname, request, sessionCheck.userid);
+					console.log(fetchSessions);
 					return fetchSessions.response;
 				}
 				else if (request.method === 'POST') {

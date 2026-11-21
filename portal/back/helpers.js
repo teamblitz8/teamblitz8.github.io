@@ -68,7 +68,11 @@ const compare = (a, b) => {
  * @returns {Response} A Response object with the required parameters built.
  */
 const buildResponse = (message, status, contentType, object, blob, disposition) => {
-    let finalObject = {...{ message: `${message} Timestamp: ${new Date().toISOString()}` }, ...object}
+	let p;
+	if (Array.isArray(object)) p = { array: object };
+	else p = object;
+
+    let finalObject = {...{ message: `${message} Timestamp: ${new Date().toISOString()}` }, ...p}
     if (object === 'BLOB') finalObject = blob;
     else finalObject = JSON.stringify(finalObject);
 
@@ -760,11 +764,11 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 	const hashedToken = hash(sessionToken, tokenSalt);
 	const tokenHash = hashedToken.hash;
 	const useragent = new UAParser(request.headers.get('User-Agent')).getResult();
-	const uuid = convertBufferToString(crypto.randomUUID());
+	const uuid = crypto.randomUUID();
 
 	const insertionStatement = 'INSERT INTO sessiontokens (token_id, session_token_hash, userid, expiration_date, browser, ip, geolocation, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
 	try {
-		const insertion = env.blitz.prepare(insertionStatement).bind(uuid, tokenHash, userID.response.userid, expiry, `${useragent.browser.toString()} on ${useragent.device.toString()} running ${useragent.os.toString()}`, `${request.headers.get('cf-connecting-ip')}`, `${request.cf.city}, ${request.cf.country}`, `${new Date().toISOString()}`);
+		const insertion = env.blitz.prepare(insertionStatement).bind(uuid, tokenHash, userID.response.userid, expiry, `${useragent.browser.toString() || 'Unknown browser'} on ${useragent.device.toString() || 'Unknown device'} running ${useragent.os.toString() || 'Unknown OS'}`, `${request.headers.get('cf-connecting-ip')}`, `${request.cf.city}, ${request.cf.country}`, `${new Date().toISOString()}`);
 		await insertion.run();
 	}
 	catch (error) {
@@ -1635,6 +1639,8 @@ const fetchCurrentSessions = async (env, pathname, request, userid) => {
 		}
 	}
 	else {
+		console.log(sessions.results);
+		console.log(sessions);
 		return {
 			success: true,
 			response: buildResponse('Fetched successfully.', 200, normalHeader, sessions.results)

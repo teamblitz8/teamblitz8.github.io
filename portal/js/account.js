@@ -103,14 +103,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         else {
             let data;
-            data = await parseJSON(response, ['browser', 'ip', 'geolocation', 'last_accessed', 'token_id']);
+            data = await parseJSON(response, ['message', 'array']);
 
             if (!data) {
                 const msg = await showError('There was an unexpected error.', false, false, undefined, undefined, false, '#main-error');
                 throw new Error(msg);
             }
             else {
-                for (let session of data) {
+                for (let session of data.array) {
                     const box = document.querySelector('#sessions');
                     box.innerHTML += `<div class="session ${session['token_id']}"><p>${session.browser}</p><p>${session.geolocation}</p><p>${session.ip}</p><p>Last accessed ${session['last_accessed']}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
                 }

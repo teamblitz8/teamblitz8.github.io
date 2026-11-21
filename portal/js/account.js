@@ -1,6 +1,8 @@
 const form = document.querySelector('form');
 
 form.addEventListener('submit', async (e) => {
+    await toggleFullScreen();
+    await toggleLoading('Processing..', true);
     hideError('#password-error');
     e.preventDefault();
 
@@ -67,13 +69,17 @@ form.addEventListener('submit', async (e) => {
             await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#password-error');
         }
         else {
-            await showError('Password change successful', false, false, undefined, undefined, true, '#password-error');
+            await toggleLoading('', false);
+            await toggleFullScreen();
+            await showError('Password change successful.', false, false, undefined, undefined, true, '#password-error');
             setTimeout(() => {
                 window.location.replace('https://teamblitz.pages.dev/portal/');
             }, 1000);
         }
     }
     catch (error) {
+        await toggleLoading('', false);
+        await toggleFullScreen();
         submit.disabled = false;
         await showError(error.message, false, false, undefined, undefined, false, '#password-error');
     }
@@ -89,7 +95,7 @@ const switchMenu = (menu) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     await toggleFullScreen();
-    await toggleLoading('Fetching car..', true);
+    await toggleLoading('Fetching account data..', true);
 
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/sessions', {
@@ -113,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const box = document.querySelector('#sessions');
                 for (let session of data.array) {
                     if (tokenid === session['token_id']) box.innerHTML += `<div class="session ${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p class="current-session success">Your current session</p><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p>`;
-                    else box.innerHTML += `<div class="session ${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
+                    else box.innerHTML += `<div class="session a${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
                 }
                 box.innerHTML += '<div class="session"><button onclick="logoutAll()"><i class="fa-solid fa-right-from-bracket"></i> Log out of all devices (causes sign-out)</button></div>';
             }
@@ -135,6 +141,9 @@ const logoutDevice = async (tokenID) => {
     for (let i of buttons) {
         i.disabled = true;
     }
+
+    await toggleFullScreen();
+    await toggleLoading('Processing..', true);
     
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/sessions', {
@@ -150,11 +159,17 @@ const logoutDevice = async (tokenID) => {
             await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#session-error');
         }
         else {
-            await showError('Successfully logged out of that device.', false, false, undefined, undefined, true, '#session-error');
-            document.querySelector(`.${tokenID}`).innerHTML = '';
+            const box = document.querySelector(`.a${tokenID}`);
+            await showError(`Successfully logged out of ${box.querySelector('h1').textContent}.`, false, false, undefined, undefined, true, '#session-error');
+            box.remove();
+
+            await toggleLoading('', false);
+            await toggleFullScreen();
         }
     }
     catch (error) {
+        await toggleLoading('', false);
+        await toggleFullScreen();
         await showError(error.message, false, false, undefined, undefined, false, '#session-error');
     }
 
@@ -168,6 +183,9 @@ const logoutAll = async () => {
     for (let i of buttons) {
         i.disabled = true;
     }
+
+    await toggleFullScreen();
+    await toggleLoading('Processing..', true);
     
     try {
         const response = await fetch('https://back.teamblitz.workers.dev/api/clear-all-sessions', {
@@ -179,6 +197,8 @@ const logoutAll = async () => {
             await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#session-error');
         }
         else {
+            await toggleLoading('', false);
+            await toggleFullScreen();
             await showError('Successfully logged out of all devices. Please log in again.', false, false, undefined, undefined, true, '#session-error');
             setTimeout(() => {
                 window.location.replace('https://teamblitz.pages.dev/portal/login');
@@ -186,6 +206,8 @@ const logoutAll = async () => {
         }
     }
     catch (error) {
+        await toggleLoading('', false);
+        await toggleFullScreen();
         await showError(error.message, false, false, undefined, undefined, false, '#session-error');
     }
 

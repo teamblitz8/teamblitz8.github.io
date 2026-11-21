@@ -1,6 +1,3 @@
-// breaking change: backend no longer sends username and name, use /api/account for that
-// breaking change: backend now just sends the car in json, there is no nested objects now
-
 const normalHeader = 'application/json; charset=UTF-8';
 const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionTokenFromSessionToken, deleteSessionTokenFromTokenID, deleteAllSessionTokens, updatePassword, checkFileMagicBytes, fetchAllCars, fetchCurrentSessions } = require('../helpers.js');
 
@@ -664,7 +661,7 @@ export default {
 					const requestCheck = await checkRequest(url.pathname, request, ['POST'], 'application/json');
 					if (!requestCheck.success) return requestCheck.response;
 
-					const parseRequest = await parseRequestJSON(url.pathname, request, ['currentPassword', 'newPassword']);
+					const parseRequest = await parseRequestJSON(url.pathname, request, ['tokenID']);
 					if (!parseRequest.success) return parseRequest.response;
 
 					const tokenID = parseRequest.json.tokenID;

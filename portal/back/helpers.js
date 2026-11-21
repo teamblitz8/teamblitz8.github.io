@@ -859,7 +859,7 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
             }
         }
 		if (compare(attemptedHash, results['session_token_hash'])) {
-            if (!Object.hasOwn(results, 'userid') || !Object.hasOwn(results, 'tokenid')) {
+            if (!Object.hasOwn(results, 'userid') || !Object.hasOwn(results, 'token_id')) {
                 log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
                 return {
                     allow: false,

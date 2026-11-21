@@ -82,7 +82,7 @@ form.addEventListener('submit', async (e) => {
 const switchMenu = (menu) => {
     for (let i of ['security']) {
         const j = document.querySelector(`#${i}`);
-        i.style.display = 'none';
+        j.style.display = 'none';
     }
     document.querySelector(`#${menu}`).style.display = 'flex';
 }
@@ -112,9 +112,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             else {
                 const box = document.querySelector('#sessions');
                 for (let session of data.array) {
-                    box.innerHTML += `<div class="session ${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
+                    if (tokenid === session['token_id']) box.innerHTML += `<div class="session ${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p class="current-session success">Your current session</p><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p>`;
+                    else box.innerHTML += `<div class="session ${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
                 }
-                box.innerHTML += '<div class="session"><button onclick="logoutAll()">Log out of all devices (requires sign-in)</button></div>';
+                box.innerHTML += '<div class="session"><button onclick="logoutAll()"><i class="fa-solid fa-right-from-bracket"></i> Log out of all devices (causes sign-out)</button></div>';
             }
 
             await toggleLoading('', false)
@@ -151,6 +152,37 @@ const logoutDevice = async (tokenID) => {
         else {
             await showError('Successfully logged out of that device.', false, false, undefined, undefined, true, '#session-error');
             document.querySelector(`.${tokenID}`).innerHTML = '';
+        }
+    }
+    catch (error) {
+        await showError(error.message, false, false, undefined, undefined, false, '#session-error');
+    }
+
+    for (let i of buttons) {
+        i.disabled = false;
+    }
+}
+
+const logoutAll = async () => {
+    const buttons = document.querySelectorAll('.kick');
+    for (let i of buttons) {
+        i.disabled = true;
+    }
+    
+    try {
+        const response = await fetch('https://back.teamblitz.workers.dev/api/clear-all-sessions', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#session-error');
+        }
+        else {
+            await showError('Successfully logged out of all devices. Please log in again.', false, false, undefined, undefined, true, '#session-error');
+            setTimeout(() => {
+                window.location.replace('https://teamblitz.pages.dev/portal/login');
+            });
         }
     }
     catch (error) {

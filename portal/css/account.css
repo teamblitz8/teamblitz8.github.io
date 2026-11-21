@@ -6,6 +6,7 @@
 #page-title {
     width: 75%;
     margin: 1em auto;
+    margin-bottom: 0.5em;
 }
 
 .question p {
@@ -64,6 +65,10 @@
     font-weight: 200;
 }
 
+.current-session {
+    border-radius: 50%;
+}
+
 #menu-container {
     width: 75%;
     margin: auto;
@@ -107,6 +112,7 @@
     box-shadow: none;
     border-radius: 100vh;
     padding: 0.5em 1.5em;
+    text-align: left;
 }
 
 #sidebar button.active {

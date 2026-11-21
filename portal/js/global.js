@@ -1,5 +1,6 @@
 let username;
 let name;
+let tokenid;
 
 const fetchProfile = async (username) => {
     const endpoint = new URL('https://back.teamblitz.workers.dev/api/profile');
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             username = await data.username;
             name = await data.name;
+            tokenid = await data.tokenid;
 
             const profileURL = await fetchProfile(username);
             document.querySelector('#profile p').innerText = await username;

@@ -818,19 +818,19 @@ const updatePassword = async (userid, env, newPassword, pathname, request) => {
 }
 
 /**
- * Checks whether the session token sent by the client exists, and returns the user's `userid`.
+ * Checks whether the session token sent by the client exists, and returns the user's `userid` and the token's `tokenid`..
  * @param {string} sessionToken The session token as a string, taken from the cookie.
  * @param {Env} env
  * @param {string} pathname The API endpoint called by the client.
  * @param {Request} request The Request object associated with it.
- * @returns {{ allow: boolean, response: Response | undefined, userid: string }}
+ * @returns {{ allow: boolean, response: Response | undefined, userid: string, tokenid: string }}
  */
 const checkSessionToken = async (sessionToken, env, pathname, request) => {
 	const theSalt = Buffer.from(env.sessionTokenSalt, 'hex');
 	const attemptedHash = hash(sessionToken, theSalt).hash;
 	const currentDate = (new Date()).toISOString();
 
-	const statement = 'SELECT session_token_hash, userid FROM sessiontokens WHERE session_token_hash = ? AND expiration_date > ?';
+	const statement = 'SELECT session_token_hash, userid, token_id FROM sessiontokens WHERE session_token_hash = ? AND expiration_date > ?';
 	let results;
 	try {
 		const query = env.blitz.prepare(statement).bind(attemptedHash, currentDate);
@@ -859,7 +859,7 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
             }
         }
 		if (compare(attemptedHash, results['session_token_hash'])) {
-            if (!Object.hasOwn(results, 'userid')) {
+            if (!Object.hasOwn(results, 'userid') || !Object.hasOwn(results, 'tokenid')) {
                 log('warn', pathname, request, `D1 query returned malformed data when attempting to fetch session token data for (hashed) token ${attemptedHash}; statement: ${statement}`);
                 return {
                     allow: false,
@@ -869,7 +869,8 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
             else {
                 return {
                     allow: true,
-                    userid: results.userid
+                    userid: results.userid,
+					tokenid: results.tokenid
                 }
             }
 		}
@@ -908,7 +909,7 @@ const parseCookies = (cookieHeader) => {
  * @param {Request} request The Request object associated with it.
  * @param {string} pathname The API endpoint called by the client.
  * @param {Env} env
- * @returns {{ allow: boolean, response: Response | undefined, userid: string | undefined, sessionToken: string | undefined }} Whether to allow the user to pass, with the `sessionToken` found and the `userid` of the user if allowed, or with a sample `Response` if not.
+ * @returns {{ allow: boolean, response: Response | undefined, userid: string | undefined, sessionToken: string | undefined, tokenid: string | undefined }} Whether to allow the user to pass, with the `sessionToken` found and the `userid` of the user if allowed, or with a sample `Response` if not.
  */
 const checkSession = async (request, pathname, env) => {
     const cookieHeader = request.headers.get('Cookie') || '';
@@ -934,7 +935,8 @@ const checkSession = async (request, pathname, env) => {
     return {
         allow: true,
         userid: userid.userid,
-        sessionToken: sessionToken
+        sessionToken: sessionToken,
+		tokenid: userid.tokenid
     }
 }
 

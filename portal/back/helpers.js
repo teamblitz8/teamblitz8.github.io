@@ -507,7 +507,7 @@ const updateLastLogin = async (pathname, request, env, enteredUsername, sessionT
 	let time;
 	if (rememberMe) time = 604800;
 	else time = 86400;
-    response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=${time}; Path=/; SameSite=None; Secure;`);
+    response.headers.append('Set-Cookie', `session_token=${sessionToken}; HttpOnly; Max-Age=${time}; Path=/; SameSite=None; Secure; Partitioned;`);
 
 	return response;
 }
@@ -870,7 +870,7 @@ const checkSessionToken = async (sessionToken, env, pathname, request) => {
                 return {
                     allow: true,
                     userid: results.userid,
-					tokenid: results.tokenid
+					tokenid: results['tokenid']
                 }
             }
 		}

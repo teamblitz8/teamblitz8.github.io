@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             username = await data.username;
             name = await data.name;
-            tokenid = await data.tokenid;
+            tokenid = await data['token_id'];
 
             const profileURL = await fetchProfile(username);
             document.querySelector('#profile p').innerText = await username;

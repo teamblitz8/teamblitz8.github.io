@@ -55,5 +55,5 @@ const goAway = () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('redirect') === 'true') showError('You must be logged in to see that page.', false, false, undefined, undefined, false, '#main-error');
+    if (params.get('redirect') === 'true') showError('Please log in again.', false, false, undefined, undefined, false, '#main-error');
 });

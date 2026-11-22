@@ -54,12 +54,20 @@ This part of the site involved a lot of learning for me. It is designed to allow
 - Loading the latest car designs, related statistics, files and other information that may help someone improve on it
     - To make things easier this is split into multiple requests; one for metadata and one for each file.
     - This allows me to send files as binary blobs and generally make things easier instead of needing to convert between Base64.
+- Account and session management on My Account page
+    - Passwords can be changed
+    - Devices can be removed (with listing of IP, geolocation etc)
+- Leaderboard of all cars and people
+    - You can filter by person, or see everyone's at once to foster competition
+    - And sort by performance quantities.
 
 ### What doesn't work yet?
 
 A lot!
 
 - My Designs is UI only
+- For some reason, it is currently unable to sort by date on the leaderboard. All other sorting should work.
+- Preview links on the leaderboard do not work at the moment.
 - It's quite horrendous on mobile right now
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
@@ -81,8 +89,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Complete the My Designs page
 - Stop user from changing password to one they already have
 - Add mobile responsivity
-- Make a leaderboard!
-- Add wheel support (incl replacing N/A on leaderboard for any wheel related stuff)
+- Add wheel support (incl replacing TBC on leaderboard for any wheel related stuff)
 - decrease number of helpers e.g. fetchuserdata can do everything
 - Add a try again button to errors
 - Reduce CPU time of the worker

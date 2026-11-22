@@ -2,6 +2,11 @@ let username;
 let name;
 let tokenid;
 
+const waitFor = (varName) => new Promise((resolve) => {
+    const check = () => (window[varName] !== undefined ? resolve(window[varName]) : setTimeout(check, 50));
+    check();
+});
+
 const fetchProfile = async (username) => {
     const endpoint = new URL('https://back.teamblitz.workers.dev/api/profile');
     endpoint.search = new URLSearchParams({ username: username }).toString();

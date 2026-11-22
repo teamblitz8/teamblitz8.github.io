@@ -47,7 +47,7 @@ const sortAndCategorise = (criteria, array, categorisedObject, categories, type)
     let obj = categorisedObject;
 
     for (let i of arr) {
-        const creator = categories[users.findIndex(a => a.userid === i.creatorid)];
+        const creator = categories[categories.findIndex(a => a.userid === i.creatorid)];
         if (creator.lowestDrag > i['drag_force']) creator.lowestDrag = i['drag_force'];
 
         obj[i.creatorid].push(i);

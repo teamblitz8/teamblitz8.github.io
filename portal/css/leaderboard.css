@@ -34,7 +34,7 @@
 }
 
 .leaderboard {
-    display: grid;
+    display: none;
     width: calc(75% - 3em);
     margin: 1.5em auto;
     border: 1px solid #f8ac29;
@@ -63,6 +63,10 @@
     border: 0px;
     padding: 0;
     width: 75%;
+}
+
+.shown {
+    display: grid;
 }
 
 .person {

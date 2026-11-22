@@ -10,8 +10,8 @@
         <link rel="stylesheet" href="./css/leaderboard.css">
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script type="text/javascript" src="dist/purify.min.js"></script>
-        <!--<script src="./js/global.js" defer></script>
-        <script src="./js/leaderboard.js" defer></script>-->
+        <!--<script src="./js/global.js" defer></script>-->
+        <script src="./js/leaderboard.js" defer></script>
     </head>
 
     <body>
@@ -33,32 +33,32 @@
         <h1 id="page-title">Leaderboard</h1>
         <div id="options">
             <div class="swapper active" id="type">
-                <button onclick="swap('type', 'people')" class="enabled"><i class="fa-solid fa-user"></i> People</button>
-                <button onclick="swap('type', 'cars')"><i class="fa-solid fa-car-side"></i> Car body</button>
-                <button onclick="swap('type', 'wheels')"><i class="fa-solid fa-ring"></i> Wheels</button>
+                <button onclick="swap('type', 'people', this)" class="enabled" id="bpeople"><i class="fa-solid fa-user"></i> People</button>
+                <button onclick="swap('type', 'cars', this)" id="bcars"><i class="fa-solid fa-car-side"></i> Car body</button>
+                <button onclick="swap('type', 'wheels', this)" id="bwheels"><i class="fa-solid fa-ring"></i> Wheels</button>
             </div>
             <div class="swapper active" id="people">
-                <button onclick="swap('people', 'all')" class="enabled">All</button> <!--will be used to show iterations made, lowest drag, lowest moi-->
-                <button onclick="swap('people', 'yash')">Yash</button> <!--the cars/wheels they have made, essentially a filter for cars, sorted by date created-->
-                <button onclick="swap('people', 'chen')">Chen</button>
-                <button onclick="swap('people', 'josh')">Josh</button>
-                <button onclick="swap('people', 'pranit')">Pranit</button>
-                <button onclick="swap('people', 'rayhaan')">Rayhaan</button>
+                <button onclick="swap('people', 'all', this)" class="enabled">All</button> <!--will be used to show iterations made, lowest drag, lowest moi-->
+                <button onclick="swap('people', 'yash', this)">Yash</button> <!--the cars/wheels they have made, essentially a filter for cars, sorted by date created-->
+                <button onclick="swap('people', 'chen', this)">Chen</button>
+                <button onclick="swap('people', 'josh', this)">Josh</button>
+                <button onclick="swap('people', 'pranit', this)">Pranit</button>
+                <button onclick="swap('people', 'rayhaan', this)">Rayhaan</button>
             </div>
             <div class="swapper" id="cars">
-                <button onclick="swap('cars', 'drag')">Drag</button>
-                <button onclick="swap('cars', 'fa')">Frontal area</button>
-                <button onclick="swap('cars', 'cd')">Drag coefficient</button>
-                <button onclick="swap('cars', 'date')">Latest date</button>
+                <button onclick="swap('cars', 'drag', this)" class="enabled">Drag</button>
+                <button onclick="swap('cars', 'frontal-area', this)">Frontal area</button>
+                <button onclick="swap('cars', 'cd', this)">Drag coefficient</button>
+                <button onclick="swap('cars', 'date', this)">Latest date</button>
             </div>
             <div class="swapper" id="wheels">
-                <button onclick="swap('wheels', 'moi')">Moment of inertia</button>
-                <button onclick="swap('wheels', 'fos')">Factor of safety</button>
-                <button onclick="swap('wheels', 'date')">Latest date</button>
+                <button onclick="swap('wheels', 'moi', this)" class="enabled">Moment of inertia</button>
+                <button onclick="swap('wheels', 'fos', this)">Factor of safety</button>
+                <button onclick="swap('wheels', 'date', this)">Latest date</button>
             </div>
         </div>
         <div id="leaderboard-container">
-            <div class="people all leaderboard">
+            <div class="people all leaderboard shown">
                 <h2>Stinky person</h2>
                 <h2>Cars created</h2>
                 <h2>Cars scrutineered</h2>
@@ -66,14 +66,32 @@
                 <h2>Wheels created</h2>
                 <h2>Lowest MoI achieved</h2>
                 <div class="person userid">
-                    <img src="./imgs/josh_lowres_square.JPG">
-                    <p>Josh</p>
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
                 </div>
-                <p class="cars-created userid">0</p>
+                <p class="cars-created userid">3</p>
                 <p class="cars-scrutineered userid">0</p>
-                <p class="lowest-drag userid">N/A</p>
-                <p class="wheels-created userid">1</p>
-                <p class="lowest-moi userid">0</p>
+                <p class="lowest-drag userid">0.1967087616547967N</p>
+                <p class="wheels-created userid">0</p>
+                <p class="lowest-moi userid">N/A</p>
+                <div class="person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <p class="cars-created userid">3</p>
+                <p class="cars-scrutineered userid">1</p>
+                <p class="lowest-drag userid">0.2194090542742676N</p>
+                <p class="wheels-created userid">0</p>
+                <p class="lowest-moi userid">N/A</p>
+                <div class="person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="cars-created userid">1</p>
+                <p class="cars-scrutineered userid">6</p>
+                <p class="lowest-drag userid">0.22758711200000000N</p>
+                <p class="wheels-created userid">0</p>
+                <p class="lowest-moi userid">N/A</p>
                 <div class="person userid">
                     <img src="./imgs/josh_lowres_square.JPG">
                     <p>Josh</p>
@@ -84,32 +102,14 @@
                 <p class="wheels-created userid">1</p>
                 <p class="lowest-moi userid">0</p>
                 <div class="person userid">
-                    <img src="./imgs/josh_lowres_square.JPG">
-                    <p>Josh</p>
+                    <img src="./imgs/rayhaan_lowres_square.JPG">
+                    <p>Rayhaan</p>
                 </div>
                 <p class="cars-created userid">0</p>
                 <p class="cars-scrutineered userid">0</p>
                 <p class="lowest-drag userid">N/A</p>
-                <p class="wheels-created userid">1</p>
-                <p class="lowest-moi userid">0</p>
-                <div class="person userid">
-                    <img src="./imgs/josh_lowres_square.JPG">
-                    <p>Josh</p>
-                </div>
-                <p class="cars-created userid">0</p>
-                <p class="cars-scrutineered userid">0</p>
-                <p class="lowest-drag userid">N/A</p>
-                <p class="wheels-created userid">1</p>
-                <p class="lowest-moi userid">0</p>
-                <div class="person userid">
-                    <img src="./imgs/josh_lowres_square.JPG">
-                    <p>Josh</p>
-                </div>
-                <p class="cars-created userid">0</p>
-                <p class="cars-scrutineered userid">0</p>
-                <p class="lowest-drag userid">N/A</p>
-                <p class="wheels-created userid">1</p>
-                <p class="lowest-moi userid">0</p>
+                <p class="wheels-created userid">0</p>
+                <p class="lowest-moi userid">N/A</p>
             </div>
             <div class="people yash leaderboard">
                 <h2>Design</h2>

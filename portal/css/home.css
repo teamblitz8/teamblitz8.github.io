@@ -260,10 +260,6 @@ body:has(.popup-open) {
     scrollbar-gutter: stable;
 }
 
-i {
-    margin-right: 0.25em;
-}
-
 #changes div div {
     flex-direction: column;
     gap: 0.4em;

@@ -768,7 +768,7 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 
 	const insertionStatement = 'INSERT INTO sessiontokens (token_id, session_token_hash, userid, expiration_date, browser, ip, geolocation, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
 	try {
-		const insertion = env.blitz.prepare(insertionStatement).bind(uuid, tokenHash, userID.response.userid, expiry, `${useragent.browser.toString() || 'Unknown browser'} on ${useragent.device.toString() || 'Unknown device'} running ${useragent.os.toString() || 'Unknown OS'}`, `${request.headers.get('cf-connecting-ip')}`, `${request.cf.city}, ${request.cf.country}`, `${new Date().toISOString()}`);
+		const insertion = env.blitz.prepare(insertionStatement).bind(uuid, tokenHash, userID.response.userid, expiry, `${useragent?.browser?.toString() || 'Unknown browser'} on ${useragent?.device?.toString() || 'Unknown device'} running ${useragent?.os?.toString() || 'Unknown OS'}`, `${request.headers.get('cf-connecting-ip')}`, `${request.cf.city}, ${request.cf.country}`, `${new Date().toISOString()}`);
 		await insertion.run();
 	}
 	catch (error) {
@@ -959,7 +959,7 @@ const checkSession = async (request, pathname, env) => {
  * @returns {{ success: boolean, response: Response | { name: string, username: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
  */
 const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
-	const statement = 'SELECT name, username, last_login, iterations, force_password_change FROM users WHERE userid = ?';
+	const statement = 'SELECT name, username, last_login, iterations, force_password_change, scrutineers FROM users WHERE userid = ?';
 	let results;
 
 	try {
@@ -1013,7 +1013,7 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
  * @returns {{ success: boolean, response: Response | { name: string, userid: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
  */
 const fetchUserDataFromUsername = async (request, pathname, env, username) => {
-    const statement = 'SELECT name, userid, last_login, iterations, force_password_change FROM users WHERE username = ?';
+    const statement = 'SELECT name, userid, last_login, iterations, force_password_change, scrutineers FROM users WHERE username = ?';
     let results;
 
     try {
@@ -1351,7 +1351,8 @@ const identifyMaxIteration = async (request, pathname, env) => {
  */
 const uploadCarMetadata = async (request, pathname, env, carArray) => {
 	const statement = 'INSERT INTO cars (creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-	
+	const iterationUpdateStatement = 'UPDATE users SET iterations = iterations + 1 WHERE userid = ?';
+
 	try {
 		const query = env.blitz.prepare(statement).bind(...carArray);
 		await query.run();
@@ -1363,6 +1364,19 @@ const uploadCarMetadata = async (request, pathname, env, carArray) => {
 			response: buildResponse('There was an unexpected error.', 500, normalHeader)
 		}
 	}
+
+	try {
+		const query = env.blitz.prepare(iterationUpdateStatement).bind(carArray[0]);
+		await query.run();
+	}
+	catch (error) {
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
 	return {
 		success: true,
 		response: buildResponse('Upload successful.', 200, normalHeader, { carid: carArray[2] })

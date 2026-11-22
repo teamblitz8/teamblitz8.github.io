@@ -97,9 +97,9 @@ window.addEventListener('load', async () => {
             console.log(userCars);
             for (let i of data.users) {
                 increment = 1;
-                if (userCars[i.creatorid].length === 0) add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard empty"><div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div></div>`
+                if (userCars[i.userid].length === 0) add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard empty"><div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div></div>`
                 add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard"><h2></h2><h2>Design</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Moment of inertia</h2><h2>Factor of safety</h2><h2>Preview</h2>`
-                for (let j of userCars[i.creatorid]) {
+                for (let j of userCars[i.userid]) {
                     add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><p class="moi car a${j.carid}">TBC</p><p class="fos car a${j.carid}">TBC</p><a class="preview car a${j.carid}" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>`;
                     increment++;
                 }

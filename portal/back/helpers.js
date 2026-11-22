@@ -956,7 +956,7 @@ const checkSession = async (request, pathname, env) => {
  * @param {string} pathname The API endpoint called by the client.
  * @param {Env} env
  * @param {string} userid The user ID associated with the account.
- * @returns {{ success: boolean, response: Response | { name: string, username: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber, scrutineers: number } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
+ * @returns {{ success: boolean, response: Response | { name: string, username: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber, scrutineers: number, userID: string } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
  */
 const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 	const statement = 'SELECT name, username, last_login, iterations, force_password_change, scrutineers FROM users WHERE userid = ?';
@@ -1010,7 +1010,7 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
  * @param {string} pathname The API endpoint called by the client.
  * @param {Env} env
  * @param {string} username The user's username.
- * @returns {{ success: boolean, response: Response | { name: string, userid: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber, scrutineers: number } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
+ * @returns {{ success: boolean, response: Response | { name: string, userid: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber, scrutineers: number, username: string } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
  */
 const fetchUserDataFromUsername = async (request, pathname, env, username) => {
     const statement = 'SELECT name, userid, last_login, iterations, force_password_change, scrutineers FROM users WHERE username = ?';

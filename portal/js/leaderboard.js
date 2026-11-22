@@ -24,9 +24,62 @@ const switchActive = (newButton, parentDOM) => {
     bg.style.transform = `translate(${newButton.offsetLeft}px, ${newButton.offsetTop}px)`;
 }
 
-window.addEventListener('load', () => {
-    switchActive(document.querySelector('#type').querySelector('button'), document.querySelector('#type'));
-    switchActive(document.querySelector('#people').querySelector('button'), document.querySelector('#people'));
-    switchActive(document.querySelector('#cars').querySelector('button'), document.querySelector('#cars'));
-    switchActive(document.querySelector('#wheels').querySelector('button'), document.querySelector('#wheels'));
+window.addEventListener('load', async () => {
+    try {
+        toggleFullScreen();
+        toggleLoading('Fetching data...', true);
+        
+        const response = await fetch('https://back.teamblitz.workers.dev/api/leaderboard', {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error(await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#main-error'));
+        else {
+            let data = await parseJSON(response, ['cars', 'users']);
+            const container = document.querySelector('#leaderboard-container');
+            let pfpMapping = {};
+            let carMapping = {};
+            let lowestDragMapping = {};
+
+            if (!data) throw new Error(await showError('There was an unexpected error.', false, false, undefined, undefined, false, '#main-error'));
+
+            for (let i of data.users) {
+                const pfp = await fetchProfile(i.username);
+                pfpMapping[i.username] = pfp;
+                carMapping[i.username] = 'TBC';
+            }
+
+            data.cars = data.cars.toSorted((a, b) => a['drag_force'] - b['drag_force']);
+
+            for (let i of data.cars) {
+                carMapping[i['car_name']] = i.creatorUsername;
+                if (!lowestDragMapping[i.creatorUsername]) lowestDragMapping[i.creatorUsername] = i['drag_force'];
+            }
+
+            container.innerHTML += '<div class="people all leaderboard shown"><h2></h2><h2>Stinky person</h2><h2>Cars created</h2><h2>Cars scrutineered</h2><h2>Lowest drag achieved</h2><h2>Wheels created</h2><h2>Lowest MoI achieved</h2>';
+
+            let increment = 0;
+            data.users = data.users.toSorted((a, b) => lowestDragMapping[a.username] - lowestDragMapping[b.username]);
+            for (let i of data.users) {
+                container.innerHTML += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers}</p><p class="lowest-drag a${i.userid}">${lowestDragMapping[i.username]}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
+                increment++;
+            }
+
+            increment = 0;
+            container.innerHTML += '</div>';
+
+            switchActive(document.querySelector('#type').querySelector('button'), document.querySelector('#type'));
+            switchActive(document.querySelector('#people').querySelector('button'), document.querySelector('#people'));
+            switchActive(document.querySelector('#cars').querySelector('button'), document.querySelector('#cars'));
+            switchActive(document.querySelector('#wheels').querySelector('button'), document.querySelector('#wheels'));
+
+            toggleFullScreen();
+            toggleLoading('', false);
+        }
+    }
+    catch (error) {
+        await toggleLoading('', false);
+        await showError(error, false, false, undefined, undefined, false, '#main-error');
+    }
 });

@@ -956,7 +956,7 @@ const checkSession = async (request, pathname, env) => {
  * @param {string} pathname The API endpoint called by the client.
  * @param {Env} env
  * @param {string} userid The user ID associated with the account.
- * @returns {{ success: boolean, response: Response | { name: string, username: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
+ * @returns {{ success: boolean, response: Response | { name: string, username: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber, scrutineers: number } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
  */
 const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
 	const statement = 'SELECT name, username, last_login, iterations, force_password_change, scrutineers FROM users WHERE userid = ?';
@@ -1010,7 +1010,7 @@ const fetchUserDataFromUserID = async (request, pathname, env, userid) => {
  * @param {string} pathname The API endpoint called by the client.
  * @param {Env} env
  * @param {string} username The user's username.
- * @returns {{ success: boolean, response: Response | { name: string, userid: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
+ * @returns {{ success: boolean, response: Response | { name: string, userid: string, last_login: ISODateString, iterations: number, force_password_change: BoolNumber, scrutineers: number } }} Whether the fetch has succeeded, along with the user data in a JavaScript Object if it did, and a sample Response if not.
  */
 const fetchUserDataFromUsername = async (request, pathname, env, username) => {
     const statement = 'SELECT name, userid, last_login, iterations, force_password_change, scrutineers FROM users WHERE username = ?';
@@ -1615,25 +1615,74 @@ const checkFileMagicBytes = async (file, expectedExtension) => {
 }
 
 /**
- * Fetches the metadata of all cars from a database and returns their name, creator and iteration number for upload selection purposes.
+ * Fetches the metadata of all cars from a database.
  * @param {Env} env
  * @param {string} pathname The API endpoint called by the client.
  * @param {Request} request The Request object associated with it.
- * @returns {Response} An appropriate Response object based on whether the fetch succeeded or not.
+ * @returns {{success: boolean, response: Response | Array<Object>}} Whether the fetch succeeded, with an appropriate Response object based on whether it did or not, or an array of Objects with each car as its own Object in the array.
  */
 const fetchAllCars = async (env, pathname, request) => {
+	let response;
+	let success = true;
 	const maxIteration = await identifyMaxIteration(request, pathname, env);
-	if (!maxIteration.success) return maxIteration.response;
+	if (!maxIteration.success) {
+		response = maxIteration.response;
+		success = false;
+	}
+	else {
+		const cars = [];
 
-	const cars = [];
+		for (let i = 1; i <= maxIteration.response; i++) {
+			const metadata = await pullCarMetaDataWithIterationNumber(i, env, pathname, request, false);
+			if (!metadata.success) {
+				response = metadata.response;
+				success = false;
+				break;
+			}
+			else {
+				if (pathname === '/api/all-cars') cars.push(`${metadata.data['car_name']} by ${metadata.data.creatorName} (Iteration #${metadata.data.iteration})`);
+				else cars.push(metadata.data);
+			}
+		}
 
-	for (let i = 1; i <= maxIteration.response; i++) {
-		const metadata = await pullCarMetaDataWithIterationNumber(i, env, pathname, request, false);
-		if (!metadata.success) return metadata.response;
-		cars.push(`${metadata.data['car_name']} by ${metadata.data.creatorName} (Iteration #${metadata.data.iteration})`);
+		if (pathname === '/api/all-cars' && success) response = buildResponse('Fetched successfully.', 200, normalHeader, { cars: cars });
+		else response = cars;
+	}
+	return {
+		success: success,
+		response: response
+	}
+}
+
+/**
+ * Fetches the metadata of all users.
+ * @param {Env} env
+ * @param {string} pathname The API endpoint called by the client.
+ * @param {Request} request The Request object associated with it.
+ * @returns {{success: boolean, response: Response | Array<Object>}} Whether the fetch succeeded, with an appropriate Response object based on whether it did or not, or an array of Objects with each user as its own Object in the array.
+ */
+const fetchAllUsers = async (env, pathname, request) => {
+	let response;
+	let success = true;
+
+	const users = [];
+
+	for (let i of ['cheese', 'yashhasnolife67', 'ihatedeodorant67', 'unc', 'healthyballhair', 'mrtwose']) {
+		const userFetch = await fetchUserDataFromUsername(request, pathname, env, i);
+		if (!userFetch.success) {
+			success = false;
+			response = userFetch.response;
+			break;
+		}
+		else users.push(userFetch.response);
 	}
 
-	return buildResponse('Fetched successfully.', 200, normalHeader, { cars: cars });
+	if (success) response = users;
+
+	return {
+		success: success,
+		response: response
+	}
 }
 
 /**
@@ -1712,4 +1761,5 @@ module.exports = {
 	checkFileMagicBytes,
 	fetchAllCars,
 	fetchCurrentSessions,
+	fetchAllUsers
 };

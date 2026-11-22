@@ -1,5 +1,5 @@
 const normalHeader = 'application/json; charset=UTF-8';
-const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionTokenFromSessionToken, deleteSessionTokenFromTokenID, deleteAllSessionTokens, updatePassword, checkFileMagicBytes, fetchAllCars, fetchCurrentSessions } = require('../helpers.js');
+const { convertBufferToString, hash, compare, addNewSessionToken, checkIfActive, authenticate, checkUsername, banIP, checkIPBanned, updateLastLogin, handleIPBan, validateInputs, parseRequestJSON, checkRequest, log, buildResponse, checkSessionToken, parseCookies, checkSession, fetchUserDataFromUserID, fetchUserDataFromUsername, fetchFromR2, pullCarMetaDataWithIterationNumber, pullCarMetaDataWithCarID, identifyMaxIteration, uploadCarMetadata, pullCarFile, parseRequestBlob, uploadCarFile, deleteSessionTokenFromSessionToken, deleteSessionTokenFromTokenID, deleteAllSessionTokens, updatePassword, checkFileMagicBytes, fetchAllCars, fetchCurrentSessions, fetchAllUsers } = require('../helpers.js');
 
 export default {
 	async fetch(request, env, ctx) {
@@ -612,7 +612,31 @@ export default {
 				const sessionCheck = await checkSession(request, url.pathname, env);
 				if (!sessionCheck.allow) return sessionCheck.response;
 
-				return await fetchAllCars(env, url.pathname, request);
+				const carFetch = await fetchAllCars(env, url.pathname, request);
+				return carFetch.response;
+			}
+
+			else if (url.pathname === '/api/leaderboard') {
+				const requestCheck = await checkRequest(url.pathname, request, ['GET']);
+				if (!requestCheck.success) return requestCheck.response;
+
+				const handleIP = await handleIPBan(url.pathname, request, env);
+				if (!handleIP.allow) return handleIP.response;
+
+				const sessionCheck = await checkSession(request, url.pathname, env);
+				if (!sessionCheck.allow) return sessionCheck.response;
+
+				const carFetch = await fetchAllCars(env, url.pathname, request);
+				if (!carFetch.success) return carFetch.response;
+
+				let dataset = carFetch.response;
+
+				const usersFetch = await fetchAllUsers(env, url.pathname, request);
+				if (!usersFetch.success) return usersFetch.response;
+				else {
+					dataset = { cars: dataset, users: usersFetch.response };
+					return buildResponse('Fetched successfully.', 200, 'application/json', dataset);
+				}
 			}
 
 			else if (url.pathname === '/api/clear-all-sessions') {

@@ -86,6 +86,8 @@ window.addEventListener('load', async () => {
                 add += '</div>';
             }
 
+            container.innerHTML += add;
+
             switchActive(document.querySelector('#type').querySelector('button'), document.querySelector('#type'));
             switchActive(document.querySelector('#people').querySelector('button'), document.querySelector('#people'));
             switchActive(document.querySelector('#cars').querySelector('button'), document.querySelector('#cars'));

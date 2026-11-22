@@ -1667,7 +1667,7 @@ const fetchAllUsers = async (env, pathname, request) => {
 
 	const users = [];
 
-	for (let i of ['cheese', 'yashhasnolife67', 'ihatedeodorant67', 'unc', 'healthyballhair', 'mrtwose']) {
+	for (let i of ['cheese', 'yashhasnolife', 'ihatedeodorant67', 'unc', 'healthyballhair', 'mrtwose']) {
 		const userFetch = await fetchUserDataFromUsername(request, pathname, env, i);
 		if (!userFetch.success) {
 			success = false;

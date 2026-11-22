@@ -57,17 +57,17 @@ window.addEventListener('load', async () => {
                 if (!lowestDragMapping[i.creatorUsername]) lowestDragMapping[i.creatorUsername] = i['drag_force'];
             }
 
-            container.innerHTML += '<div class="people all leaderboard shown"><h2></h2><h2>Stinky person</h2><h2>Cars created</h2><h2>Cars scrutineered</h2><h2>Lowest drag achieved</h2><h2>Wheels created</h2><h2>Lowest MoI achieved</h2>';
+            let add = '<div class="people all leaderboard shown"><h2></h2><h2>Stinky person</h2><h2>Cars created</h2><h2>Cars scrutineered</h2><h2>Lowest drag achieved</h2><h2>Wheels created</h2><h2>Lowest MoI achieved</h2>';
 
-            let increment = 0;
+            let increment = 1;
             data.users = data.users.toSorted((a, b) => lowestDragMapping[a.username] - lowestDragMapping[b.username]);
             for (let i of data.users) {
-                container.innerHTML += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers}</p><p class="lowest-drag a${i.userid}">${lowestDragMapping[i.username]}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
+                add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers}</p><p class="lowest-drag a${i.userid}">${lowestDragMapping[i.username]}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
                 increment++;
             }
 
             increment = 0;
-            container.innerHTML += '</div>';
+            container.innerHTML += `${add}</div>`;
 
             switchActive(document.querySelector('#type').querySelector('button'), document.querySelector('#type'));
             switchActive(document.querySelector('#people').querySelector('button'), document.querySelector('#people'));

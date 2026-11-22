@@ -42,11 +42,6 @@
             <div class="swapper active" id="people">
                 <div class="active-indicator"></div>
                 <button onclick="swap('people', 'all', this)" class="enabled" id="all">All</button> <!--will be used to show iterations made, lowest drag, lowest moi-->
-                <button onclick="swap('people', 'yash', this)" id="yash">Yash</button> <!--the cars/wheels they have made, essentially a filter for cars, sorted by date created-->
-                <button onclick="swap('people', 'chen', this)" id="chen">Chen</button>
-                <button onclick="swap('people', 'josh', this)" id="josh">Josh</button>
-                <button onclick="swap('people', 'pranit', this)" id="pranit">Pranit</button>
-                <button onclick="swap('people', 'rayhaan', this)" id="rayhaan">Rayhaan</button>
             </div>
             <div class="swapper" id="cars">
                 <div class="active-indicator"></div>
@@ -63,98 +58,6 @@
             </div>
         </div>
         <div id="leaderboard-container">
-            <div class="people yash leaderboard">
-                <h2>Design</h2>
-                <h2>Date created</h2>
-                <h2>Frontal area</h2>
-                <h2>Drag coefficient</h2>
-                <h2>Drag</h2>
-                <h2>Moment of inertia</h2>
-                <h2>Factor of safety</h2>
-                <h2>Preview</h2>
-                <p class="name car carid">P-FR1</p>
-                <p class="date car carid">19/10/2026</p>
-                <p class="frontal-area car carid">1694.878mm²</p>
-                <p class="cd car carid">1.044363044</p>
-                <p class="drag car carid">0.23816264230768536N</p>
-                <p class="moi car carid">N/A</p>
-                <p class="fos car carid">N/A</p>
-                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
-                <p class="name car carid">P-FW02</p>
-                <p class="date car carid">19/10/2026</p>
-                <p class="frontal-area car carid">1802.826mm²</p>
-                <p class="cd car carid">0.927392401</p>
-                <p class="drag car carid">0.22495779570817911N</p>
-                <p class="moi car carid">N/A</p>
-                <p class="fos car carid">N/A</p>
-                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
-                <p class="name car carid">P-FW01</p>
-                <p class="date car carid">18/10/2026</p>
-                <p class="frontal-area car carid">1720.783mm²</p>
-                <p class="cd car carid">0.947642951</p>
-                <p class="drag car carid">0.2194090542742676N</p>
-                <p class="moi car carid">N/A</p>
-                <p class="fos car carid">N/A</p>
-                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
-            </div>
-            <div class="people chen leaderboard">
-                <h2>Design</h2>
-                <h2>Date created</h2>
-                <h2>Frontal area</h2>
-                <h2>Drag coefficient</h2>
-                <h2>Drag</h2>
-                <h2>Moment of inertia</h2>
-                <h2>Factor of safety</h2>
-                <h2>Preview</h2>
-                <p class="name car carid">Beta</p>
-                <p class="date car carid">19/10/2026</p>
-                <p class="frontal-area car carid">1685.075mm²</p>
-                <p class="cd car carid">1.003794303</p>
-                <p class="drag car carid">0.22758711200000000N</p>
-                <p class="moi car carid">N/A</p>
-                <p class="fos car carid">N/A</p>
-                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
-            </div>
-            <div class="people pranit leaderboard">
-                <h2>Design</h2>
-                <h2>Date created</h2>
-                <h2>Frontal area</h2>
-                <h2>Drag coefficient</h2>
-                <h2>Drag</h2>
-                <h2>Moment of inertia</h2>
-                <h2>Factor of safety</h2>
-                <h2>Preview</h2>
-                <p class="name car carid">MK3</p>
-                <p class="date car carid">20/10/2026</p>
-                <p class="frontal-area car carid">1664.864mm²</p>
-                <p class="cd car carid">0.878134904</p>
-                <p class="drag car carid">0.1967087616547967N</p>
-                <p class="moi car carid">N/A</p>
-                <p class="fos car carid">N/A</p>
-                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
-                <p class="name car carid">MK2</p>
-                <p class="date car carid">19/10/2026</p>
-                <p class="frontal-area car carid">1800mm²</p>
-                <p class="cd car carid">0.876741218</p>
-                <p class="drag car carid">0.21233795558742N</p>
-                <p class="moi car carid">N/A</p>
-                <p class="fos car carid">N/A</p>
-                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
-                <p class="name car carid">MK1</p>
-                <p class="date car carid">18/10/2026</p>
-                <p class="frontal-area car carid">2411mm²</p>
-                <p class="cd car carid">0.719615813</p>
-                <p class="drag car carid">0.23344340571799063N</p>
-                <p class="moi car carid">N/A</p>
-                <p class="fos car carid">N/A</p>
-                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
-            </div>
-            <div class="people josh leaderboard empty">
-                <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
-            </div>
-            <div class="people rayhaan leaderboard empty">
-                <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
-            </div>
             <div class="cars drag leaderboard">
                 <h2>Design</h2>
                 <h2>Creator</h2>

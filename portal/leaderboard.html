@@ -33,28 +33,32 @@
         <h1 id="page-title">Leaderboard</h1>
         <div id="options">
             <div class="swapper active" id="type">
+                <div class="active-indicator"></div>
                 <button onclick="swap('type', 'people', this)" class="enabled" id="bpeople"><i class="fa-solid fa-user"></i> People</button>
                 <button onclick="swap('type', 'cars', this)" id="bcars"><i class="fa-solid fa-car-side"></i> Car body</button>
                 <button onclick="swap('type', 'wheels', this)" id="bwheels"><i class="fa-solid fa-ring"></i> Wheels</button>
             </div>
             <div class="swapper active" id="people">
-                <button onclick="swap('people', 'all', this)" class="enabled">All</button> <!--will be used to show iterations made, lowest drag, lowest moi-->
-                <button onclick="swap('people', 'yash', this)">Yash</button> <!--the cars/wheels they have made, essentially a filter for cars, sorted by date created-->
-                <button onclick="swap('people', 'chen', this)">Chen</button>
-                <button onclick="swap('people', 'josh', this)">Josh</button>
-                <button onclick="swap('people', 'pranit', this)">Pranit</button>
-                <button onclick="swap('people', 'rayhaan', this)">Rayhaan</button>
+                <div class="active-indicator"></div>
+                <button onclick="swap('people', 'all', this)" class="enabled" id="all">All</button> <!--will be used to show iterations made, lowest drag, lowest moi-->
+                <button onclick="swap('people', 'yash', this)" id="yash">Yash</button> <!--the cars/wheels they have made, essentially a filter for cars, sorted by date created-->
+                <button onclick="swap('people', 'chen', this)" id="chen">Chen</button>
+                <button onclick="swap('people', 'josh', this)" id="josh">Josh</button>
+                <button onclick="swap('people', 'pranit', this)" id="pranit">Pranit</button>
+                <button onclick="swap('people', 'rayhaan', this)" id="rayhaan">Rayhaan</button>
             </div>
             <div class="swapper" id="cars">
-                <button onclick="swap('cars', 'drag', this)" class="enabled">Drag</button>
-                <button onclick="swap('cars', 'frontal-area', this)">Frontal area</button>
-                <button onclick="swap('cars', 'cd', this)">Drag coefficient</button>
-                <button onclick="swap('cars', 'date', this)">Latest date</button>
+                <div class="active-indicator"></div>
+                <button onclick="swap('cars', 'drag', this)" class="enabled" id="drag">Drag</button>
+                <button onclick="swap('cars', 'frontal-area', this)" id="frontal-area">Frontal area</button>
+                <button onclick="swap('cars', 'cd', this)" id="cd">Drag coefficient</button>
+                <button onclick="swap('cars', 'car-date', this)" id="car-date">Latest date</button>
             </div>
             <div class="swapper" id="wheels">
-                <button onclick="swap('wheels', 'moi', this)" class="enabled">Moment of inertia</button>
-                <button onclick="swap('wheels', 'fos', this)">Factor of safety</button>
-                <button onclick="swap('wheels', 'date', this)">Latest date</button>
+                <div class="active-indicator"></div>
+                <button onclick="swap('wheels', 'moi', this)" id="moi" class="enabled">Moment of inertia</button>
+                <button onclick="swap('wheels', 'fos', this)" id="fos">Factor of safety</button>
+                <button onclick="swap('wheels', 'wheel-date', this)" id="wheel-date">Latest date</button>
             </div>
         </div>
         <div id="leaderboard-container">
@@ -527,7 +531,7 @@
                 <p class="drag car carid">0.23816264230768536N</p>
                 <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
             </div>
-            <div class="cars date leaderboard">
+            <div class="cars car-date leaderboard">
                 <h2>Design</h2>
                 <h2>Creator</h2>
                 <h2>Scrutineer</h2>
@@ -641,7 +645,7 @@
             <div class="wheels fos leaderboard empty">
                 <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
             </div>
-            <div class="wheels date leaderboard empty">
+            <div class="wheels wheel-date leaderboard empty">
                 <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
             </div>
         </div>

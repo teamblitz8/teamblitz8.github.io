@@ -12,25 +12,36 @@
 }
 
 .swapper {
-    display: none;
+    display: flex;
+    pointer-events: none;
     background-color: rgb(36, 38, 38);
     border: 1px solid #f5d53d;
     padding: 0.3em 0.3em;
     border-radius: 100vh;
     box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+    position: absolute;
+    opacity: 0;
 }
 
 .swapper button {
-    background-color: rgb(36, 38, 38);
+    background: transparent;
     box-shadow: none;
+    z-index: 1;
+}
+
+.active-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgb(46, 48, 48);;
+    border-radius: 100vh;
+    transition: transform 0.3s ease, width 0.3s ease;
 }
 
 .active {
-    display: flex;
-}
-
-.swapper button.enabled {
-    background-color: rgb(46, 48, 48);
+    pointer-events: all;
+    position: relative;
+    opacity: 1;
 }
 
 .leaderboard {

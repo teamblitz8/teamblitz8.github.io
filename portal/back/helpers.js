@@ -1352,6 +1352,7 @@ const identifyMaxIteration = async (request, pathname, env) => {
 const uploadCarMetadata = async (request, pathname, env, carArray) => {
 	const statement = 'INSERT INTO cars (creatorid, scrutineerid, carid, derived_carid, car_name, iteration, date_created, frontal_area, drag_coefficient, drag_force, changelog, additional_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 	const iterationUpdateStatement = 'UPDATE users SET iterations = iterations + 1 WHERE userid = ?';
+	const scrutineerUpdateStatement = 'UPDATE users SET scrutineers = scrutineers + 1 WHERE userid = ?';
 
 	try {
 		const query = env.blitz.prepare(statement).bind(...carArray);
@@ -1367,6 +1368,18 @@ const uploadCarMetadata = async (request, pathname, env, carArray) => {
 
 	try {
 		const query = env.blitz.prepare(iterationUpdateStatement).bind(carArray[0]);
+		await query.run();
+	}
+	catch (error) {
+		log('error', pathname, request, `D1 query failed when attempting to execute the statement: ${statement}`, error);
+		return {
+			success: false,
+			response: buildResponse('There was an unexpected error.', 500, normalHeader)
+		}
+	}
+
+	try {
+		const query = env.blitz.prepare(scrutineerUpdateStatement).bind(carArray[1]);
 		await query.run();
 	}
 	catch (error) {

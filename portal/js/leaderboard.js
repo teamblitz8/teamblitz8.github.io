@@ -28,7 +28,7 @@ const initialiseLeaderboard = (userArray) => {
     const result = {};
     for (let i of userArray) {
         document.querySelector('#people').innerHTML += `<button onclick="swap('people', '${i.name.toLowerCase().split(' ').join('')}', this)" id="${i.name.toLowerCase().split(' ').join('')}">${i.name}</button>`;
-        result[i.username] = [];
+        result[i.userid] = [];
     }
 
     return result;
@@ -37,8 +37,9 @@ const initialiseLeaderboard = (userArray) => {
 const mapUsernamesToProfile = async (users) => {
     let result = {};
     for (let i of users) {
-        result[i.username] = await fetchProfile(i.username);
+        result[i.userid] = await fetchProfile(i.username);
     }
+    return result;
 }
 
 const sortAndCategorise = (criteria, array, categorisedObject, categories, type) => {
@@ -85,13 +86,13 @@ window.addEventListener('load', async () => {
             let increment = 1;
             data.users = data.users.toSorted((a, b) => a.lowestDrag - b.lowestDrag);
             for (let i of data.users) {
-                add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations || '0'}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers || '0'}</p><p class="lowest-drag a${i.userid}">${i.lowestDrag || 'N/A'}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
+                add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.userid]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations || '0'}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers || '0'}</p><p class="lowest-drag a${i.userid}">${i.lowestDrag || 'N/A'}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
                 increment++;
             }
             container.innerHTML += `${add}</div>`;
 
             add = '';
-            const initialisedUserObject = initialiseLeaderboard();
+            const initialisedUserObject = initialiseLeaderboard(data.users);
             const userCars = sortAndCategorise('date_created', data.cars, initialisedUserObject, data.users, 'descending');
             for (let i of data.users) {
                 increment = 1;

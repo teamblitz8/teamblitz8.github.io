@@ -76,6 +76,11 @@
     width: 75%;
 }
 
+.number {
+    font-weight: 600;
+    color: #f5d53d;
+}
+
 .shown {
     display: grid;
 }

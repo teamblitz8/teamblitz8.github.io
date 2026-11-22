@@ -62,7 +62,7 @@ window.addEventListener('load', async () => {
             let increment = 1;
             data.users = data.users.toSorted((a, b) => lowestDragMapping[a.username] - lowestDragMapping[b.username]);
             for (let i of data.users) {
-                add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers}</p><p class="lowest-drag a${i.userid}">${lowestDragMapping[i.username]}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
+                add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations || '0'}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers || '0'}</p><p class="lowest-drag a${i.userid}">${lowestDragMapping[i.username] || 'N/A'}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
                 increment++;
             }
 

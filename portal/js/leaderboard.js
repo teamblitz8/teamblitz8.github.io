@@ -94,7 +94,6 @@ window.addEventListener('load', async () => {
             add = '';
             const initialisedUserObject = initialiseLeaderboard(data.users);
             const userCars = sortAndCategorise('date_created', data.cars, initialisedUserObject, data.users, 'descending');
-            console.log(userCars);
             for (let i of data.users) {
                 increment = 1;
                 if (userCars[i.userid].length === 0) add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard empty"><div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div></div>`
@@ -111,7 +110,7 @@ window.addEventListener('load', async () => {
             for (let i of ['drag', 'frontal-area', 'cd', 'car-date']) {
                 let j;
                 let order = 'ascending'
-                if (i === 'drag') j = i;
+                if (i === 'drag') j = 'drag_force';
                 else if (i === 'frontal-area') j = 'frontal_area';
                 else if (i === 'cd') j = 'drag_coefficient';
                 else if (i === 'car-date') {
@@ -124,7 +123,7 @@ window.addEventListener('load', async () => {
 
                 add += `<div class="cars ${i} leaderboard"><h2></h2><h2>Design</h2><h2>Creator</h2><h2>Scrutineer</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Preview</h2>`;
                 for (let j of data.cars) {
-                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><div class="creator person a${j.creatorid}"><img src="${pfpMapping[j.creatorUsername]}"><p>${j.creatorName}</p></div><div class="scrutineer person a${j.scrutineerid}"><img src="${pfpMapping[j.scrutineerUsername]}"><p>${j.scrutineerName}</p></div><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><a class="preview car a${j.carid}" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>`
+                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><div class="creator person a${j.creatorid}"><img src="${pfpMapping[j.creatorid]}"><p>${j.creatorName}</p></div><div class="scrutineer person a${j.scrutineerid}"><img src="${pfpMapping[j.scrutineerid]}"><p>${j.scrutineerName}</p></div><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><a class="preview car a${j.carid}" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>`
                     increment++;
                 }
                 add += '</div>';

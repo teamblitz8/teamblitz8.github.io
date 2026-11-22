@@ -67,21 +67,36 @@ window.addEventListener('load', async () => {
             let increment = 1;
             data.users = data.users.toSorted((a, b) => lowestDragMapping[a.username] - lowestDragMapping[b.username]);
             for (let i of data.users) {
-                add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name.toLowerCase().split(' ').join('')}</p></div><p class="cars-created a${i.userid}">${i.iterations || '0'}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers || '0'}</p><p class="lowest-drag a${i.userid}">${lowestDragMapping[i.username] || 'N/A'}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
+                add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.username]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations || '0'}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers || '0'}</p><p class="lowest-drag a${i.userid}">${lowestDragMapping[i.username] || 'N/A'}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;
                 increment++;
             }
 
-            increment = 0;
             container.innerHTML += `${add}</div>`;
 
             add = '';
 
             // sort by date created
             for (let i of data.users) {
+                increment = 0;
                 if (userMapping[i.username].length === 0) add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard empty"><div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div></div>`
-                add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard"><h2>Design</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Moment of inertia</h2><h2>Factor of safety</h2><h2>Preview</h2>`
+                add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard"><h2></h2><h2>Design</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Moment of inertia</h2><h2>Factor of safety</h2><h2>Preview</h2>`
                 for (let j of userMapping[i.username]) {
-                    add += `<p class="name car ${j.carid}">${j['car_name']}</p><p class="date car ${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car ${j.carid}">${j['frontal_area']}mm²</p><p class="cd car ${j.carid}">${j['drag_coefficient']}</p><p class="drag car ${j.carid}">${j['drag_force']}N</p><p class="moi car ${j.carid}">TBC</p><p class="fos car ${j.carid}">TBC</p><a class="preview car ${j.carid}" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>`;
+                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><p class="moi car a${j.carid}">TBC</p><p class="fos car a${j.carid}">TBC</p><a class="preview car a${j.carid}" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>`;
+                    increment++;
+                }
+                add += '</div>';
+            }
+
+            container.innerHTML += add;
+
+            add = '';
+
+            for (let i of ['drag', 'frontal-area', 'cd', 'car-date']) {
+                // adjust sorting, rn its just the same for each
+                add += `<div class="cars ${i} leaderboard"><h2></h2><h2>Design</h2><h2>Creator</h2><h2>Scrutineer</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Preview</h2>`;
+                for (let j of data.cars) {
+                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><div class="creator person a${j.creatorid}"><img src="${pfpMapping[j.creatorUsername]}"><p>${j.creatorName}</p></div><div class="scrutineer person a${j.scrutineerid}"><img src="${pfpMapping[j.scrutineerUsername]}"><p>${j.scrutineerName}</p></div><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><a class="preview car a${j.carid}" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>`
+                    increment++;
                 }
                 add += '</div>';
             }
@@ -93,6 +108,7 @@ window.addEventListener('load', async () => {
             switchActive(document.querySelector('#cars').querySelector('button'), document.querySelector('#cars'));
             switchActive(document.querySelector('#wheels').querySelector('button'), document.querySelector('#wheels'));
 
+            document.getElementById('options').style.display = 'flex';
             toggleFullScreen();
             toggleLoading('', false);
         }

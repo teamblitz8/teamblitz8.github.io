@@ -1180,6 +1180,7 @@ const pullCarMetaDataWithIterationNumber = async (iterationNumber, env, pathname
 		data.creatorName = creatorData.response.name;
 		data.creatorUsername = creatorData.response.username;
 		data.scrutineerName = scrutineerData.response.name;
+		data.scrutineerUsername = scrutineerData.response.username;
 		data.changelog = data.changelog.split('[BRK;]');
 
 		if ((data['derived_carid'] !== null) && (findDerivations)) {
@@ -1270,6 +1271,7 @@ const pullCarMetaDataWithCarID = async (carid, env, pathname, request, findDeriv
 		data.creatorName = creatorData.response.name;
 		data.creatorUsername = creatorData.response.username;
 		data.scrutineerName = scrutineerData.response.name;
+		data.scrutineerUsername = scrutineerData.response.username;
 		data.changelog = data.changelog.split('[BRK;]');
 
 		if ((data['derived_carid'] !== null) && (findDerivations)) {

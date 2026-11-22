@@ -7,7 +7,7 @@
 #options {
     width: 75%;
     margin: auto;
-    display: flex;
+    display: none;
     justify-content: space-between;
 }
 
@@ -49,7 +49,7 @@
     width: calc(75% - 3em);
     margin: 1.5em auto;
     border: 1px solid #f8ac29;
-    grid-template-columns: repeat(8, auto);
+    grid-template-columns: repeat(9, auto);
     padding: 0.5em 1.5em;
     border-radius: 1em;
 }

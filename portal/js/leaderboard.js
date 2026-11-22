@@ -51,7 +51,7 @@ window.addEventListener('load', async () => {
                 carMapping[i.username] = 'TBC';
                 userMapping[i.username] = [];
 
-                document.querySelector('#people').innerHTML += `<button onclick="swap('people', '${i.name.toLowerCase()}', this)" id="${i.name.toLowerCase()}">${i.name[0].toUpperCase() + i.name.slice(1).toLowerCase()}</button>`
+                document.querySelector('#people').innerHTML += `<button onclick="swap('people', '${i.name.toLowerCase()}', this)" id="${i.name.toLowerCase()}">${i.name}</button>`
             }
 
             data.cars = data.cars.toSorted((a, b) => a['drag_force'] - b['drag_force']);
@@ -59,7 +59,7 @@ window.addEventListener('load', async () => {
             for (let i of data.cars) {
                 carMapping[i['car_name']] = i.creatorUsername;
                 if (!lowestDragMapping[i.creatorUsername]) lowestDragMapping[i.creatorUsername] = i['drag_force'];
-                userMapping[i.username].push(i);
+                userMapping[i.creatorUsername].push(i);
             }
 
             let add = '<div class="people all leaderboard shown"><h2></h2><h2>Stinky person</h2><h2>Cars created</h2><h2>Cars scrutineered</h2><h2>Lowest drag achieved</h2><h2>Wheels created</h2><h2>Lowest MoI achieved</h2>';

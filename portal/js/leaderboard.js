@@ -94,6 +94,7 @@ window.addEventListener('load', async () => {
             add = '';
             const initialisedUserObject = initialiseLeaderboard(data.users);
             const userCars = sortAndCategorise('date_created', data.cars, initialisedUserObject, data.users, 'descending');
+            console.log(userCars);
             for (let i of data.users) {
                 increment = 1;
                 if (userCars[i.creatorid].length === 0) add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard empty"><div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div></div>`

@@ -59,7 +59,7 @@ This part of the site involved a lot of learning for me. It is designed to allow
 
 A lot!
 
-- My Account & My Designs is UI only
+- My Designs is UI only
 - It's quite horrendous on mobile right now
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
@@ -78,7 +78,7 @@ The portal can be accessed at https://teamblitz.pages.dev/portal.
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
 ## To-do (in order of priority)
-- Complete the My Designs and My Account pages
+- Complete the My Designs page
 - Stop user from changing password to one they already have
 - Add mobile responsivity
 - Make a leaderboard!

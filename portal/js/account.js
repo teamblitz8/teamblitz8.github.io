@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             else {
                 const box = document.querySelector('#sessions');
                 for (let session of data.array) {
+                    console.log(session);
                     if (tokenid === session['token_id']) box.innerHTML += `<div class="session ${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p class="current-session success">Your current session</p><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p>`;
                     else box.innerHTML += `<div class="session a${session['token_id']}"><h1>${session.browser || 'Unknown device'}</h1><p><i class="fa-solid fa-location-dot"></i> ${session.geolocation || 'Location not available'}</p><p><i class="fa-solid fa-mobile-screen-button"></i> ${session.ip || 'IP address not available'}</p><p><i class="fa-solid fa-calendar-days"></i> Last accessed ${session['last_accessed'] || 'on an unknown day'}</p><button onclick="logoutDevice('${session['token_id']}')" class="kick">Log out of this device</button></div>`;
                 }
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             await toggleLoading('', false)
             const params = new URLSearchParams(window.location.search);
-            if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false, false, undefined, undefined, false, '#main-error');
+            if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false, false, undefined, undefined, false, '#password-error');
             await toggleFullScreen();
         }
     }

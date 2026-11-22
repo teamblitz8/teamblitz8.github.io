@@ -82,7 +82,7 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Stop user from changing password to one they already have
 - Add mobile responsivity
 - Make a leaderboard!
-- Add a filter, sort by bar on the dashboard
+- Add wheel support
 - decrease number of helpers e.g. fetchuserdata can do everything
 - Add a try again button to errors
 - Reduce CPU time of the worker

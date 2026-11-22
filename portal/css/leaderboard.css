@@ -1,0 +1,86 @@
+#page-title {
+    width: 75%;
+    margin: 1em auto;
+    margin-bottom: 0.5em;
+}
+
+#options {
+    width: 75%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.swapper {
+    display: none;
+    background-color: rgb(36, 38, 38);
+    border: 1px solid #f5d53d;
+    padding: 0.3em 0.3em;
+    border-radius: 100vh;
+    box-shadow: 0px 4px 20px rgba(248, 172, 41, 0.2);
+}
+
+.swapper button {
+    background-color: rgb(36, 38, 38);
+    box-shadow: none;
+}
+
+.active {
+    display: flex;
+}
+
+.swapper button.enabled {
+    background-color: rgb(46, 48, 48);
+}
+
+.leaderboard {
+    display: grid;
+    width: calc(75% - 3em);
+    margin: 1.5em auto;
+    border: 1px solid #f8ac29;
+    grid-template-columns: repeat(8, auto);
+    padding: 0.5em 1.5em;
+    border-radius: 1em;
+}
+
+.leaderboard h2 {
+    font-size: 1.1em;
+}
+
+.leaderboard a {
+    padding: 0 1em;
+    align-self: center;
+    justify-self: start;
+    line-height: 2em;
+}
+
+.leaderboard.all {
+    grid-template-columns: repeat(6, auto);
+}
+
+.leaderboard.empty {
+    grid-template-columns: repeat(1, auto);
+    border: 0px;
+    padding: 0;
+    width: 75%;
+}
+
+.person {
+    display: flex;
+    gap: 0.75em;
+    padding: 0.5em 0;
+}
+
+.person img {
+    height: 2em;
+    border-radius: 100vh;
+}
+
+p {
+    padding: 0.5em 0;
+    line-height: 2em;
+}
+
+.person p {
+    padding: 0;
+}

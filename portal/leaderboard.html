@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="./imgs/blitzLogo_TransparentSquare.svg">
         <link rel="stylesheet" href="./css/global.css">
-        <link rel="stylesheet" href="./css/account.css">
+        <link rel="stylesheet" href="./css/leaderboard.css">
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script type="text/javascript" src="dist/purify.min.js"></script>
         <!--<script src="./js/global.js" defer></script>
@@ -31,7 +31,619 @@
         </div>
 
         <h1 id="page-title">Leaderboard</h1>
-        <div id="options"></div>
-        <div id="leaderboard-container"></div>
+        <div id="options">
+            <div class="swapper active" id="type">
+                <button onclick="swap('type', 'people')" class="enabled"><i class="fa-solid fa-user"></i> People</button>
+                <button onclick="swap('type', 'cars')"><i class="fa-solid fa-car-side"></i> Car body</button>
+                <button onclick="swap('type', 'wheels')"><i class="fa-solid fa-ring"></i> Wheels</button>
+            </div>
+            <div class="swapper active" id="people">
+                <button onclick="swap('people', 'all')" class="enabled">All</button> <!--will be used to show iterations made, lowest drag, lowest moi-->
+                <button onclick="swap('people', 'yash')">Yash</button> <!--the cars/wheels they have made, essentially a filter for cars, sorted by date created-->
+                <button onclick="swap('people', 'chen')">Chen</button>
+                <button onclick="swap('people', 'josh')">Josh</button>
+                <button onclick="swap('people', 'pranit')">Pranit</button>
+                <button onclick="swap('people', 'rayhaan')">Rayhaan</button>
+            </div>
+            <div class="swapper" id="cars">
+                <button onclick="swap('cars', 'drag')">Drag</button>
+                <button onclick="swap('cars', 'fa')">Frontal area</button>
+                <button onclick="swap('cars', 'cd')">Drag coefficient</button>
+                <button onclick="swap('cars', 'date')">Latest date</button>
+            </div>
+            <div class="swapper" id="wheels">
+                <button onclick="swap('wheels', 'moi')">Moment of inertia</button>
+                <button onclick="swap('wheels', 'fos')">Factor of safety</button>
+                <button onclick="swap('wheels', 'date')">Latest date</button>
+            </div>
+        </div>
+        <div id="leaderboard-container">
+            <div class="people all leaderboard">
+                <h2>Stinky person</h2>
+                <h2>Cars created</h2>
+                <h2>Cars scrutineered</h2>
+                <h2>Lowest drag achieved</h2>
+                <h2>Wheels created</h2>
+                <h2>Lowest MoI achieved</h2>
+                <div class="person userid">
+                    <img src="./imgs/josh_lowres_square.JPG">
+                    <p>Josh</p>
+                </div>
+                <p class="cars-created userid">0</p>
+                <p class="cars-scrutineered userid">0</p>
+                <p class="lowest-drag userid">N/A</p>
+                <p class="wheels-created userid">1</p>
+                <p class="lowest-moi userid">0</p>
+                <div class="person userid">
+                    <img src="./imgs/josh_lowres_square.JPG">
+                    <p>Josh</p>
+                </div>
+                <p class="cars-created userid">0</p>
+                <p class="cars-scrutineered userid">0</p>
+                <p class="lowest-drag userid">N/A</p>
+                <p class="wheels-created userid">1</p>
+                <p class="lowest-moi userid">0</p>
+                <div class="person userid">
+                    <img src="./imgs/josh_lowres_square.JPG">
+                    <p>Josh</p>
+                </div>
+                <p class="cars-created userid">0</p>
+                <p class="cars-scrutineered userid">0</p>
+                <p class="lowest-drag userid">N/A</p>
+                <p class="wheels-created userid">1</p>
+                <p class="lowest-moi userid">0</p>
+                <div class="person userid">
+                    <img src="./imgs/josh_lowres_square.JPG">
+                    <p>Josh</p>
+                </div>
+                <p class="cars-created userid">0</p>
+                <p class="cars-scrutineered userid">0</p>
+                <p class="lowest-drag userid">N/A</p>
+                <p class="wheels-created userid">1</p>
+                <p class="lowest-moi userid">0</p>
+                <div class="person userid">
+                    <img src="./imgs/josh_lowres_square.JPG">
+                    <p>Josh</p>
+                </div>
+                <p class="cars-created userid">0</p>
+                <p class="cars-scrutineered userid">0</p>
+                <p class="lowest-drag userid">N/A</p>
+                <p class="wheels-created userid">1</p>
+                <p class="lowest-moi userid">0</p>
+            </div>
+            <div class="people yash leaderboard">
+                <h2>Design</h2>
+                <h2>Date created</h2>
+                <h2>Frontal area</h2>
+                <h2>Drag coefficient</h2>
+                <h2>Drag</h2>
+                <h2>Moment of inertia</h2>
+                <h2>Factor of safety</h2>
+                <h2>Preview</h2>
+                <p class="name car carid">P-FR1</p>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1694.878mm²</p>
+                <p class="cd car carid">1.044363044</p>
+                <p class="drag car carid">0.23816264230768536N</p>
+                <p class="moi car carid">N/A</p>
+                <p class="fos car carid">N/A</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW02</p>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1802.826mm²</p>
+                <p class="cd car carid">0.927392401</p>
+                <p class="drag car carid">0.22495779570817911N</p>
+                <p class="moi car carid">N/A</p>
+                <p class="fos car carid">N/A</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW01</p>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">1720.783mm²</p>
+                <p class="cd car carid">0.947642951</p>
+                <p class="drag car carid">0.2194090542742676N</p>
+                <p class="moi car carid">N/A</p>
+                <p class="fos car carid">N/A</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+            </div>
+            <div class="people chen leaderboard">
+                <h2>Design</h2>
+                <h2>Date created</h2>
+                <h2>Frontal area</h2>
+                <h2>Drag coefficient</h2>
+                <h2>Drag</h2>
+                <h2>Moment of inertia</h2>
+                <h2>Factor of safety</h2>
+                <h2>Preview</h2>
+                <p class="name car carid">Beta</p>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1685.075mm²</p>
+                <p class="cd car carid">1.003794303</p>
+                <p class="drag car carid">0.22758711200000000N</p>
+                <p class="moi car carid">N/A</p>
+                <p class="fos car carid">N/A</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+            </div>
+            <div class="people pranit leaderboard">
+                <h2>Design</h2>
+                <h2>Date created</h2>
+                <h2>Frontal area</h2>
+                <h2>Drag coefficient</h2>
+                <h2>Drag</h2>
+                <h2>Moment of inertia</h2>
+                <h2>Factor of safety</h2>
+                <h2>Preview</h2>
+                <p class="name car carid">MK3</p>
+                <p class="date car carid">20/10/2026</p>
+                <p class="frontal-area car carid">1664.864mm²</p>
+                <p class="cd car carid">0.878134904</p>
+                <p class="drag car carid">0.1967087616547967N</p>
+                <p class="moi car carid">N/A</p>
+                <p class="fos car carid">N/A</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK2</p>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1800mm²</p>
+                <p class="cd car carid">0.876741218</p>
+                <p class="drag car carid">0.21233795558742N</p>
+                <p class="moi car carid">N/A</p>
+                <p class="fos car carid">N/A</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK1</p>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">2411mm²</p>
+                <p class="cd car carid">0.719615813</p>
+                <p class="drag car carid">0.23344340571799063N</p>
+                <p class="moi car carid">N/A</p>
+                <p class="fos car carid">N/A</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+            </div>
+            <div class="people josh leaderboard empty">
+                <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
+            </div>
+            <div class="people rayhaan leaderboard empty">
+                <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
+            </div>
+            <div class="cars drag leaderboard">
+                <h2>Design</h2>
+                <h2>Creator</h2>
+                <h2>Scrutineer</h2>
+                <h2>Date created</h2>
+                <h2>Frontal area</h2>
+                <h2>Drag coefficient</h2>
+                <h2>Drag</h2>
+                <h2>Preview</h2>
+                <p class="name car carid">MK3</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">20/10/2026</p>
+                <p class="frontal-area car carid">1664.864mm²</p>
+                <p class="cd car carid">0.878134904</p>
+                <p class="drag car carid">0.1967087616547967N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK2</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1800mm²</p>
+                <p class="cd car carid">0.876741218</p>
+                <p class="drag car carid">0.21233795558742N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW01</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">1720.783mm²</p>
+                <p class="cd car carid">0.947642951</p>
+                <p class="drag car carid">0.2194090542742676N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW02</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1802.826mm²</p>
+                <p class="cd car carid">0.927392401</p>
+                <p class="drag car carid">0.22495779570817911N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">Beta</p>
+                <div class="creator person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <p class="date car carid">03/10/2026</p>
+                <p class="frontal-area car carid">1685.075mm²</p>
+                <p class="cd car carid">1.003794303</p>
+                <p class="drag car carid">0.22758711200000000N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">2411mm²</p>
+                <p class="cd car carid">0.719615813</p>
+                <p class="drag car carid">0.23344340571799063N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FR1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1694.878mm²</p>
+                <p class="cd car carid">1.044363044</p>
+                <p class="drag car carid">0.23816264230768536N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+            </div>
+            <div class="cars frontal-area leaderboard">
+                <h2>Design</h2>
+                <h2>Creator</h2>
+                <h2>Scrutineer</h2>
+                <h2>Date created</h2>
+                <h2>Frontal area</h2>
+                <h2>Drag coefficient</h2>
+                <h2>Drag</h2>
+                <h2>Preview</h2>
+                <p class="name car carid">MK3</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">20/10/2026</p>
+                <p class="frontal-area car carid">1664.864mm²</p>
+                <p class="cd car carid">0.878134904</p>
+                <p class="drag car carid">0.1967087616547967N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">Beta</p>
+                <div class="creator person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <p class="date car carid">03/10/2026</p>
+                <p class="frontal-area car carid">1685.075mm²</p>
+                <p class="cd car carid">1.003794303</p>
+                <p class="drag car carid">0.22758711200000000N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FR1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1694.878mm²</p>
+                <p class="cd car carid">1.044363044</p>
+                <p class="drag car carid">0.23816264230768536N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW01</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">1720.783mm²</p>
+                <p class="cd car carid">0.947642951</p>
+                <p class="drag car carid">0.2194090542742676N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK2</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1800mm²</p>
+                <p class="cd car carid">0.876741218</p>
+                <p class="drag car carid">0.21233795558742N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW02</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1802.826mm²</p>
+                <p class="cd car carid">0.927392401</p>
+                <p class="drag car carid">0.22495779570817911N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">2411mm²</p>
+                <p class="cd car carid">0.719615813</p>
+                <p class="drag car carid">0.23344340571799063N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+            </div>
+            <div class="cars cd leaderboard">
+                <h2>Design</h2>
+                <h2>Creator</h2>
+                <h2>Scrutineer</h2>
+                <h2>Date created</h2>
+                <h2>Frontal area</h2>
+                <h2>Drag coefficient</h2>
+                <h2>Drag</h2>
+                <h2>Preview</h2>
+                <p class="name car carid">MK1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">2411mm²</p>
+                <p class="cd car carid">0.719615813</p>
+                <p class="drag car carid">0.23344340571799063N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK2</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1800mm²</p>
+                <p class="cd car carid">0.876741218</p>
+                <p class="drag car carid">0.21233795558742N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK3</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">20/10/2026</p>
+                <p class="frontal-area car carid">1664.864mm²</p>
+                <p class="cd car carid">0.878134904</p>
+                <p class="drag car carid">0.1967087616547967N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW02</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1802.826mm²</p>
+                <p class="cd car carid">0.927392401</p>
+                <p class="drag car carid">0.22495779570817911N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW01</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">1720.783mm²</p>
+                <p class="cd car carid">0.947642951</p>
+                <p class="drag car carid">0.2194090542742676N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">Beta</p>
+                <div class="creator person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <p class="date car carid">03/10/2026</p>
+                <p class="frontal-area car carid">1685.075mm²</p>
+                <p class="cd car carid">1.003794303</p>
+                <p class="drag car carid">0.22758711200000000N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FR1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1694.878mm²</p>
+                <p class="cd car carid">1.044363044</p>
+                <p class="drag car carid">0.23816264230768536N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+            </div>
+            <div class="cars date leaderboard">
+                <h2>Design</h2>
+                <h2>Creator</h2>
+                <h2>Scrutineer</h2>
+                <h2>Date created</h2>
+                <h2>Frontal area</h2>
+                <h2>Drag coefficient</h2>
+                <h2>Drag</h2>
+                <h2>Preview</h2>
+                <p class="name car carid">MK3</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">20/10/2026</p>
+                <p class="frontal-area car carid">1664.864mm²</p>
+                <p class="cd car carid">0.878134904</p>
+                <p class="drag car carid">0.1967087616547967N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FR1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1694.878mm²</p>
+                <p class="cd car carid">1.044363044</p>
+                <p class="drag car carid">0.23816264230768536N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK2</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1800mm²</p>
+                <p class="cd car carid">0.876741218</p>
+                <p class="drag car carid">0.21233795558742N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW02</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">19/10/2026</p>
+                <p class="frontal-area car carid">1802.826mm²</p>
+                <p class="cd car carid">0.927392401</p>
+                <p class="drag car carid">0.22495779570817911N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">MK1</p>
+                <div class="creator person userid">
+                    <img src="./imgs/pranit_lowres_square.JPG">
+                    <p>Pranit</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">2411mm²</p>
+                <p class="cd car carid">0.719615813</p>
+                <p class="drag car carid">0.23344340571799063N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">P-FW01</p>
+                <div class="creator person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <p class="date car carid">18/10/2026</p>
+                <p class="frontal-area car carid">1720.783mm²</p>
+                <p class="cd car carid">0.947642951</p>
+                <p class="drag car carid">0.2194090542742676N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+                <p class="name car carid">Beta</p>
+                <div class="creator person userid">
+                    <img src="./imgs/chen_lowres_square.JPG">
+                    <p>Chen</p>
+                </div>
+                <div class="scrutineer person userid">
+                    <img src="./imgs/yash_lowres_square.JPG">
+                    <p>Yash</p>
+                </div>
+                <p class="date car carid">03/10/2026</p>
+                <p class="frontal-area car carid">1685.075mm²</p>
+                <p class="cd car carid">1.003794303</p>
+                <p class="drag car carid">0.22758711200000000N</p>
+                <a class="preview car carid" href="" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> View in new tab</a>
+            </div>
+            <div class="wheels moi leaderboard empty">
+                <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
+            </div>
+            <div class="wheels fos leaderboard empty">
+                <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
+            </div>
+            <div class="wheels date leaderboard empty">
+                <div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div>
+            </div>
+        </div>
     </body>
 </html>

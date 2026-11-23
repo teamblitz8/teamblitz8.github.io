@@ -592,7 +592,7 @@ export default {
 
 				const authentication = await authenticate(userData.response.username, currentPassword, env, url.pathname, request);
 				if (authentication.allow) {
-					const passwordChange = await updatePassword(userid, env, newPassword, url.pathname, request);
+					const passwordChange = await updatePassword(userid, env, newPassword, url.pathname, request, userData.response.username);
 					if (!passwordChange.success) return passwordChange.response;
 					else {
 						const deletion = await deleteAllSessionTokens(userid, env, url.pathname, request, sessionCheck.sessionToken);

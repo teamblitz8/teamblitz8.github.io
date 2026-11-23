@@ -1,7 +1,7 @@
 const form = document.querySelector('form');
 
 form.addEventListener('submit', async (e) => {
-    hideError('#login-error');
+    hideError('#main-error');
     e.preventDefault();
 
     const username = document.querySelector('#username');
@@ -35,13 +35,13 @@ form.addEventListener('submit', async (e) => {
                     }, 1000);
                 }
                 else {
-                    await showError(undefined, response, false, undefined, undefined, false, '#login-error');
+                    await showError(undefined, response, false, undefined, undefined, false, '#main-error');
                     submit.disabled = false;
                 }
             }
             catch (error) {
                 console.error(error);
-                showError(error, false, false, undefined, undefined, false, '#login-error');
+                showError(error, false, false, undefined, undefined, false, '#main-error');
                 submit.disabled = false;
             }
         }

@@ -157,6 +157,8 @@ form.addEventListener('submit', async (e) => {
     }
     catch (error) {
         submit.disabled = false;
+        toggleFullScreen();
+        toggleLoading('', false);
         await showError(error.message, false, false, undefined, undefined, false, '#main-error');
     }
 });

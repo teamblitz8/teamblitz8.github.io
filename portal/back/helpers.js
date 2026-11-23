@@ -792,9 +792,17 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
  * @param {string} newPassword The new password to be associated with the account.
  * @param {string} pathname The API endpoint called by the client.
  * @param {Request} request The Request object associated with it.
+ * @param {string} username The user's username.
  * @returns {{ success: boolean, response: Response }}
  */
-const updatePassword = async (userid, env, newPassword, pathname, request) => {
+const updatePassword = async (userid, env, newPassword, pathname, request, username) => {
+	const checkSame = await authenticate(username, newPassword, env, pathname, request);
+	if (checkSame.allow) {
+		return {
+			success: false,
+			response: buildResponse('Your new password must not be the same as your old password.', 400, normalHeader)
+		}
+	}
 	const hashAndSalt = hash(newPassword);
 	const statement = 'UPDATE users SET password_hash = ?, password_salt = ?, force_password_change = ? WHERE userid = ?';
 

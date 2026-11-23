@@ -58,8 +58,14 @@ const sortAndCategorise = (criteria, array, categorisedObject, categories, type)
 
 const sortBy = (array, type, criteria) => {
     let arr;
-    if (type === 'ascending') arr = array.toSorted((a, b) => a[criteria] - b[criteria]);
-    else if (type === 'descending') arr = array.toSorted((a, b) => b[criteria] - a[criteria]);
+    if (criteria === 'date_created') {
+        if (type === 'ascending') arr = array.toSorted((a, b) => new Date(a[criteria]) - new Date(b[criteria]));
+        else if (type === 'descending') arr = array.toSorted((a, b) => new Date(b[criteria]) - new Date(a[criteria]));
+    }
+    else {
+        if (type === 'ascending') arr = array.toSorted((a, b) => a[criteria] - b[criteria]);
+        else if (type === 'descending') arr = array.toSorted((a, b) => b[criteria] - a[criteria]);
+    }
 
     return arr;
 }

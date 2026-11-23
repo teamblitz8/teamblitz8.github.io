@@ -46,6 +46,8 @@ form.addEventListener('submit', async (e) => {
         if (!response.ok) {
             submit.disabled = false;
             await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#password-error');
+            toggleFullScreen();
+            toggleLoading('', false);
         }
         else {
             await toggleLoading('', false);
@@ -137,6 +139,8 @@ const logoutDevice = async (tokenID) => {
 
         if (!response.ok) {
             await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#session-error');
+            toggleFullScreen();
+            toggleLoading('', false);
         }
         else {
             const box = document.querySelector(`.a${tokenID}`);
@@ -175,6 +179,8 @@ const logoutAll = async () => {
 
         if (!response.ok) {
             await showError(undefined, response, true, 'https://teamblitz.pages.dev/portal/login', 401, false, '#session-error');
+            toggleFullScreen();
+            toggleLoading('', false);
         }
         else {
             await toggleLoading('', false);

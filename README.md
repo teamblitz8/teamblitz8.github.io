@@ -84,9 +84,6 @@ The portal can be accessed at https://teamblitz.pages.dev/portal.
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
 ## To-do (in order of priority)
-- Add mobile responsivity
-- Make preview/download buttons work
-- Add the whizzing white chip thing to account
 - Add edit support
 - Add different perms
 - Add light/dark mode

@@ -1,3 +1,10 @@
+const switchActive = (newButton, parentDOM) => {
+    const bg = parentDOM.querySelector('.active-indicator');
+    bg.style.width = `${newButton.offsetWidth}px`;
+    bg.style.height = `${newButton.offsetHeight}px`;
+    bg.style.transform = `translate(${newButton.offsetLeft}px, ${newButton.offsetTop}px)`;
+}
+
 const form = document.querySelector('form');
 
 form.addEventListener('submit', async (e) => {
@@ -110,6 +117,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
             if (params.get('redirect') === 'true') showError('Your password has expired; please change it.', false, false, undefined, undefined, false, '#password-error');
             await toggleFullScreen();
+
+            switchActive(document.querySelector('#sidebar').querySelector('button'), document.querySelector('#sidebar'));
         }
     }
     catch (error) {

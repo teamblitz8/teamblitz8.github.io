@@ -6,10 +6,13 @@ const swap = (type, arg, dom) => {
 
     if (type === 'type') {
         document.querySelectorAll('.active')[1].classList.remove('active');
+        document.querySelectorAll('.scroll-container').forEach(a => {
+            if (!a.classList.contains('type')) a.classList.add('hidden');
+        });
         document.querySelector(`#${arg}`).classList.add('active');
+        document.querySelector(`#${arg}`).parentElement.classList.remove('hidden');
         m = arg;
         n = document.querySelector(`#${arg}`).querySelector('.enabled').id
-        console.log(n);
     }
 
     document.querySelector('.shown').classList.remove('shown');

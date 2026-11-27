@@ -74,7 +74,7 @@ form.addEventListener('submit', async (e) => {
 });
 
 const switchMenu = (menu) => {
-    for (let i of ['security']) {
+    for (let i of ['security', 'designs']) {
         const j = document.querySelector(`#${i}`);
         j.style.display = 'none';
     }

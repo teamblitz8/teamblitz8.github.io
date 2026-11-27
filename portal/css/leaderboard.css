@@ -36,13 +36,16 @@
 }
 
 .leaderboard-container {
+    width: 75%;
     border: 1px solid #f8ac29;
+    margin: 1.5em auto;
+    border-radius: 2em;
 }
 
 .leaderboard {
     display: none;
-    width: calc(75% - 3em);
-    margin: 1.5em auto;
+    width: 100%;
+    margin: 0 auto;
     grid-template-columns: repeat(9, auto);
     padding: 0.5em 1.5em;
     border-radius: 1em;

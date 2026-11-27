@@ -60,6 +60,7 @@ select, ::picker(select) {
     background-color: rgb(46, 48, 48);;
     border-radius: 100vh;
     transition: transform 0.3s ease, width 0.3s ease;
+    z-index: 0;
 }
 
 select {
@@ -318,6 +319,10 @@ span:empty {
 }
 
 .error:empty {
+    display: none;
+}
+
+.hidden {
     display: none;
 }
 

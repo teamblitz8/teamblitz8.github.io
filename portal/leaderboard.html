@@ -32,7 +32,7 @@
         <h1 id="page-title">Leaderboard</h1>
         <div id="error-box"><div id="main-error" class="error"></div></div>
         <div id="options">
-            <div class="scroll-container">
+            <div class="scroll-container type">
                 <div class="swapper active" id="type">
                     <div class="active-indicator"></div>
                     <button onclick="swap('type', 'people', this)" class="enabled" id="bpeople"><i class="fa-solid fa-user"></i> People</button>
@@ -46,7 +46,7 @@
                     <button onclick="swap('people', 'all', this)" class="enabled" id="all">All</button>
                 </div>
             </div>
-            <div class="scroll-container">
+            <div class="scroll-container hidden">
                 <div class="swapper" id="cars">
                     <div class="active-indicator"></div>
                     <button onclick="swap('cars', 'drag', this)" class="enabled" id="drag">Drag</button>
@@ -55,7 +55,7 @@
                     <button onclick="swap('cars', 'car-date', this)" id="car-date">Latest date</button>
                 </div>
             </div>
-            <div class="scroll-container">
+            <div class="scroll-container hidden">
                 <div class="swapper" id="wheels">
                     <div class="active-indicator"></div>
                     <button onclick="swap('wheels', 'moi', this)" id="moi" class="enabled">Moment of inertia</button>

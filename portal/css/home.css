@@ -373,3 +373,136 @@ textarea {
 #loadMore button i {
     line-height: 1.5em;
 }
+
+@media screen and (max-width: 1000px) {
+    body h1 {
+        margin-top: 0.5em;
+    }
+    .car {
+        flex-direction: column;
+        border-radius: 3em;
+    }
+    .details {
+        width: 100%;
+    }
+    .person {
+        text-align: left;
+        font-size: 1em;
+    }
+    .creator {
+        gap: 0em;
+        justify-content: space-between;
+    }
+    .portrait {
+        width: 12.5em;
+        height: 12.5em;
+    }
+    p, a, button, h3, li, label, input, textarea {
+        font-size: 2.25em;
+    }
+
+    .details div.buttons {
+        margin-top: 0;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .download, .button, .download a, .button button {
+        width: 100%;
+        display: block;
+        padding: 0.25em 0;
+    }
+
+    div.button {
+        margin-top: 0;
+    }
+
+    .image {
+        width: 100%;
+    }
+
+    #X {
+        font-size: 4em;
+    }
+
+    #popup-title {
+        font-size: 3em;
+        margin-top: 1em;
+    }
+
+    .upload-file button {
+        width: 100%;
+    }
+
+    .info h2 {
+        font-size: 3em;
+    }
+
+    .section div div {
+        width: 90%;
+        flex-direction: column;
+    }
+
+    label {
+        width: 100%;
+        text-align: center;
+    }
+
+    #car-info .section div div input {
+        width: 90%;
+        margin-right: 0;
+    }
+
+    .section-title {
+        margin-top: 0.75em;
+    }
+
+    .label {
+        display: none;
+    }
+
+    #scrutineer div {
+        width: 1em;
+    }
+
+    #scrutineer div div {
+        flex-direction: row;
+    }
+
+    #scrutineer div div input {
+        transform: scale(2);
+        margin-right: 1em !important;
+    }
+
+    select {
+        width: 100%;
+        margin: 0;
+        font-size: 2.1em
+    }
+
+    textarea {
+        width: 90%;
+        margin-right: 0;
+    }
+
+    #popup-container {
+        width: 90%;
+        height: 90%;
+    }
+
+    .popup-shroud {
+        z-index: 4;
+    }
+
+    form#car-info .section div div#submission {
+        width: 90%;
+    }
+
+    form#car-info .section div div#submission input#submit {
+        width: 100%;
+    }
+
+    #add-info div div div.upload-file {
+        width: 100%;
+    }
+}

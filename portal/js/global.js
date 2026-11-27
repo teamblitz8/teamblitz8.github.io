@@ -68,13 +68,12 @@ const wait = (milliseconds) => new Promise(resolve => setTimeout(resolve, millis
 const waitForUsername = async () => {
     const menu = document.querySelector('#profile-menu');
     const profile = document.querySelector('#profile');
-    const username = document.querySelector('#profile p');
-    const nav = document.querySelector('#nav');
 
-    while (username.textContent.trim() === '') await wait(100);
+    menu.style.width = `calc(${profile.offsetWidth}px)`;
 
-    nav.style.display = 'flex';
-    menu.style.width = `calc(${profile.offsetWidth - 2}px + 3em)`;
+    if (window.innerWidth < 1000) {
+        menu.style.transform = `translateY(${profile.offsetTop + (profile.offsetHeight / 2)}px)`;
+    }
 }
 
 const showPassword = (field) => {

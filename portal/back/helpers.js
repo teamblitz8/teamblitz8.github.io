@@ -768,7 +768,19 @@ const addNewSessionToken = async (sessionToken, env, enteredUsername, pathname, 
 
 	const insertionStatement = 'INSERT INTO sessiontokens (token_id, session_token_hash, userid, expiration_date, browser, ip, geolocation, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
 	try {
-		const insertion = env.blitz.prepare(insertionStatement).bind(uuid, tokenHash, userID.response.userid, expiry, `${useragent?.browser?.toString() || 'Unknown browser'} on ${useragent?.device?.toString() || 'Unknown device'} running ${useragent?.os?.toString() || 'Unknown OS'}`, `${request.headers.get('cf-connecting-ip')}`, `${request.cf.city}, ${request.cf.country}`, `${new Date().toISOString()}`);
+		const browser = useragent.browser.name 
+			? `${useragent.browser.name} ${useragent.browser.version || ''}`.trim() 
+			: 'Unknown browser';
+
+		const device = [useragent.device.vendor, useragent.device.model].filter(Boolean).join(' ') 
+			|| 'Unknown device';
+
+		const os = useragent.os.name 
+			? `${useragent.os.name} ${useragent.os.version || ''}`.trim() 
+			: 'Unknown OS';
+
+		const userAgentSummary = `${browser} on ${device} running ${os}`;
+		const insertion = env.blitz.prepare(insertionStatement).bind(uuid, tokenHash, userID.response.userid, expiry, userAgentSummary, `${request.headers.get('cf-connecting-ip')}`, `${request.cf.city}, ${request.cf.country}`, `${new Date().toISOString()}`);
 		await insertion.run();
 	}
 	catch (error) {

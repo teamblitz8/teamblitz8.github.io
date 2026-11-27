@@ -87,6 +87,9 @@ The portal is strictly for internal team use only. If you would like to see a de
 - Add mobile responsivity
 - Add edit support
 - Add different perms
+- Add light/dark mode
+- Captchas.
+- Add legality flags
 - Add wheel support (incl replacing TBC on leaderboard for any wheel related stuff)
 - decrease number of helpers e.g. fetchuserdata can do everything
 - Add a try again button to errors

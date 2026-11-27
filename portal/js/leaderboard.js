@@ -90,6 +90,7 @@ window.addEventListener('load', async () => {
 
             let add = '<div class="people all leaderboard shown"><h2></h2><h2>Stinky person</h2><h2>Cars created</h2><h2>Cars scrutineered</h2><h2>Lowest drag achieved</h2><h2>Wheels created</h2><h2>Lowest MoI achieved</h2>';
             let increment = 1;
+            console.log(data.users);
             data.users = data.users.toSorted((a, b) => a.lowestDrag - b.lowestDrag);
             for (let i of data.users) {
                 add += `<p class="number">${increment}</p><div class="person a${i.userid}"><img src="${pfpMapping[i.userid]}"><p>${i.name}</p></div><p class="cars-created a${i.userid}">${i.iterations || '0'}</p><p class="cars-scrutineered a${i.userid}">${i.scrutineers || '0'}</p><p class="lowest-drag a${i.userid}">${i.lowestDrag || 'N/A'}</p><p class="wheels-created a${i.userid}">TBC</p><p class="lowest-moi a${i.userid}">TBC</p>`;

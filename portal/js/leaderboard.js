@@ -174,7 +174,7 @@ window.addEventListener('load', async () => {
     }
 });
 
-const download = async (iteration, name) => {
+const download = async (name, iteration) => {
     try {
         toggleFullScreen();
         toggleLoading('Preparing download..', true);

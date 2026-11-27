@@ -63,10 +63,8 @@ This part of the site involved a lot of learning for me. It is designed to allow
 
 ### What doesn't work yet?
 
-A lot!
-
-- Preview links on the leaderboard do not work at the moment.
-- It's quite horrendous on mobile right now
+Actually, everything that is on the site should be fully working! Please let me know if otherwise, would really help me out.
+If you use the site for a longer period of time, you may experience that some functions stop working, this is normal as Cloudflare limits my CPU time. Wait a few minutes, then try again and it should work.
 
 ![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
 

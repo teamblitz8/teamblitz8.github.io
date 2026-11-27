@@ -338,8 +338,8 @@ span:empty {
         font-size: 3em;
     }
 
-    p, input, label, a, button, span {
-        font-size: 3em;
+    p, input, label, a, button, span, li {
+        font-size: 2em;
     }
     #profile {
         height: 7.5em;

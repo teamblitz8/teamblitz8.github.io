@@ -140,3 +140,80 @@
 .password-box {
     position: relative;
 }
+
+@media screen and (max-width: 1000px) {
+    #menu-container {
+        flex-direction: column;
+        gap: 3em;
+        width: 90%;
+    }
+
+    #menu-container #sidebar-container, #menu-container #main-menu, #menu-container #error-box {
+        width: 100%;
+    }
+
+    #sidebar-container {
+        overflow: hidden;
+    }
+
+    #sidebar {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        border-radius: 100vh;
+    }
+
+    #sidebar button {
+        flex: 0 0 auto;
+    }
+    
+    #page-title {
+        margin-top: 1em;
+        width: 90%;
+    }
+
+    #security {
+        gap: 3em;
+    }
+
+    #security div.card {
+        padding: 3em;
+        border-radius: 3em;
+    }
+
+    input {
+        line-height: 1.7em;
+    }
+
+    #submit-box input {
+        width: 100%;
+    }
+
+    #sessions {
+        gap: 2em;
+        margin-top: 1em;
+    }
+
+    .session {
+        padding: 2em;
+        border-radius: 3em;
+    }
+
+    .session h1 {
+        font-size: 3em;
+    }
+
+    .session button {
+        width: 100%;
+        line-height: 2em;
+        margin: 0;
+    }
+
+    button.kick {
+        margin-top: 1em;
+    }
+
+    .session:last-of-type button {
+        font-size: 1.75em;
+    }
+}

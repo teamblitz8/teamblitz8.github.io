@@ -44,11 +44,14 @@
     opacity: 1;
 }
 
+.leaderboard-container {
+    border: 1px solid #f8ac29;
+}
+
 .leaderboard {
     display: none;
     width: calc(75% - 3em);
     margin: 1.5em auto;
-    border: 1px solid #f8ac29;
     grid-template-columns: repeat(9, auto);
     padding: 0.5em 1.5em;
     border-radius: 1em;
@@ -132,10 +135,11 @@ p {
     #leaderboard-container {
         width: 90%;
         margin: auto;
-        border-radius: 3em;
+        border-radius: 4em;
         overflow: hidden;
     }
     #leaderboard-container .leaderboard {
+        border-radius: 4em;
         width: 90%;
         overflow-x: auto;
         grid-template-columns: repeat(9, max-content);

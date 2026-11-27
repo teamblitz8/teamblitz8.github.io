@@ -69,10 +69,12 @@ const waitForUsername = async () => {
     const menu = document.querySelector('#profile-menu');
     const profile = document.querySelector('#profile');
     const username = document.querySelector('#profile p');
+    const nav = document.querySelector('#nav');
 
     if (username.textContent === '') wait(100);
 
     menu.style.width = `calc(${profile.offsetWidth}px)`;
+    nav.style.display = 'flex';
 
     if (window.innerWidth < 1000) menu.style.transform = `translateY(${profile.offsetTop + (profile.offsetHeight / 2)}px)`;
 }

@@ -375,6 +375,9 @@ textarea {
 }
 
 @media screen and (max-width: 1000px) {
+    body {
+        width: 90%;
+    }
     body h1 {
         margin-top: 0.5em;
     }

@@ -29,15 +29,6 @@
     z-index: 1;
 }
 
-.active-indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: rgb(46, 48, 48);;
-    border-radius: 100vh;
-    transition: transform 0.3s ease, width 0.3s ease;
-}
-
 .active {
     pointer-events: all;
     position: relative;
@@ -137,6 +128,7 @@ p {
         margin: auto;
         border-radius: 4em;
         overflow: hidden;
+        border: 1px solid #f5d53d
     }
     #leaderboard-container .leaderboard {
         border-radius: 4em;
@@ -144,6 +136,7 @@ p {
         overflow-x: auto;
         grid-template-columns: repeat(9, max-content);
         align-items: center;
+        margin: 0 auto;
     }
     #leaderboard-container .leaderboard div.person {
         padding-right: 1em;

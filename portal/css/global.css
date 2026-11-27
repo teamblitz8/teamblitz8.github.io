@@ -53,6 +53,15 @@ select, ::picker(select) {
     appearance: base-select;
 }
 
+.active-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgb(46, 48, 48);;
+    border-radius: 100vh;
+    transition: transform 0.3s ease, width 0.3s ease;
+}
+
 select {
     padding: 0 1em !important;
     text-align: center;

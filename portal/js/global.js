@@ -68,12 +68,13 @@ const wait = (milliseconds) => new Promise(resolve => setTimeout(resolve, millis
 const waitForUsername = async () => {
     const menu = document.querySelector('#profile-menu');
     const profile = document.querySelector('#profile');
+    const username = document.querySelector('#profile p');
+
+    if (username.textContent === '') wait(100);
 
     menu.style.width = `calc(${profile.offsetWidth}px)`;
 
-    if (window.innerWidth < 1000) {
-        menu.style.transform = `translateY(${profile.offsetTop + (profile.offsetHeight / 2)}px)`;
-    }
+    if (window.innerWidth < 1000) menu.style.transform = `translateY(${profile.offsetTop + (profile.offsetHeight / 2)}px)`;
 }
 
 const showPassword = (field) => {
@@ -402,6 +403,7 @@ const processFullCar = async (iterationNumber) => {
 
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '100%');
         document.querySelectorAll('.model-viewer').forEach(x => x.style.height = `${document.querySelector('.model-viewer').offsetHeight}px`);
+        if (window.innerWidth < 1000) document.querySelectorAll('.model-viewer').forEach(x => x.style.height = '50vh');
         await toggleLoading('', false);
         await toggleFullScreen();
     }

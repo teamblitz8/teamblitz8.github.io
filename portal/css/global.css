@@ -338,7 +338,7 @@ span:empty {
         font-size: 3em;
     }
 
-    p, input, label, a, button {
+    p, input, label, a, button, span {
         font-size: 3em;
     }
     #profile {
@@ -378,5 +378,15 @@ span:empty {
         top: 0;
         position: absolute;
         z-index: 3;
+    }
+    .error {
+        font-size: 3em;
+    }
+
+    .loading {
+        height: 20em;
+        width: 20em;
+        border: 5px #131414 solid;
+        border-top: 5px #f5d53d solid;
     }
 }

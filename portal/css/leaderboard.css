@@ -119,10 +119,11 @@ p {
         overflow-x: scroll;
     }
     #options .swapper button {
+        flex: 0 0 auto;
         padding: 0 0.75em;
     }
     #options .swapper#type {
-        justify-content: center;
+        justify-content: space-between;
     }
     #leaderboard-container {
         width: 90%;
@@ -130,7 +131,7 @@ p {
     }
     #leaderboard-container .leaderboard {
         width: 90%;
-        border-radius: 2em;
+        border-radius: 3em;
         overflow-x: auto;
         grid-template-columns: repeat(9, max-content);
         align-items: center;
@@ -147,6 +148,7 @@ p {
     #leaderboard-container .leaderboard div.person img {
         height: 5em;
         padding: 0.5em 0;
+        border-radius: 100vh;
     }
     #leaderboard-container .leaderboard h2 {
         font-size: 2.5em;
@@ -163,13 +165,20 @@ p {
         padding-left: 0.5em;
     }
 
-    .leaderboard.all {
+    #leaderboard-container .leaderboard.all {
         grid-template-columns: repeat(7, max-content);
     }
 
-    .leaderboard.empty {
+    #leaderboard-container .leaderboard.empty {
         grid-template-columns: repeat(1, max-content);
         border: 0px;
         padding: 0;
+        margin-left: 0;
+        margin-right: 0;
+        flex-wrap: wrap;
+    }
+
+    #leaderboard-container .leaderboard.empty #empty-error {
+        overflow-wrap: anywhere;
     }
 }

@@ -124,9 +124,9 @@ window.addEventListener('load', async () => {
             for (let i of data.users) {
                 increment = 1;
                 if (userCars[i.userid].length === 0) add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard empty"><div class="error" id="empty-error">There appears to be no data. Try changing some of the filters.</div></div>`
-                add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard"><h2></h2><h2>Design</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Moment of inertia</h2><h2>Factor of safety</h2><h2>Preview</h2>`
+                add += `<div class="people ${i.name.toLowerCase().split(' ').join('')} leaderboard"><h2></h2><h2>Design</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Moment of inertia</h2><h2>Factor of safety</h2><h2>Download</h2>`
                 for (let j of userCars[i.userid]) {
-                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><p class="moi car a${j.carid}">TBC</p><p class="fos car a${j.carid}">TBC</p><button class="download car a${j.carid}" onclick="download(${j['car_name']}, ${j.iteration})"><i class="fa-solid fa-cloud-arrow-down"></i> Download</button>`;
+                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><p class="moi car a${j.carid}">TBC</p><p class="fos car a${j.carid}">TBC</p><button class="download car a${j.carid}" onclick="download('${j['car_name']}', '${j.iteration}')"><i class="fa-solid fa-cloud-arrow-down"></i> Download</button>`;
                     increment++;
                 }
                 add += '</div>';
@@ -148,9 +148,9 @@ window.addEventListener('load', async () => {
                 data.cars = sortBy(data.cars, order, j);
                 increment = 1;
 
-                add += `<div class="cars ${i} leaderboard"><h2></h2><h2>Design</h2><h2>Creator</h2><h2>Scrutineer</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Preview</h2>`;
+                add += `<div class="cars ${i} leaderboard"><h2></h2><h2>Design</h2><h2>Creator</h2><h2>Scrutineer</h2><h2>Date created</h2><h2>Frontal area</h2><h2>Drag coefficient</h2><h2>Drag</h2><h2>Download</h2>`;
                 for (let j of data.cars) {
-                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><div class="creator person a${j.creatorid}"><img src="${pfpMapping[j.creatorid]}"><p>${j.creatorName}</p></div><div class="scrutineer person a${j.scrutineerid}"><img src="${pfpMapping[j.scrutineerid]}"><p>${j.scrutineerName}</p></div><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><button class="download car a${j.carid}" onclick="download(${j['car_name']}, ${j.iteration})"><i class="fa-solid fa-cloud-arrow-down"></i> Download</button>`
+                    add += `<p class="number">${increment}</p><p class="name car a${j.carid}">${j['car_name']}</p><div class="creator person a${j.creatorid}"><img src="${pfpMapping[j.creatorid]}"><p>${j.creatorName}</p></div><div class="scrutineer person a${j.scrutineerid}"><img src="${pfpMapping[j.scrutineerid]}"><p>${j.scrutineerName}</p></div><p class="date car a${j.carid}">${new Date(j['date_created']).toDateString()}</p><p class="frontal-area car a${j.carid}">${j['frontal_area']}mm²</p><p class="cd car a${j.carid}">${j['drag_coefficient']}</p><p class="drag car a${j.carid}">${j['drag_force']}N</p><button class="download car a${j.carid}" onclick="download('${j['car_name']}', '${j.iteration}')"><i class="fa-solid fa-cloud-arrow-down"></i> Download</button>`;
                     increment++;
                 }
                 add += '</div>';

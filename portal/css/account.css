@@ -109,7 +109,7 @@
 }
 
 #sidebar button {
-    background-color: rgb(36, 38, 38);
+    background: transparent;
     border: 0px;
     box-shadow: none;
     border-radius: 100vh;

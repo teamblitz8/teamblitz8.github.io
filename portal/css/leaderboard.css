@@ -35,7 +35,7 @@
     opacity: 1;
 }
 
-.leaderboard-container {
+#leaderboard-container {
     width: 75%;
     border: 1px solid #f8ac29;
     margin: 1.5em auto;
@@ -66,11 +66,15 @@
     grid-template-columns: repeat(7, auto);
 }
 
+#leaderboard-container .leaderboard.empty {
+    border: 0px;
+}
+
 .leaderboard.empty {
     grid-template-columns: repeat(1, auto);
     border: 0px;
     padding: 0;
-    width: 75%;
+    width: 100%;
 }
 
 .number {

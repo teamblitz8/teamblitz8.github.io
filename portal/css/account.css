@@ -118,10 +118,6 @@
     z-index: 1;
 }
 
-#sidebar button.active {
-    background-color: rgb(46, 48, 48);
-}
-
 .reveal {
     height: 1.6em;
     width: 1.6em;

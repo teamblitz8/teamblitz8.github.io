@@ -73,12 +73,13 @@ form.addEventListener('submit', async (e) => {
     }
 });
 
-const switchMenu = (menu) => {
+const switchMenu = (menu, dom) => {
     for (let i of ['security', 'designs']) {
         const j = document.querySelector(`#${i}`);
         j.style.display = 'none';
     }
     document.querySelector(`#${menu}`).style.display = 'flex';
+    switchActive(dom, document.querySelector('#sidebar'));
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

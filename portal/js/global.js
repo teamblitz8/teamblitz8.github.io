@@ -73,8 +73,8 @@ const waitForUsername = async () => {
 
     if (username.textContent === '') wait(100);
 
-    menu.style.width = `calc(${profile.offsetWidth}px)`;
     nav.style.display = 'flex';
+    menu.style.width = `calc(${profile.offsetWidth}px)`;
 
     if (window.innerWidth < 1000) menu.style.transform = `translateY(${profile.offsetTop + (profile.offsetHeight / 2)}px)`;
 }

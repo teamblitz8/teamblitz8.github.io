@@ -115,23 +115,28 @@ p {
         flex-direction: column;
         gap: 2em;
     }
-    #options .swapper {
+    #options .scroll-container {
+        border-radius: 100vh;
+        overflow: hidden;
+    }
+    #options .scroll-container .swapper {
         overflow-x: scroll;
     }
-    #options .swapper button {
+    #options .scroll-container .swapper button {
         flex: 0 0 auto;
         padding: 0 0.75em;
     }
-    #options .swapper#type {
+    #options .scroll-container .swapper#type {
         justify-content: space-between;
     }
     #leaderboard-container {
         width: 90%;
         margin: auto;
+        border-radius: 3em;
+        overflow: hidden;
     }
     #leaderboard-container .leaderboard {
         width: 90%;
-        border-radius: 3em;
         overflow-x: auto;
         grid-template-columns: repeat(9, max-content);
         align-items: center;

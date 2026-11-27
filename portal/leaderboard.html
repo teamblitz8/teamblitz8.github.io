@@ -32,28 +32,36 @@
         <h1 id="page-title">Leaderboard</h1>
         <div id="error-box"><div id="main-error" class="error"></div></div>
         <div id="options">
-            <div class="swapper active" id="type">
-                <div class="active-indicator"></div>
-                <button onclick="swap('type', 'people', this)" class="enabled" id="bpeople"><i class="fa-solid fa-user"></i> People</button>
-                <button onclick="swap('type', 'cars', this)" id="bcars"><i class="fa-solid fa-car-side"></i> Car body</button>
-                <button onclick="swap('type', 'wheels', this)" id="bwheels"><i class="fa-solid fa-ring"></i> Wheels</button>
+            <div class="scroll-container">
+                <div class="swapper active" id="type">
+                    <div class="active-indicator"></div>
+                    <button onclick="swap('type', 'people', this)" class="enabled" id="bpeople"><i class="fa-solid fa-user"></i> People</button>
+                    <button onclick="swap('type', 'cars', this)" id="bcars"><i class="fa-solid fa-car-side"></i> Car body</button>
+                    <button onclick="swap('type', 'wheels', this)" id="bwheels"><i class="fa-solid fa-ring"></i> Wheels</button>
+                </div>
             </div>
-            <div class="swapper active" id="people">
-                <div class="active-indicator"></div>
-                <button onclick="swap('people', 'all', this)" class="enabled" id="all">All</button>
+            <div class="scroll-container">
+                <div class="swapper active" id="people">
+                    <div class="active-indicator"></div>
+                    <button onclick="swap('people', 'all', this)" class="enabled" id="all">All</button>
+                </div>
             </div>
-            <div class="swapper" id="cars">
-                <div class="active-indicator"></div>
-                <button onclick="swap('cars', 'drag', this)" class="enabled" id="drag">Drag</button>
-                <button onclick="swap('cars', 'frontal-area', this)" id="frontal-area">Frontal area</button>
-                <button onclick="swap('cars', 'cd', this)" id="cd">Drag coefficient</button>
-                <button onclick="swap('cars', 'car-date', this)" id="car-date">Latest date</button>
+            <div class="scroll-container">
+                <div class="swapper" id="cars">
+                    <div class="active-indicator"></div>
+                    <button onclick="swap('cars', 'drag', this)" class="enabled" id="drag">Drag</button>
+                    <button onclick="swap('cars', 'frontal-area', this)" id="frontal-area">Frontal area</button>
+                    <button onclick="swap('cars', 'cd', this)" id="cd">Drag coefficient</button>
+                    <button onclick="swap('cars', 'car-date', this)" id="car-date">Latest date</button>
+                </div>
             </div>
-            <div class="swapper" id="wheels">
-                <div class="active-indicator"></div>
-                <button onclick="swap('wheels', 'moi', this)" id="moi" class="enabled">Moment of inertia</button>
-                <button onclick="swap('wheels', 'fos', this)" id="fos">Factor of safety</button>
-                <button onclick="swap('wheels', 'wheel-date', this)" id="wheel-date">Latest date</button>
+            <div class="scroll-container">
+                <div class="swapper" id="wheels">
+                    <div class="active-indicator"></div>
+                    <button onclick="swap('wheels', 'moi', this)" id="moi" class="enabled">Moment of inertia</button>
+                    <button onclick="swap('wheels', 'fos', this)" id="fos">Factor of safety</button>
+                    <button onclick="swap('wheels', 'wheel-date', this)" id="wheel-date">Latest date</button>
+                </div>
             </div>
         </div>
         <div id="leaderboard-container">

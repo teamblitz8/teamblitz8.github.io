@@ -104,3 +104,72 @@ p {
 .person p {
     padding: 0;
 }
+
+@media screen and (max-width: 1000px) {
+    #page-title {
+        margin-top: 0;
+        width: 90%;
+    }
+    #options {
+        width: 90%;
+        flex-direction: column;
+        gap: 2em;
+    }
+    #options .swapper {
+        overflow-x: scroll;
+    }
+    #options .swapper button {
+        padding: 0 0.75em;
+    }
+    #options .swapper#type {
+        justify-content: center;
+    }
+    #leaderboard-container {
+        width: 90%;
+        margin: auto;
+    }
+    #leaderboard-container .leaderboard {
+        width: 90%;
+        border-radius: 2em;
+        overflow-x: auto;
+        grid-template-columns: repeat(9, max-content);
+        align-items: center;
+    }
+    #leaderboard-container .leaderboard div.person {
+        padding-right: 1em;
+        display: flex;
+        align-items: center;
+    }
+    #leaderboard-container .leaderboard div.person p {
+        padding: 0;
+        padding-left: 0.25em;
+    }
+    #leaderboard-container .leaderboard div.person img {
+        height: 5em;
+        padding: 0.5em 0;
+    }
+    #leaderboard-container .leaderboard h2 {
+        font-size: 2.5em;
+        padding: 0.25em 0;
+        padding-right: 1em;
+    }
+    #leaderboard-container .leaderboard p {
+        padding: 0.5em 0;
+        padding-right: 1em;
+        font-size: 2em;
+        line-height: 1.5em;
+    }
+    #leaderboard-container .leaderboard p.number {
+        padding-left: 0.5em;
+    }
+
+    .leaderboard.all {
+        grid-template-columns: repeat(7, max-content);
+    }
+
+    .leaderboard.empty {
+        grid-template-columns: repeat(1, max-content);
+        border: 0px;
+        padding: 0;
+    }
+}

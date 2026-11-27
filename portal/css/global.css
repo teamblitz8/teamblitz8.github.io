@@ -373,6 +373,8 @@ span:empty {
     #nav {
         position: relative;
         padding: 2em 0;
+        width: 90%;
+        margin: auto;
     }
     #profile-menu {
         top: 0;

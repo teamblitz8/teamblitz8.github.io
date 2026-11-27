@@ -85,7 +85,9 @@ The portal is strictly for internal team use only. If you would like to see a de
 
 ## To-do (in order of priority)
 - Add mobile responsivity
+- Make preview/download buttons work
 - Add edit support
+- Broken nav bar bruh
 - Add different perms
 - Add light/dark mode
 - Captchas.

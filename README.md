@@ -35,7 +35,7 @@ The site should adapt to different viewport sizes. Images may load slowly on mob
 - There's some unused pages dedicated to a blog. Not sure if this will happen though. Maybe if I have hours to kill on a week in Terra.
 - There is also an empty Sponsors page which will be filled in later on. The navigation bar should have the link to this omitted.
 
-![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/website-homepage.png?raw=true)
+![Homepage of Team Blitz website, an image of Blitz on the podium at the 2025 F1 in Schools Natonal Finals, and a floating frosted-glass-style navigation bar.](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/website-homepage.png?raw=true)
 
 > How was this developed?
 
@@ -63,10 +63,10 @@ This part of the site involved a lot of learning for me. It is designed to allow
 
 ### What doesn't work yet?
 
-Actually, everything that is on the site should be fully working! Please let me know if otherwise, would really help me out.
-If you use the site for a longer period of time, you may experience that some functions stop working, this is normal as Cloudflare limits my CPU time. Wait a few minutes, then try again and it should work.
+- Actually, everything that is on the site should be fully working! Please let me know if otherwise, would really help me out.
+- If you use the site for a longer period of time, you may experience that some functions stop working, this is normal as Cloudflare limits my CPU time. Wait a few minutes, then try again and it should work.
 
-![alt text](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
+![Screenshot of the portal dashboard, showing user's view of how a car uploaded to the portal would look.](https://github.com/teamblitz8/teamblitz8.github.io/blob/development-subdomain/imgs/misc/portal-dashboard.png?raw=true)
 
 > How was this developed?
 
@@ -82,6 +82,7 @@ The portal can be accessed at https://teamblitz.pages.dev/portal.
 The portal is strictly for internal team use only. If you would like to see a demo of the portal, see the ship on Terra for sample login details
 
 ## To-do (in order of priority)
+- fix the drag values
 - Add edit support
 - Add different perms
 - Add light/dark mode

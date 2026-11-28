@@ -10,8 +10,8 @@
         <link rel="stylesheet" href="./css/account.css">
         <script src="https://kit.fontawesome.com/5de12ac90d.js"></script>
         <script type="text/javascript" src="dist/purify.min.js"></script>
-        <script src="./js/global.js" defer></script>
-        <script src="./js/account.js" defer></script>
+        <!--<script src="./js/global.js" defer></script>
+        <script src="./js/account.js" defer></script>-->
     </head>
 
     <body>
@@ -87,12 +87,44 @@
                 </div>
                 <div id="designs" class="section" style="display: none;">
                     <div id="designs-list" class="card">
-                        <h3>What is up bro.</h3>
-                        <p>This will have your designs.</p>
+                        <h3>Car body</h3>
+                        <div id="designs-wrapper">
+                            <div id="designs-container">
+                                <h2>Name</h2>
+                                <h2>Date created</h2>
+                                <h2>Drag (N)</h2>
+                                <h2>Options</h2>
+                                <p class="name carid">Alpha</p>
+                                <p class="date carid">02/11/2026</p>
+                                <p class="drag carid">0N fr</p>
+                                <div class="options carid">
+                                    <button onclick="viewMore('carid')"><i class="fa-solid fa-eye"></i></button>
+                                    <button onclick="edit('carid')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button onclick="delete('carid')"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div id="error-box"><div id="main-error" class="error"></div></div>
         </div>
     </body>
+    <script>
+        const switchActive = (newButton, parentDOM) => {
+            const bg = parentDOM.querySelector('.active-indicator');
+            bg.style.width = `${newButton.offsetWidth}px`;
+            bg.style.height = `${newButton.offsetHeight}px`;
+            bg.style.transform = `translate(${newButton.offsetLeft}px, ${newButton.offsetTop}px)`;
+        }
+        const switchMenu = (menu, dom) => {
+            for (let i of ['security', 'designs']) {
+                const j = document.querySelector(`#${i}`);
+                j.style.display = 'none';
+            }
+            document.querySelector(`#${menu}`).style.display = 'flex';
+            switchActive(dom, document.querySelector('#sidebar'));
+        }
+        switchActive(document.querySelector('#sidebar').querySelector('button'), document.querySelector('#sidebar'));
+    </script>
 </html>

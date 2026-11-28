@@ -138,7 +138,26 @@
     position: relative;
 }
 
+#designs-wrapper {
+    border-radius: 3em;
+    border: 1px solid #f5d53d;
+    overflow: hidden;
+}
+
+#designs-wrapper #designs-container {
+    overflow-x: scroll;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+}
+
+#designs-wrapper #designs-container div.options button {
+    border-radius: 100vh;
+}
+
 @media screen and (max-width: 1000px) {
+    #designs-container {
+        grid-template-columns: repeat(4, max-content);
+    }
     #menu-container {
         flex-direction: column;
         gap: 3em;

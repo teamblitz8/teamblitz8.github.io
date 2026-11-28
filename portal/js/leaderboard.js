@@ -66,9 +66,12 @@ const fetchLowestDrag = (carArray, userArray) => {
     }
     for (let car of carArray) {
         for (let user of userArray) {
+            console.log(user.userid);
+            console.log(car.creatorid);
             if (user.userid === car.creatorid) {
                 if (user.lowestDrag > car['drag_force']) {
                     user.lowestDrag = car['drag_force'];
+                    console.log(user.lowestDrag);
                 }
             }
         }

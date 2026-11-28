@@ -79,9 +79,7 @@ const waitForUsername = async () => {
         menu.style.width = `calc(${profile.offsetWidth}px)`;
         menu.style.transform = `translateY(${profile.offsetTop + (profile.offsetHeight / 2)}px)`;
     }
-    else {
-        menu.style.width = `calc(${profile.offsetWidth}px + 3em)`;
-    }
+    else menu.style.width = `calc(${profile.offsetWidth}px + 3em)`;
 }
 
 const showPassword = (field) => {
